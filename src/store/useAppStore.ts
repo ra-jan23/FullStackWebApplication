@@ -10,7 +10,9 @@ export type Page =
   | 'highlights' 
   | 'tickets' 
   | 'analyze' 
-  | 'match-center';
+  | 'match-center'
+  | 'profile'
+  | 'favorites';
 
 interface User {
   id: string;
@@ -24,6 +26,7 @@ interface AppState {
   user: User | null;
   token: string | null;
   cartCount: number;
+  favoritesCount: number;
   isLoading: boolean;
   searchQuery: string;
 
@@ -31,6 +34,7 @@ interface AppState {
   login: (user: User, token: string) => void;
   logout: () => void;
   setCartCount: (count: number) => void;
+  setFavoritesCount: (count: number) => void;
   setLoading: (loading: boolean) => void;
   hydrateAuth: () => void;
   setSearchQuery: (query: string) => void;
@@ -41,6 +45,7 @@ export const useAppStore = create<AppState>((set) => ({
   user: null,
   token: null,
   cartCount: 0,
+  favoritesCount: 0,
   isLoading: true,
   searchQuery: '',
 
@@ -63,6 +68,7 @@ export const useAppStore = create<AppState>((set) => ({
   },
 
   setCartCount: (count) => set({ cartCount: count }),
+  setFavoritesCount: (count) => set({ favoritesCount: count }),
   setLoading: (loading) => set({ isLoading: loading }),
   setSearchQuery: (query) => set({ searchQuery: query }),
 

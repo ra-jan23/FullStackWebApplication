@@ -13,14 +13,16 @@ model User {
   name      String
   password  String
   role      String   @default("user")
-  avatar    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  avatar       String?
+  favoriteTeam String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   cartItems    CartItem[]
   tickets      Ticket[]
   highlights   Highlight[]
   analyses     MatchAnalysis[]
+  favorites    FavoriteItem[]
 }
 
 model Product {
@@ -38,7 +40,8 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  cartItems CartItem[]
+  cartItems  CartItem[]
+  favorites  FavoriteItem[]
 }
 
 model CartItem {
@@ -105,4 +108,27 @@ model MatchAnalysis {
   updatedAt      DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model FavoriteItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+}
+
+model MatchEvent {
+  id          Int      @id @default(autoincrement())
+  matchId     String
+  type        String
+  minute      Int
+  team        String
+  player      String
+  description String
+  createdAt   DateTime @default(now())
 }
