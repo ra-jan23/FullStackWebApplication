@@ -70,6 +70,7 @@ export default function Footer() {
                 { label: "Jersey Store", page: "store" as Page },
                 { label: "Match Tickets", page: "tickets" as Page },
                 { label: "Football News", page: "news" as Page },
+                { label: "Transfer Market", page: "transfers" as Page },
               ].map((item) => (
                 <button key={item.page} className="block text-sm text-muted-foreground hover:text-primary transition-colors hover:translate-x-0.5 transform">
                   {item.label}

@@ -1076,3 +1076,285 @@ select:focus {
 .card-grid-equal > * > *:last-child {
   margin-top: auto;
 }
+
+/* ===== ROUND 7B ENHANCED STYLING ===== */
+
+@keyframes transferArrow {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
+}
+
+@keyframes barFillLeft {
+  from { width: 0; }
+}
+
+@keyframes barFillRight {
+  from { width: 0; }
+}
+
+@keyframes vsGlow {
+  0%, 100% { box-shadow: 0 0 8px hsl(0 84% 60% / 0.3), 0 0 16px hsl(0 84% 60% / 0.1); }
+  50% { box-shadow: 0 0 16px hsl(0 84% 60% / 0.5), 0 0 32px hsl(0 84% 60% / 0.2); }
+}
+
+@keyframes footballSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes dashOffset {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -20; }
+}
+
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.96); clip-path: inset(100% 0 0 0); }
+  to { opacity: 1; transform: translateY(0) scale(1); clip-path: inset(0 0 0 0); }
+}
+
+@keyframes statHighlight {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: hsl(142 71% 35% / 0.08); }
+}
+
+@keyframes iconBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes borderDance {
+  0%, 100% { border-color: hsl(142 71% 35% / 0.2); }
+  33% { border-color: hsl(160 84% 39% / 0.3); }
+  66% { border-color: hsl(142 71% 45% / 0.25); }
+}
+
+@keyframes subtleBreath {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+/* Transfer arrow animation */
+.transfer-arrow {
+  animation: transferArrow 1.5s ease-in-out infinite;
+}
+
+/* Comparison bar fill from left */
+.bar-fill-left {
+  animation: barFillLeft 0.8s ease-out forwards;
+}
+
+/* Comparison bar fill from right */
+.bar-fill-right {
+  animation: barFillRight 0.8s ease-out forwards;
+  margin-left: auto;
+}
+
+/* VS badge glow pulse */
+.vs-glow {
+  animation: vsGlow 2s ease-in-out infinite;
+}
+
+/* Football icon spin */
+.football-spin {
+  animation: footballSpin 8s linear infinite;
+}
+
+/* Dashed line animation for decorations */
+.dash-animate {
+  animation: dashOffset 1.5s linear infinite;
+}
+
+/* Reveal up animation for page sections */
+.reveal-up {
+  animation: revealUp 0.6s ease-out forwards;
+}
+
+/* Stat row highlight on hover */
+.stat-highlight:hover {
+  animation: statHighlight 0.6s ease-in-out;
+}
+
+/* Subtle icon bounce */
+.icon-bounce {
+  animation: iconBounce 2s ease-in-out infinite;
+}
+
+/* Animated border color */
+.border-dance {
+  animation: borderDance 4s ease-in-out infinite;
+}
+
+/* Subtle breathing animation for decorative elements */
+.subtle-breath {
+  animation: subtleBreath 3s ease-in-out infinite;
+}
+
+/* Enhanced page header gradient */
+.page-header-gradient {
+  position: relative;
+  overflow: hidden;
+}
+.page-header-gradient::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    hsl(142 71% 35%), 
+    hsl(160 84% 39%), 
+    hsl(35 92% 60%), 
+    hsl(0 84% 60%), 
+    hsl(280 84% 60%), 
+    hsl(142 71% 35%)
+  );
+  background-size: 200% 100%;
+  animation: gradientBorderSpin 6s linear infinite;
+}
+
+/* Transfer card special styling */
+.transfer-card {
+  position: relative;
+  overflow: hidden;
+}
+.transfer-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(to bottom, hsl(142 71% 35%), hsl(160 84% 39%));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.transfer-card:hover::before {
+  opacity: 1;
+}
+
+/* Comparison section divider */
+.comparison-divider {
+  position: relative;
+}
+.comparison-divider::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, hsl(var(--border)), transparent);
+}
+
+/* Enhanced tab styling */
+.tab-active-indicator {
+  position: relative;
+}
+.tab-active-indicator::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: hsl(var(--primary));
+  border-radius: 1px 1px 0 0;
+}
+
+/* Navbar scroll shadow */
+.navbar-scroll-shadow {
+  transition: box-shadow 0.3s ease;
+}
+.navbar-scroll-shadow.scrolled {
+  box-shadow: 0 1px 12px hsl(0 0% 0% / 0.06);
+}
+.dark .navbar-scroll-shadow.scrolled {
+  box-shadow: 0 1px 12px hsl(0 0% 0% / 0.3);
+}
+
+/* Hero particle effect */
+.hero-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: hsl(142 71% 35% / 0.3);
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Improved badge hover */
+.badge-interactive {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+.badge-interactive:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px hsl(0 0% 0% / 0.1);
+}
+
+/* Stat card micro interaction */
+.stat-card-interactive {
+  transition: all 0.25s ease;
+}
+.stat-card-interactive:hover {
+  transform: translateY(-2px);
+  border-color: hsl(var(--primary) / 0.2);
+}
+
+/* Enhanced scrollable areas */
+.scroll-smooth-area {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Pitch pattern background for football-themed sections */
+.pitch-pattern {
+  background-color: hsl(142 50% 35%);
+  background-image: 
+    repeating-linear-gradient(0deg, transparent, transparent 40px, hsl(142 50% 32% / 0.3) 40px, hsl(142 50% 32% / 0.3) 41px),
+    repeating-linear-gradient(90deg, transparent, transparent 40px, hsl(142 50% 32% / 0.3) 40px, hsl(142 50% 32% / 0.3) 41px);
+}
+
+/* Dot grid pattern background */
+.dot-grid-pattern {
+  background-image: radial-gradient(hsl(var(--muted-foreground) / 0.15) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Smooth gradient background for sections */
+.section-gradient-warm {
+  background: linear-gradient(135deg, hsl(35 92% 60% / 0.03), hsl(25 95% 53% / 0.05), transparent);
+}
+.section-gradient-cool {
+  background: linear-gradient(135deg, hsl(142 71% 35% / 0.03), hsl(160 84% 39% / 0.05), transparent);
+}
+
+/* Enhanced footer link hover */
+.footer-link-hover {
+  position: relative;
+  transition: color 0.2s ease;
+}
+.footer-link-hover:hover {
+  color: hsl(var(--primary));
+}
+
+/* Better focus ring for inputs */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--primary) / 0.3);
+}
+
+/* Reduced motion - disable all custom animations */
+@media (prefers-reduced-motion: reduce) {
+  .transfer-arrow,
+  .football-spin,
+  .dash-animate,
+  .icon-bounce,
+  .border-dance,
+  .subtle-breath,
+  .hero-particle {
+    animation: none !important;
+  }
+}

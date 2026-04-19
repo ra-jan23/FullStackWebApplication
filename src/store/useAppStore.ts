@@ -17,7 +17,8 @@ export type Page =
   | 'checkout'
   | 'predictions'
   | 'orders'
-  | 'news';
+  | 'news'
+  | 'transfers';
 
 interface User {
   id: string;

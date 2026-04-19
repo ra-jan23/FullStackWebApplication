@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   ScanSearch, Store, Ticket, Video, Sparkles, Crown, Cpu, Upload,
   CheckCircle2, Star, ArrowLeft, Play, Zap, Flame, CircleDot,
-  ChevronRight, Megaphone, Users, BarChart3, Shield, Target, MessageCircle, Brain, Newspaper
+  ChevronRight, Megaphone, Users, BarChart3, Shield, Target, MessageCircle, Brain, Newspaper, ArrowLeftRight
 } from "lucide-react";
 
 export default function HomePage() {
@@ -38,8 +38,17 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         </div>
         {/* Floating decorative elements */}
-        <div className="absolute top-20 right-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 right-40 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl" />
+        <div className="absolute top-20 right-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl subtle-breath" />
+        <div className="absolute bottom-10 right-40 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl subtle-breath" style={{ animationDelay: "1.5s" }} />
+        {/* Decorative particles */}
+        <div className="hero-particle" style={{ top: "15%", right: "20%", animationDelay: "0s" }} />
+        <div className="hero-particle" style={{ top: "30%", right: "35%", animationDelay: "1s", width: "6px", height: "6px" }} />
+        <div className="hero-particle" style={{ top: "60%", right: "15%", animationDelay: "2s" }} />
+        <div className="hero-particle" style={{ top: "45%", right: "45%", animationDelay: "0.5s", width: "3px", height: "3px" }} />
+        <div className="hero-particle" style={{ top: "75%", right: "30%", animationDelay: "1.5s", width: "5px", height: "5px" }} />
+        {/* Animated dashed circle decoration */}
+        <div className="absolute top-1/4 right-1/4 w-32 h-32 rounded-full border border-dashed border-white/10 football-spin hidden lg:block" />
+        <div className="absolute bottom-1/4 right-1/3 w-20 h-20 rounded-full border border-dashed border-emerald-400/10 football-spin hidden lg:block" style={{ animationDirection: "reverse", animationDuration: "12s" }} />
 
         <div className="relative container mx-auto px-4 py-28 md:py-40">
           <div className="max-w-2xl">
@@ -70,9 +79,9 @@ export default function HomePage() {
             {/* Quick stats in hero */}
             <div className="flex gap-8 mt-12">
               {[{ val: "50K+", label: "Analyses" }, { val: "200+", label: "Teams" }, { val: "95%", label: "Accuracy" }].map((s, i) => (
-                <div key={i}>
-                  <div className="text-2xl font-bold text-white">{s.val}</div>
-                  <div className="text-xs text-gray-400">{s.label}</div>
+                <div key={i} className="group cursor-default">
+                  <div className="text-2xl font-bold text-white group-hover:text-primary transition-colors duration-300">{s.val}</div>
+                  <div className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors duration-300">{s.label}</div>
                 </div>
               ))}
             </div>
@@ -127,7 +136,7 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
             { icon: <ScanSearch className="w-8 h-8" />, title: "AI Formation Detection", desc: "Upload match photos and let AI detect player positions and formations instantly.", page: "analyze" as Page, gradient: "from-emerald-500 to-teal-600", bg: "bg-emerald-500/10" },
             { icon: <MessageCircle className="w-8 h-8" />, title: "AI Football Expert", desc: "Chat with our AI football expert about tactics, players, history, and predictions.", page: "chat" as Page, gradient: "from-violet-500 to-purple-600", bg: "bg-violet-500/10" },
@@ -137,6 +146,7 @@ export default function HomePage() {
             { icon: <Crown className="w-8 h-8" />, title: "Live Match Scores", desc: "Follow live matches with real-time scores, events, and play-by-play commentary.", page: "match-center" as Page, gradient: "from-amber-500 to-orange-500", bg: "bg-amber-500/10" },
             { icon: <Brain className="w-8 h-8" />, title: "AI Match Predictions", desc: "Get AI-powered match predictions with score forecasts and tactical analysis.", page: "predictions" as Page, gradient: "from-fuchsia-500 to-violet-600", bg: "bg-fuchsia-500/10" },
             { icon: <Newspaper className="w-8 h-8" />, title: "Football News Hub", desc: "Stay updated with the latest transfer rumors, match results, and football headlines.", page: "news" as Page, gradient: "from-orange-500 to-red-600", bg: "bg-orange-500/10" },
+            { icon: <ArrowLeftRight className="w-8 h-8" />, title: "Transfer Market", desc: "Track latest transfer rumors, player values, and completed deals from around the world.", page: "transfers" as Page, gradient: "from-teal-500 to-cyan-600", bg: "bg-teal-500/10" },
           ].map((feature, i) => (
             <Card
               key={i}
@@ -163,20 +173,20 @@ export default function HomePage() {
 
       {/* Stats Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-emerald-500/5 border-y">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMDUpIi8+PC9zdmc+')] opacity-50" />
+        <div className="absolute inset-0 dot-grid-pattern opacity-30" />
         <div className="container mx-auto px-4 py-20 relative">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 text-center stagger-fade">
             {[
-              { value: "50K+", label: "Matches Analyzed", icon: <BarChart3 className="w-7 h-7 mx-auto mb-3 text-primary" />, desc: "And counting every day" },
-              { value: "200+", label: "Teams Covered", icon: <Shield className="w-7 h-7 mx-auto mb-3 text-primary" />, desc: "From leagues worldwide" },
-              { value: "10K+", label: "Jerseys Available", icon: <Store className="w-7 h-7 mx-auto mb-3 text-primary" />, desc: "Official club merchandise" },
-              { value: "95%", label: "AI Accuracy", icon: <Target className="w-7 h-7 mx-auto mb-3 text-primary" />, desc: "Formation detection rate" },
+              { value: "50K+", label: "Matches Analyzed", icon: <BarChart3 className="w-7 h-7 mx-auto mb-3 text-primary icon-bounce" />, desc: "And counting every day" },
+              { value: "200+", label: "Teams Covered", icon: <Shield className="w-7 h-7 mx-auto mb-3 text-primary icon-bounce" style={{ animationDelay: "0.3s" }} />, desc: "From leagues worldwide" },
+              { value: "10K+", label: "Jerseys Available", icon: <Store className="w-7 h-7 mx-auto mb-3 text-primary icon-bounce" style={{ animationDelay: "0.6s" }} />, desc: "Official club merchandise" },
+              { value: "95%", label: "AI Accuracy", icon: <Target className="w-7 h-7 mx-auto mb-3 text-primary icon-bounce" style={{ animationDelay: "0.9s" }} />, desc: "Formation detection rate" },
             ].map((stat, i) => (
-              <div key={i} className="group" style={{ animationDelay: `${i * 100}ms` }}>
-                <div className="w-16 h-16 rounded-2xl bg-background/80 backdrop-blur-sm shadow-sm flex items-center justify-center mx-auto mb-3 group-hover:shadow-md transition-shadow">
+              <div key={i} className="group stat-card-interactive p-4 rounded-2xl cursor-default">
+                <div className="w-16 h-16 rounded-2xl bg-background/80 backdrop-blur-sm shadow-sm flex items-center justify-center mx-auto mb-3 group-hover:shadow-md group-hover:scale-105 transition-all duration-300">
                   {stat.icon}
                 </div>
-                <div className="text-3xl md:text-4xl font-extrabold text-primary mb-1">{stat.value}</div>
+                <div className="text-3xl md:text-4xl font-extrabold text-primary mb-1 stat-number">{stat.value}</div>
                 <div className="text-sm font-semibold mb-0.5">{stat.label}</div>
                 <div className="text-xs text-muted-foreground">{stat.desc}</div>
               </div>

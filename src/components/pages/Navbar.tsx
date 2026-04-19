@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import {
   Home, LogIn, LogOut, UserPlus, LayoutDashboard, Store, ShoppingCart,
   Ticket, Video, ScanSearch, Moon, Sun, Menu, X, Search, User,
-  CheckCircle2, Play, Flame, Calendar, Target, Trophy, Bell, Heart, MessageCircle, Brain, Newspaper, ShoppingBag
+  CheckCircle2, Play, Flame, Calendar, Target, Trophy, Bell, Heart, MessageCircle, Brain, Newspaper, ShoppingBag, ArrowLeftRight
 } from "lucide-react";
 
 export default function Navbar() {
@@ -25,6 +25,7 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
   const localSearchQuery = useState(searchQuery);
@@ -32,6 +33,13 @@ export default function Navbar() {
   useEffect(() => {
     const timer = requestAnimationFrame(() => setMounted(true));
     return () => cancelAnimationFrame(timer);
+  }, []);
+
+  // Navbar scroll shadow effect
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Close profile dropdown on click outside
@@ -60,6 +68,7 @@ export default function Navbar() {
     { page: "chat", label: "AI Chat", icon: <MessageCircle className="w-4 h-4" /> },
     { page: "predictions", label: "Predictions", icon: <Brain className="w-4 h-4" /> },
     { page: "news", label: "News", icon: <Newspaper className="w-4 h-4" /> },
+    { page: "transfers", label: "Transfers", icon: <ArrowLeftRight className="w-4 h-4" /> },
     { page: "cart", label: "Cart", icon: <ShoppingCart className="w-4 h-4" />, auth: true },
   ];
 
@@ -89,7 +98,7 @@ export default function Navbar() {
   const unreadCount = notifications.filter(n => n.unread).length;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl">
+    <header className={`sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl navbar-scroll-shadow ${scrolled ? "scrolled" : ""}`}>
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleNavClick("home")}>
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center shadow-lg shadow-primary/25">

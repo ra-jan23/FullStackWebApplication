@@ -25,6 +25,7 @@ import CheckoutPage from "@/components/pages/CheckoutPage";
 import PredictionsPage from "@/components/pages/PredictionsPage";
 import OrdersPage from "@/components/pages/OrdersPage";
 import NewsPage from "@/components/pages/NewsPage";
+import TransferMarketPage from "@/components/pages/TransferMarketPage";
 import Footer from "@/components/pages/Footer";
 
 // ==================== MAIN APP ====================
@@ -111,6 +112,7 @@ export default function App() {
       case "predictions": return <PredictionsPage />;
       case "orders": return requireAuth(<OrdersPage />);
       case "news": return <NewsPage />;
+      case "transfers": return <TransferMarketPage />;
       default: return <HomePage />;
     }
   };
