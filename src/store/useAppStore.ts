@@ -1,18 +1,20 @@
 import { create } from 'zustand';
 
-export type Page = 
-  | 'home' 
-  | 'login' 
-  | 'register' 
-  | 'dashboard' 
-  | 'store' 
-  | 'cart' 
-  | 'highlights' 
-  | 'tickets' 
-  | 'analyze' 
+export type Page =
+  | 'home'
+  | 'login'
+  | 'register'
+  | 'dashboard'
+  | 'store'
+  | 'cart'
+  | 'highlights'
+  | 'tickets'
+  | 'analyze'
   | 'match-center'
   | 'profile'
-  | 'favorites';
+  | 'favorites'
+  | 'chat'
+  | 'checkout';
 
 interface User {
   id: string;
@@ -29,6 +31,8 @@ interface AppState {
   favoritesCount: number;
   isLoading: boolean;
   searchQuery: string;
+  checkoutItems: any[];
+  checkoutTotal: number;
 
   setCurrentPage: (page: Page) => void;
   login: (user: User, token: string) => void;
@@ -38,6 +42,8 @@ interface AppState {
   setLoading: (loading: boolean) => void;
   hydrateAuth: () => void;
   setSearchQuery: (query: string) => void;
+  setCheckoutData: (items: any[], total: number) => void;
+  clearCheckoutData: () => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -48,9 +54,11 @@ export const useAppStore = create<AppState>((set) => ({
   favoritesCount: 0,
   isLoading: true,
   searchQuery: '',
+  checkoutItems: [],
+  checkoutTotal: 0,
 
   setCurrentPage: (page) => set({ currentPage: page }),
-  
+
   login: (user, token) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('pv_token', token);
@@ -71,6 +79,8 @@ export const useAppStore = create<AppState>((set) => ({
   setFavoritesCount: (count) => set({ favoritesCount: count }),
   setLoading: (loading) => set({ isLoading: loading }),
   setSearchQuery: (query) => set({ searchQuery: query }),
+  setCheckoutData: (items, total) => set({ checkoutItems: items, checkoutTotal: total }),
+  clearCheckoutData: () => set({ checkoutItems: [], checkoutTotal: 0 }),
 
   hydrateAuth: () => {
     if (typeof window !== 'undefined') {

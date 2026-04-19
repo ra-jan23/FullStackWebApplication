@@ -20,6 +20,8 @@ import TicketsPage from "@/components/pages/TicketsPage";
 import AnalyzePage from "@/components/pages/AnalyzePage";
 import ProfilePage from "@/components/pages/ProfilePage";
 import FavoritesPage from "@/components/pages/FavoritesPage";
+import ChatPage from "@/components/pages/ChatPage";
+import CheckoutPage from "@/components/pages/CheckoutPage";
 import Footer from "@/components/pages/Footer";
 
 // ==================== MAIN APP ====================
@@ -88,6 +90,8 @@ export default function App() {
       case "analyze": return requireAuth(<AnalyzePage />);
       case "profile": return requireAuth(<ProfilePage />);
       case "favorites": return requireAuth(<FavoritesPage />);
+      case "chat": return <ChatPage />;
+      case "checkout": return requireAuth(<CheckoutPage />);
       default: return <HomePage />;
     }
   };

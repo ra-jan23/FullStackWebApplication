@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   ScanSearch, Store, Ticket, Video, Sparkles, Crown, Cpu, Upload,
   CheckCircle2, Star, ArrowLeft, Play, Zap, Flame, CircleDot,
-  ChevronRight, Megaphone, Users, BarChart3, Shield, Target
+  ChevronRight, Megaphone, Users, BarChart3, Shield, Target, MessageCircle
 } from "lucide-react";
 
 export default function HomePage() {
@@ -62,6 +62,9 @@ export default function HomePage() {
               </Button>
               <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl border-white/25 text-white hover:bg-white/15 hover:text-white h-12 px-6 backdrop-blur-sm" onClick={() => setCurrentPage("store")}>
                 <Store className="w-5 h-5" /> Browse Jerseys
+              </Button>
+              <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl border-white/25 text-white hover:bg-white/15 hover:text-white h-12 px-6 backdrop-blur-sm" onClick={() => setCurrentPage("chat")}>
+                <MessageCircle className="w-5 h-5" /> AI Chat
               </Button>
             </div>
             {/* Quick stats in hero */}
@@ -127,13 +130,15 @@ export default function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             { icon: <ScanSearch className="w-8 h-8" />, title: "AI Formation Detection", desc: "Upload match photos and let AI detect player positions and formations instantly.", page: "analyze" as Page, gradient: "from-emerald-500 to-teal-600", bg: "bg-emerald-500/10" },
+            { icon: <MessageCircle className="w-8 h-8" />, title: "AI Football Expert", desc: "Chat with our AI football expert about tactics, players, history, and predictions.", page: "chat" as Page, gradient: "from-violet-500 to-purple-600", bg: "bg-violet-500/10" },
             { icon: <Video className="w-8 h-8" />, title: "Match Highlights", desc: "Watch AI-curated highlights from the biggest matches around the world.", page: "highlights" as Page, gradient: "from-orange-500 to-red-500", bg: "bg-orange-500/10" },
             { icon: <Store className="w-8 h-8" />, title: "Jersey Store", desc: "Shop authentic football jerseys from top clubs and national teams.", page: "store" as Page, gradient: "from-blue-500 to-indigo-500", bg: "bg-blue-500/10" },
             { icon: <Ticket className="w-8 h-8" />, title: "Match Tickets", desc: "Book tickets for upcoming matches and experience the atmosphere live.", page: "tickets" as Page, gradient: "from-purple-500 to-pink-500", bg: "bg-purple-500/10" },
+            { icon: <Crown className="w-8 h-8" />, title: "Live Match Scores", desc: "Follow live matches with real-time scores, events, and play-by-play commentary.", page: "match-center" as Page, gradient: "from-amber-500 to-orange-500", bg: "bg-amber-500/10" },
           ].map((feature, i) => (
             <Card
               key={i}
-              className="group cursor-pointer hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border hover:border-primary/20 relative overflow-hidden"
+              className="group cursor-pointer hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border hover:border-primary/20 relative overflow-hidden card-hover-lift"
               onClick={() => setCurrentPage(feature.page === "analyze" && !user ? "login" : feature.page)}
             >
               <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
@@ -335,6 +340,9 @@ export default function HomePage() {
           </Button>
           <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl h-12 px-6" onClick={() => setCurrentPage("highlights")}>
             <Play className="w-5 h-5" /> Watch Highlights
+          </Button>
+          <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl h-12 px-6" onClick={() => setCurrentPage("chat")}>
+            <MessageCircle className="w-5 h-5" /> Chat with AI
           </Button>
         </div>
       </section>

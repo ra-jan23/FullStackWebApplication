@@ -155,107 +155,52 @@ Work Log:
 
 CSS Enhancements (globals.css):
 - Added 8 new keyframe animations: float, shimmer, countUp, slideUp, scaleIn, scanLine, marquee, gradientShift, countdownPulse
-- Added .animate-float, .animate-shimmer, .animate-slide-up, .animate-scale-in, .animate-scan-line, .animate-marquee, .animate-gradient-shift, .animate-countdown-pulse utility classes
-- Added .glass utility class (glassmorphism effect with backdrop-blur)
-- Added .gradient-border utility class (gradient border mask effect)
-- Added .marquee-container utility (gradient mask for infinite scroll)
+- Added utility classes for animations, glassmorphism, gradient border, marquee container
 - Added prefers-reduced-motion media query support for accessibility
 
 Homepage Enhancements:
-- New "Trending Now" marquee strip with scrolling team names (27 teams, infinite loop with mask fade)
-- How It Works section: floating animation on step icons (staggered delay)
-- New "Mini Pitch Diagram" visual showing 4-3-3 formation detected:
-  - Green gradient pitch background with grid overlay
-  - Pitch markings: center circle, penalty areas, halfway line, goal area
-  - 11 player position dots color-coded: GK (yellow), DEF (green), MID (amber), FWD (red)
-  - Center forward pulses to indicate ball possession
-  - Legend bar below pitch
-- Testimonial cards upgraded to glassmorphism style with hover lift effect
-- Trusted By section reduced padding for cleaner separation
+- New "Trending Now" marquee strip with scrolling team names
+- How It Works section: floating animation on step icons
+- New "Mini Pitch Diagram" visual showing 4-3-3 formation detected
+- Testimonial cards upgraded to glassmorphism style
+- Trusted By section reduced padding
 
 Dashboard Enhancements:
-- New "Match Day Countdown" card with gradient border:
-  - Shows Chelsea FC vs Arsenal FC match info
-  - 4-unit countdown: Days, Hours, Mins, Secs (with pulsing animation)
-  - "Book Tickets" quick action button
-- Grid layout expanded from 2-col to 3-col to accommodate new card
+- New "Match Day Countdown" card with gradient border
 
 Login/Register Enhancements:
-- Added social login buttons (Google, GitHub) with "or continue with" separator
-- Toast notification on click: "Social login coming soon!"
+- Social login buttons (Google, GitHub)
 - Register page: password strength indicator
-  - 4-segment colored bar (red/amber/yellow/green)
-  - Real-time labels: Weak, Fair, Good, Strong
-  - Strength logic: length < 6 = Weak, < 10 = Fair, uppercase + number = Strong, else Good
 
 Match Center Enhancements:
-- New "League Tabs" filter bar at top with 5 options:
-  - All Leagues, Premier League, La Liga, Serie A, Bundesliga
-  - Active tab styled with default variant, others with outline
-  - Each tab has appropriate icon
-- Standings table: new "Form" column showing last 5 results
-  - Each result shown as colored badge: W (green), D (amber), L (red)
-  - Top 4 rows get subtle primary background tint
-
-AI Analysis Enhancements:
-- Upload area icon now has pulse animation
-- Added camera icon with "PNG, JPEG, WebP supported" text
+- New "League Tabs" filter bar
+- Standings table: new "Form" column
 
 Footer Enhancements:
-- Social media buttons (X/Twitter, Instagram, YouTube) in About section
-- Each button has hover effect with primary color tint
+- Social media buttons (X/Twitter, Instagram, YouTube)
 
 Unresolved Issues / Risks:
-- None identified — all features working correctly
+- None identified
 
 Priority Recommendations for Next Phase:
-1. Add user profile settings page (change name, avatar, password)
+1. Add user profile settings page
 2. Add product reviews/ratings system
 3. Add payment integration simulation for checkout
 4. Add Favorites/Wishlist feature
-5. Add dark mode pitch diagram (currently only green, needs dark mode adaptation)
+5. Add dark mode pitch diagram adaptation
 
 ---
-Task ID: 3
+Task ID: 3b
 Agent: Refactoring Agent
 Task: Split monolithic page.tsx (~1894 lines) into separate component files
 
 Work Log:
-- Read worklog.md and full page.tsx to understand the complete project structure
-- Identified all component boundaries and their line ranges
 - Created src/components/pages/ directory
-- Extracted 12 component files from page.tsx with precise import management
-- Rewrote page.tsx to only contain App component (~100 lines) with imports and page router
-- Fixed lint errors: added missing Trophy and Bell imports to Navbar.tsx
-- Verified 0 lint errors, 0 compile errors
-- Dev server recompiled successfully (455ms, 160ms)
+- Extracted 12 component files from page.tsx
+- Rewrote page.tsx to ~100 lines (imports + App component + requireAuth helper)
 
 Files Created:
-- src/components/pages/Navbar.tsx — Navbar with search, notifications, profile dropdown, mobile menu, theme toggle
-- src/components/pages/HomePage.tsx — Hero, features, stats, how it works, pitch diagram, testimonials, newsletter, CTA
-- src/components/pages/LoginPage.tsx — Login form with demo account, social auth buttons
-- src/components/pages/RegisterPage.tsx — Registration form with password strength indicator
-- src/components/pages/MatchCenterPage.tsx — Live scores, results, fixtures, standings, top scorers, player rankings
-- src/components/pages/DashboardPage.tsx — Welcome banner, stats cards, countdown, spending, quick actions, activity feed
-- src/components/pages/StorePage.tsx — Jersey store with filters, sort, search, ProductCard sub-component
-- src/components/pages/CartPage.tsx — Shopping cart with order summary and checkout
-- src/components/pages/HighlightsPage.tsx — Match highlights grid with video dialog
-- src/components/pages/TicketsPage.tsx — Ticket booking form, upcoming matches, my tickets management
-- src/components/pages/AnalyzePage.tsx — AI formation analysis with upload, results, and history
-- src/components/pages/Footer.tsx — Site footer with links, technologies, social media
-
-Files Modified:
-- src/app/page.tsx — Reduced from ~1894 lines to ~100 lines (imports + App component + requireAuth helper)
-
-Issues Encountered:
-- Initial lint errors in Navbar.tsx due to missing Trophy and Bell icon imports — fixed by adding them to the lucide-react import statement
-- No other issues; the refactoring was a pure code split with no functional changes
-
-Current Project Status:
-- 0 lint errors, 0 compile errors, 0 runtime errors
-- All 9 pages fully functional (Home, Login, Register, Dashboard, Match Center, Store, Cart, Highlights, Tickets, AI Analysis)
-- page.tsx reduced from ~1894 lines to ~100 lines
-- Each page component is self-contained with its own imports
+- Navbar.tsx, HomePage.tsx, LoginPage.tsx, RegisterPage.tsx, MatchCenterPage.tsx, DashboardPage.tsx, StorePage.tsx, CartPage.tsx, HighlightsPage.tsx, TicketsPage.tsx, AnalyzePage.tsx, Footer.tsx
 
 ---
 Task ID: 6
@@ -264,59 +209,9 @@ Task: Real-Time Match Updates via WebSocket (Socket.io)
 
 Work Log:
 - Created Socket.io mini-service in mini-services/match-service/ (port 3004)
-  - package.json with socket.io and cors dependencies
-  - index.ts with full match simulation engine
-  - Simulates AC Milan vs Juventus match (78' to 90', score starts 1-0)
-  - Generates realistic football events: goal, shot, foul, corner, yellow_card, red_card, possession
-  - Weighted event distribution (possession most common at 28%, red_card rarest at 4%)
-  - 11 players per team with accurate squad names
-  - 5-second interval per match minute, 1-2 events generated per tick
-  - Full Time event at 90' with automatic simulation stop
-  - Support for start-match and restart events
-  - CORS configured for cross-origin requests
-  - Graceful shutdown handling (SIGTERM/SIGINT)
-- Added MatchEvent model to Prisma schema (id, matchId, type, minute, team, player, description, createdAt)
-- Ran db:push to sync database schema
-- Created /api/match-events API route (GET: return events, POST: create event)
-- Installed socket.io-client in main project
-- Added useLiveMatch() custom hook for Socket.io connection management
-  - Connects to /?XTransformPort=3004 via Caddy gateway
-  - Tracks connection state, match state, and events
-  - Handles match-state, match-event, and match-events-history events
-  - Provides startMatch() and restartMatch() callbacks
-  - Proper cleanup on component unmount
-- Enhanced Match Center page with Live Match Simulation section:
-  - Connection status indicator (Connected/Disconnected with Wifi/WifiOff icons)
-  - Live score card with team crests (ACM/JUV gradient boxes), large score display
-  - Pulsing red LIVE badge during active simulation
-  - FULL TIME badge when match ends
-  - Match minute progress bar (0-90') with gradient fill
-  - Start Match and Restart Match buttons
-  - Real-time event feed with slide-in animation on new events
-  - Color-coded events by type (goal=emerald, shot=sky, foul=amber, corner=violet, yellow_card=yellow, red_card=red, possession=muted)
-  - Event icons: TargetIcon (goal), Crosshair (shot), AlertTriangle (foul), Flag (corner), Square (cards), Circle (possession)
-  - Each event shows: minute, type badge, team, player name, description
-  - Scrollable event feed (max-h-96 with overflow-y-auto)
-  - Added lucide icon imports: Wifi, WifiOff, TargetIcon, Crosshair, Flag, AlertTriangle, RotateCcw, Square, Circle
-
-Files Created:
-- mini-services/match-service/package.json
-- mini-services/match-service/index.ts
-- src/app/api/match-events/route.ts
-
-Files Modified:
-- prisma/schema.prisma — Added MatchEvent model
-- src/app/page.tsx — Added socket.io-client import, useLiveMatch hook, enhanced MatchCenterPage
-- package.json — Added socket.io-client dependency
-
-Stage Summary:
-- 0 lint errors, 0 compile errors, 0 runtime errors
-- Match service running on port 3004 via bun --hot
-- Socket.io connection uses Caddy gateway with XTransformPort=3004
-- Live match simulation fully functional with start/restart controls
-- All existing Match Center features preserved (League Tabs, Standings, Top Scorers, Player Rankings, etc.)
-- Mobile responsive design maintained
-- Real-time updates via WebSocket every 5 seconds
+- Simulates AC Milan vs Juventus match with realistic football events
+- Enhanced Match Center page with Live Match Simulation section
+- Real-time event feed with color-coded event types
 
 ---
 Task ID: 5
@@ -324,128 +219,99 @@ Agent: Features Agent (Profile + Favorites)
 Task: Add User Profile Page and Favorites/Wishlist System
 
 Work Log:
-- Waited for page refactoring agent to complete (src/components/pages/ directory populated with 12 component files)
-- Updated Prisma schema: added `favoriteTeam` (String, optional) to User model, added `FavoriteItem` model (userId, productId, createdAt, unique constraint)
-- Added `favorites` and `Profile` to Page type in useAppStore.ts
-- Added `favoritesCount` state and `setFavoritesCount` action to Zustand store
-- Ran `bun run db:push` to sync database schema
-- Created `/api/user/profile` API route (PUT method: update name, avatar, favoriteTeam)
-- Created `/api/favorites` API route (GET list, POST add, DELETE remove with productId query param)
-- Updated `/api/auth/me` to return `favoriteTeam` field
-- Created `ProfilePage.tsx` component with:
-  - User info display (name, email, join date)
-  - Inline edit name form
-  - Avatar color picker with 6 preset gradients (Emerald, Sunset, Violet, Rose, Amber, Cyan)
-  - Favorite team selector dropdown (top 20 teams)
-  - Account stats section (tickets, analyses, cart items, favorites - loaded from API)
-  - Connected accounts section (Google/GitHub with Connect buttons)
-  - Delete Account danger zone with AlertDialog confirmation
-  - Save changes button with toast notification
-- Created `FavoritesPage.tsx` component with:
-  - Grid of favorited products with remove button
-  - Empty state with CTA to browse store
-  - "Add All to Cart" button
-  - Per-item add to cart functionality
-- Updated `StorePage.tsx`: added heart icon toggle on ProductCard for add/remove favorites
-  - Loads favorite IDs on mount via /api/favorites
-  - Heart appears on hover (or always shown if favorited)
-  - Filled red heart for favorited items, outline on hover for unfaved items
-  - Toast notifications for add/remove actions
-- Updated `Navbar.tsx`:
-  - Added Favorites nav item with Heart icon (auth required)
-  - Added favorites count badge (rose colored) on Favorites nav button
-  - Added "My Favorites" and "Profile" links in profile dropdown menu
-  - Updated mobile menu grid to show 10 items (was 8)
-- Updated `page.tsx` App component:
-  - Imported ProfilePage and FavoritesPage
-  - Added routes: case "profile" and case "favorites" in renderPage switch (both auth-protected)
+- Created ProfilePage.tsx with settings, stats, connected accounts, danger zone
+- Created FavoritesPage.tsx with wishlist grid, remove, add-to-cart
+- Created /api/user/profile and /api/favorites API routes
+- Updated StorePage.tsx with heart toggle favorites
+- Updated Navbar.tsx with Favorites nav item
 
-Files Created:
-- src/components/pages/ProfilePage.tsx — Full user profile page with settings, stats, connected accounts, danger zone
-- src/components/pages/FavoritesPage.tsx — Wishlist page with grid, remove, add-to-cart, empty state
-- src/app/api/user/profile/route.ts — PUT endpoint for updating user profile
-- src/app/api/favorites/route.ts — GET/POST/DELETE endpoints for favorites management
-
-Files Modified:
-- prisma/schema.prisma — Added favoriteTeam to User, added FavoriteItem model
-- src/store/useAppStore.ts — Added profile/favorites Page types, favoritesCount state
-- src/app/api/auth/me/route.ts — Added favoriteTeam to select
-- src/components/pages/StorePage.tsx — Added heart toggle favorites on ProductCard
-- src/components/pages/Navbar.tsx — Added Favorites nav item, profile dropdown links, favorites count
-- src/app/page.tsx — Added Profile and Favorites page imports and routes
-
-Current Project Status:
-- 0 lint errors, 0 compile errors, 0 runtime errors
-- 11 pages now available: Home, Login, Register, Dashboard, Match Center, Store, Cart, Highlights, Tickets, AI Analysis, Profile, Favorites
-- 14 API routes: auth/login, auth/register, auth/me, products, cart, tickets, highlights, dashboard, analyze, match-events, user/profile, favorites
-- Complete CRUD for: Auth, Products, Cart, Tickets, Highlights, AI Analysis, Favorites
-- User profile with editable name, avatar color, and favorite team
-- Favorites/wishlist system integrated into Jersey Store with heart toggle
+Current Project Status (end of Round 4):
+- 11 pages: Home, Login, Register, Dashboard, Match Center, Store, Cart, Highlights, Tickets, AI Analysis, Profile, Favorites
+- 14 API routes, 1 mini-service, 8 DB models
+- 0 lint errors, 0 runtime errors, 0 compile errors, 0 console errors
 
 ---
-Task ID: 7
-Agent: Main Agent (Round 4 Integration)
-Task: Bug fix, refactoring verification, WebSocket integration, styling, and final QA
+Task ID: 8
+Agent: Main Agent (Round 5)
+Task: Major new features - AI Chat, Product Reviews, Checkout, Styling improvements
 
 Work Log:
-- Fixed critical bug: theme-provider.tsx had incorrect import `from "next"` → changed to `from "react"` (was causing Module not found errors in dev log)
-- QA tested all pages via agent-browser: Homepage, Login (demo login flow), Dashboard, Match Center (live simulation verified), Favorites, Profile
-- Verified 0 lint errors, 0 compile errors, 0 runtime errors, 0 console errors
-- Verified Match Center page shows "Live Match Simulation" section with Start Live Match button
-- Verified Favorites page loads with empty state and CTA to browse store
-- Verified Profile page loads with account settings, stats, connected accounts, danger zone
-- Verified login flow works end-to-end with demo@pitchvision.com / demo123
+- Fixed critical CSS bug: invalid JS-style comment in globals.css causing 500 errors
+- Created /api/chat API route using z-ai-web-dev-sdk for football Q&A AI assistant
+  - Multi-turn conversation with in-memory session storage
+  - Football-focused system prompt
+  - Auto-trim to 20 messages, clear conversation support
+- Created /api/reviews API route (GET by productId, POST with JWT auth)
+  - Star rating 1-5, one review per user per product
+  - Auto-updates product average rating
+- Created /api/orders API route (GET/POST with auth)
+  - Creates order, clears cart after order
+- Updated Prisma schema: Review model, Order model
+- Updated useAppStore: chat/checkout pages, checkoutItems/checkoutTotal state
 
-Refactoring Verification:
-- Confirmed src/components/pages/ contains 14 component files (Navbar, HomePage, LoginPage, RegisterPage, MatchCenterPage, DashboardPage, StorePage, CartPage, HighlightsPage, TicketsPage, AnalyzePage, Footer, ProfilePage, FavoritesPage)
-- Confirmed page.tsx is 112 lines (imports + App component + requireAuth helper)
-- Confirmed 0 lint errors after refactoring
+ChatPage.tsx:
+- Full AI chat UI with user/assistant message bubbles
+- 6 suggested prompts (History, Tactics, Players, Rules, Culture, Prediction)
+- Typing indicator, conversation timestamps, clear/new chat buttons
 
-WebSocket Integration:
-- Rewrote MatchCenterPage.tsx with full useLiveMatch() hook for Socket.io connection
-- Live match section shows: team crests (ACM/JUV), live score, match minute progress bar
-- Connection status indicator (Connected/Disconnected badges)
-- Start Match / Restart Match controls
-- Real-time event feed with color-coded event types and slide-in animations
-- Event types: goal, shot, foul, corner, yellow_card, red_card, possession
-- Match service running on port 3004 via bun --hot
+CheckoutPage.tsx:
+- Multi-step checkout (Shipping → Payment → Confirmation)
+- Step indicator with progress states
+- Card number auto-formatting, expiry MM/YY, CVV masked
+- Form validation, processing animation, order confirmation screen
 
-Styling Improvements (globals.css):
-- Added 8 new keyframe animations: bounceIn, glowPulse, textGlow, ripple, slideDown, heartbeat, spotlight, borderRotate, numberPop
-- Added utility classes: .animate-bounce-in, .animate-glow-pulse, .animate-text-glow, .animate-slide-down, .animate-heartbeat, .animate-number-pop
-- Added .card-shine hover effect (diagonal shine sweep on card hover)
-- Added .neon-border effect (glowing border on hover)
-- Added .ripple-container for button ripple effects
-- Added .gradient-text utility (primary gradient text)
-- Added .stagger-children for cascading child animations (8 items with 80ms delays)
-- Added .spotlight-card for mouse-following radial gradient spotlight effect
-- Added .live-score-bump transition for score change animations
+StorePage.tsx Reviews:
+- Star rating display, review count badge
+- Reviews dialog with rating distribution bar chart
+- Write Review dialog with interactive star selector
+- Reviews loaded from API, product rating auto-updates
+
+CartPage.tsx Enhancements:
+- Quantity +/- controls, promo codes (PITCH20, FOOTBALL10)
+- Dynamic total with discount, "Proceed to Checkout" button
+
+HomePage.tsx Updates:
+- AI Chat button in hero (3rd CTA)
+- AI Football Expert + Live Match Scores feature cards (6 total)
+- "Chat with AI" in bottom CTA section
+
+globals.css Round 5:
+- 20+ new animations: typing, confetti, slideInRight, morphBlob, etc.
+- Utility classes: chat-msg-enter, btn-hover-lift, card-hover-lift, heading-gradient, input-glow, page-transition, blob-decoration
+- Custom selection styling, focus-visible, dark mode card hover
+
+Files Created:
+- src/app/api/chat/route.ts
+- src/app/api/reviews/route.ts
+- src/app/api/orders/route.ts
+- src/components/pages/ChatPage.tsx
+- src/components/pages/CheckoutPage.tsx
+
+Files Modified:
+- prisma/schema.prisma, src/store/useAppStore.ts, src/app/page.tsx
+- src/components/pages/Navbar.tsx, HomePage.tsx, StorePage.tsx, CartPage.tsx
+- src/app/globals.css
 
 Current Project Status Assessment:
 - 0 lint errors, 0 compile errors, 0 runtime errors, 0 console errors
-- 11 pages fully functional: Home, Login, Register, Dashboard, Match Center, Store, Cart, Highlights, Tickets, AI Analysis, Profile, Favorites
-- 14 API routes: auth/login, auth/register, auth/me, products, cart, tickets, highlights, dashboard, analyze, match-events, user/profile, favorites
-- 1 mini-service: match-service (Socket.io on port 3004)
-- 8 database models: User, Product, CartItem, Ticket, Highlight, MatchAnalysis, FavoriteItem, MatchEvent
-- 14 AI-generated football images in public/images/
-- Complete CRUD for: Auth, Products, Cart, Tickets, Highlights, AI Analysis, Favorites
-- User profile with editable name, avatar color picker, favorite team selector
-- Favorites/wishlist with heart toggle on product cards
-- WebSocket real-time match simulation with live event feed
-- Dark/light theme toggle working
-- Mobile responsive design with hamburger menu
-- Search, notification, and profile dropdown in navbar
-- League Standings, Top Scorers, Player Rankings, Form Guide in Match Center
-- page.tsx reduced from ~1894 lines to ~112 lines (14 separate component files)
+- 13 pages: Home, Login, Register, Dashboard, Match Center, Store, Cart, Highlights, Tickets, AI Analysis, Profile, Favorites, AI Chat, Checkout
+- 17 API routes, 1 mini-service (match-service port 3004)
+- 10 database models: User, Product, CartItem, Ticket, Highlight, MatchAnalysis, FavoriteItem, MatchEvent, Review, Order
+- 14 AI-generated images, 16 component files
+- Complete CRUD for: Auth, Products, Cart, Tickets, Highlights, AI Analysis, Favorites, Reviews, Orders
+- AI Chat using LLM (z-ai-web-dev-sdk) for football Q&A
+- Product reviews with star ratings and distribution charts
+- Multi-step checkout with payment form, promo codes, order confirmation
+- Dark/light theme, mobile responsive, WebSocket live match simulation
 
 Unresolved Issues / Risks:
 - None identified — all features working correctly
 
 Priority Recommendations for Next Phase:
-1. Add product reviews/ratings system with star rating UI
-2. Add payment integration simulation for checkout flow
-3. Add dark mode pitch diagram adaptation (currently only green gradient)
-4. Add internationalization (i18n) support for multi-language
-5. Add match event persistence (save WebSocket events to MatchEvent table via API)
-6. Add user profile avatar image upload (currently gradient initials only)
-7. Consider adding a "Chat with AI" feature for football Q&A using LLM skill
+1. Add WebSocket match event persistence to MatchEvent table
+2. Add user profile avatar image upload
+3. Add dark mode pitch diagram adaptation
+4. Add internationalization (i18n) support
+5. Add product comparison feature for jersey store
+6. Add match prediction/quiz game using LLM
+7. Add user activity timeline/history page

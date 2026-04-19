@@ -23,6 +23,8 @@ model User {
   highlights   Highlight[]
   analyses     MatchAnalysis[]
   favorites    FavoriteItem[]
+  reviews      Review[]
+  orders       Order[]
 }
 
 model Product {
@@ -42,6 +44,7 @@ model Product {
 
   cartItems  CartItem[]
   favorites  FavoriteItem[]
+  reviews    Review[]
 }
 
 model CartItem {
@@ -131,4 +134,36 @@ model MatchEvent {
   player      String
   description String
   createdAt   DateTime @default(now())
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  rating    Int
+  title     String
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+}
+
+model Order {
+  id          String   @id @default(cuid())
+  userId      String
+  items       String
+  total       Float
+  status      String   @default("confirmed")
+  address     String
+  city        String
+  country     String
+  postalCode  String
+  phone       String
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
