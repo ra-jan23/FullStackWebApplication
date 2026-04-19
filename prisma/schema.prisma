@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      String   @default("user")
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cartItems    CartItem[]
+  tickets      Ticket[]
+  highlights   Highlight[]
+  analyses     MatchAnalysis[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  image       String
+  team        String
+  category    String   @default("jersey")
+  sizes       String   @default("S,M,L,XL")
+  stock       Int      @default(50)
+  rating      Float    @default(4.5)
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  cartItems CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  quantity  Int      @default(1)
+  size      String   @default("M")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId, size])
+}
+
+model Ticket {
+  id        String   @id @default(cuid())
+  userId    String
+  match     String
+  homeTeam  String
+  awayTeam  String
+  date      String
+  time      String
+  venue     String
+  section   String
+  seat      String
+  price     Float
+  status    String   @default("confirmed")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Highlight {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  match       String
+  description String?
+  thumbnail   String
+  videoUrl    String?
+  duration    String   @default("2:30")
+  views       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model MatchAnalysis {
+  id             String   @id @default(cuid())
+  userId         String
+  imageUrl       String
+  formation      String
+  playersCount   Int
+  homeTeam       String?
+  awayTeam       String?
+  analysis       String
+  confidence     Float
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
