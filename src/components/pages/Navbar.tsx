@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import {
   Home, LogIn, LogOut, UserPlus, LayoutDashboard, Store, ShoppingCart,
   Ticket, Video, ScanSearch, Moon, Sun, Menu, X, Search, User,
-  CheckCircle2, Play, Flame, Calendar, Target, Trophy, Bell, Heart, MessageCircle, Brain
+  CheckCircle2, Play, Flame, Calendar, Target, Trophy, Bell, Heart, MessageCircle, Brain, Newspaper, ShoppingBag
 } from "lucide-react";
 
 export default function Navbar() {
@@ -59,6 +59,7 @@ export default function Navbar() {
     { page: "analyze", label: "AI Analysis", icon: <ScanSearch className="w-4 h-4" />, auth: true },
     { page: "chat", label: "AI Chat", icon: <MessageCircle className="w-4 h-4" /> },
     { page: "predictions", label: "Predictions", icon: <Brain className="w-4 h-4" /> },
+    { page: "news", label: "News", icon: <Newspaper className="w-4 h-4" /> },
     { page: "cart", label: "Cart", icon: <ShoppingCart className="w-4 h-4" />, auth: true },
   ];
 
@@ -224,6 +225,9 @@ export default function Navbar() {
                   <Button variant="ghost" size="sm" className="w-full justify-start gap-2 rounded-lg text-sm" onClick={() => { handleNavClick("favorites"); setProfileOpen(false); }}>
                     <Heart className="w-4 h-4" /> My Favorites
                   </Button>
+                  <Button variant="ghost" size="sm" className="w-full justify-start gap-2 rounded-lg text-sm" onClick={() => { handleNavClick("orders"); setProfileOpen(false); }}>
+                    <ShoppingBag className="w-4 h-4" /> My Orders
+                  </Button>
                   <Button variant="ghost" size="sm" className="w-full justify-start gap-2 rounded-lg text-sm" onClick={() => { handleNavClick("profile"); setProfileOpen(false); }}>
                     <User className="w-4 h-4" /> Profile
                   </Button>
@@ -255,7 +259,7 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="lg:hidden border-t bg-background/95 backdrop-blur-xl p-4 animate-fade-in">
           <div className="grid grid-cols-4 gap-2 mb-3">
-            {navItems.slice(0, 10).map((item) => {
+            {navItems.slice(0, 12).map((item) => {
               if (item.auth && !user) return null;
               const isActive = currentPage === item.page;
               return (

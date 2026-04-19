@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   ScanSearch, Store, Ticket, Video, Sparkles, Crown, Cpu, Upload,
   CheckCircle2, Star, ArrowLeft, Play, Zap, Flame, CircleDot,
-  ChevronRight, Megaphone, Users, BarChart3, Shield, Target, MessageCircle, Brain
+  ChevronRight, Megaphone, Users, BarChart3, Shield, Target, MessageCircle, Brain, Newspaper
 } from "lucide-react";
 
 export default function HomePage() {
@@ -131,11 +131,12 @@ export default function HomePage() {
           {[
             { icon: <ScanSearch className="w-8 h-8" />, title: "AI Formation Detection", desc: "Upload match photos and let AI detect player positions and formations instantly.", page: "analyze" as Page, gradient: "from-emerald-500 to-teal-600", bg: "bg-emerald-500/10" },
             { icon: <MessageCircle className="w-8 h-8" />, title: "AI Football Expert", desc: "Chat with our AI football expert about tactics, players, history, and predictions.", page: "chat" as Page, gradient: "from-violet-500 to-purple-600", bg: "bg-violet-500/10" },
-            { icon: <Video className="w-8 h-8" />, title: "Match Highlights", desc: "Watch AI-curated highlights from the biggest matches around the world.", page: "highlights" as Page, gradient: "from-orange-500 to-red-500", bg: "bg-orange-500/10" },
-            { icon: <Store className="w-8 h-8" />, title: "Jersey Store", desc: "Shop authentic football jerseys from top clubs and national teams.", page: "store" as Page, gradient: "from-blue-500 to-indigo-500", bg: "bg-blue-500/10" },
+            { icon: <Video className="w-8 h-8" />, title: "Match Highlights", desc: "Watch AI-curated highlights from the biggest matches around the world.", page: "highlights" as Page, gradient: "from-rose-500 to-red-500", bg: "bg-rose-500/10" },
+            { icon: <Store className="w-8 h-8" />, title: "Jersey Store", desc: "Shop authentic football jerseys from top clubs and national teams.", page: "store" as Page, gradient: "from-blue-500 to-cyan-500", bg: "bg-blue-500/10" },
             { icon: <Ticket className="w-8 h-8" />, title: "Match Tickets", desc: "Book tickets for upcoming matches and experience the atmosphere live.", page: "tickets" as Page, gradient: "from-purple-500 to-pink-500", bg: "bg-purple-500/10" },
             { icon: <Crown className="w-8 h-8" />, title: "Live Match Scores", desc: "Follow live matches with real-time scores, events, and play-by-play commentary.", page: "match-center" as Page, gradient: "from-amber-500 to-orange-500", bg: "bg-amber-500/10" },
-            { icon: <Brain className="w-8 h-8" />, title: "AI Match Predictions", desc: "Get AI-powered match predictions with score forecasts, tactical analysis, and key player insights.", page: "predictions" as Page, gradient: "from-violet-500 to-purple-600", bg: "bg-violet-500/10" },
+            { icon: <Brain className="w-8 h-8" />, title: "AI Match Predictions", desc: "Get AI-powered match predictions with score forecasts and tactical analysis.", page: "predictions" as Page, gradient: "from-fuchsia-500 to-violet-600", bg: "bg-fuchsia-500/10" },
+            { icon: <Newspaper className="w-8 h-8" />, title: "Football News Hub", desc: "Stay updated with the latest transfer rumors, match results, and football headlines.", page: "news" as Page, gradient: "from-orange-500 to-red-600", bg: "bg-orange-500/10" },
           ].map((feature, i) => (
             <Card
               key={i}

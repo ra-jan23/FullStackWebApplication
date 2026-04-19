@@ -883,3 +883,196 @@ html {
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
 }
+
+/* ===== ROUND 7 NEW ANIMATIONS ===== */
+
+@keyframes newsCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes orderTrackPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes comparisonSlide {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes newsBadgeGlow {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(25 95% 53% / 0.2); }
+  50% { box-shadow: 0 0 8px 2px hsl(25 95% 53% / 0.15); }
+}
+
+@keyframes successBounce {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shimmerCard {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-5px) rotate(1deg); }
+  66% { transform: translateY(-3px) rotate(-1deg); }
+}
+
+/* News card enter animation */
+.news-card-enter {
+  animation: newsCardEnter 0.4s ease-out forwards;
+}
+
+/* Order status pulse */
+.order-track-pulse {
+  animation: orderTrackPulse 2s ease-in-out infinite;
+}
+
+/* Comparison column slide */
+.comparison-slide {
+  animation: comparisonSlide 0.3s ease-out forwards;
+}
+
+/* News badge glow */
+.news-badge-glow {
+  animation: newsBadgeGlow 2s ease-in-out infinite;
+}
+
+/* Success bounce for checkmarks */
+.success-bounce {
+  animation: successBounce 0.5s ease-out forwards;
+}
+
+/* Shimmer card background for loading */
+.shimmer-card {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--muted-foreground) / 0.06) 50%,
+    hsl(var(--muted)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmerCard 1.8s ease-in-out infinite;
+}
+
+/* Gentle float for decorative elements */
+.gentle-float {
+  animation: gentleFloat 4s ease-in-out infinite;
+}
+
+/* Enhanced link hover effect */
+.link-hover-underline {
+  position: relative;
+  text-decoration: none;
+}
+.link-hover-underline::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: hsl(var(--primary));
+  transition: width 0.3s ease;
+}
+.link-hover-underline:hover::after {
+  width: 100%;
+}
+
+/* Dark mode enhancements */
+.dark .glass {
+  background: hsl(var(--card) / 0.4);
+  border: 1px solid hsl(var(--border) / 0.3);
+}
+
+.dark .gradient-border::before {
+  background: linear-gradient(135deg, hsl(142 71% 40%), hsl(160 60% 50%), hsl(142 71% 45%));
+}
+
+.dark .neon-border:hover {
+  box-shadow: 0 0 12px hsl(142 71% 40% / 0.5),
+              0 0 24px hsl(142 71% 40% / 0.25),
+              inset 0 0 12px hsl(142 71% 40% / 0.2);
+}
+
+/* Better card backgrounds in dark mode */
+.dark .card-shine::after {
+  background: linear-gradient(
+    to bottom right,
+    transparent 40%,
+    hsl(142 71% 40% / 0.04) 45%,
+    hsl(142 71% 40% / 0.06) 50%,
+    hsl(142 71% 40% / 0.04) 55%,
+    transparent 60%
+  );
+}
+
+/* Scrollbar improvements for dark mode */
+.dark ::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.2);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.4);
+}
+
+/* Better input styling */
+input:focus,
+textarea:focus,
+select:focus {
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* Improved table/hover rows */
+.hover-row-highlight:hover {
+  background-color: hsl(var(--muted) / 0.5);
+}
+
+/* Mobile touch friendly tap targets */
+@media (max-width: 640px) {
+  .mobile-tap-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Improved dialog animation */
+.animate-dialog-enter {
+  animation: fadeInScale 0.25s ease-out forwards;
+}
+
+/* Price highlight */
+.price-highlight {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+/* Status badge animations */
+.status-badge-pending {
+  animation: newsBadgeGlow 3s ease-in-out infinite;
+}
+
+/* Card grid consistent heights */
+.card-grid-equal > * {
+  display: flex;
+  flex-direction: column;
+}
+.card-grid-equal > * > *:last-child {
+  margin-top: auto;
+}

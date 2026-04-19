@@ -23,6 +23,8 @@ import FavoritesPage from "@/components/pages/FavoritesPage";
 import ChatPage from "@/components/pages/ChatPage";
 import CheckoutPage from "@/components/pages/CheckoutPage";
 import PredictionsPage from "@/components/pages/PredictionsPage";
+import OrdersPage from "@/components/pages/OrdersPage";
+import NewsPage from "@/components/pages/NewsPage";
 import Footer from "@/components/pages/Footer";
 
 // ==================== MAIN APP ====================
@@ -107,6 +109,8 @@ export default function App() {
       case "chat": return <ChatPage />;
       case "checkout": return requireAuth(<CheckoutPage />);
       case "predictions": return <PredictionsPage />;
+      case "orders": return requireAuth(<OrdersPage />);
+      case "news": return <NewsPage />;
       default: return <HomePage />;
     }
   };

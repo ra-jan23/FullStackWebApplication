@@ -10,12 +10,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription
 } from "@/components/ui/dialog";
 import {
-  Star, Plus, Store, Flame, Search, X, Heart, MessageSquare, ThumbsUp
+  Star, Plus, Store, Flame, Search, X, Heart, MessageSquare, ThumbsUp,
+  GitCompare, Check, Trash2, Package, Tag, Ruler
 } from "lucide-react";
 
 export default function StorePage() {
@@ -24,6 +26,9 @@ export default function StorePage() {
   const [filter, setFilter] = useState("all");
   const [sortBy, setSortBy] = useState("default");
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+  const [compareMode, setCompareMode] = useState(false);
+  const [compareIds, setCompareIds] = useState<Set<string>>(new Set());
+  const [compareOpen, setCompareOpen] = useState(false);
   const { token, setCurrentPage, searchQuery, setSearchQuery, setFavoritesCount } = useAppStore();
 
   useEffect(() => {
@@ -73,6 +78,22 @@ export default function StorePage() {
     } catch { toast.error("Failed to update favorites"); }
   };
 
+  const toggleCompare = (productId: string) => {
+    setCompareIds(prev => {
+      const next = new Set(prev);
+      if (next.has(productId)) {
+        next.delete(productId);
+      } else if (next.size < 3) {
+        next.add(productId);
+      } else {
+        toast.error("Maximum 3 items for comparison");
+      }
+      return next;
+    });
+  };
+
+  const compareProducts = products.filter(p => compareIds.has(p.id));
+
   const featured = products.filter(p => p.featured);
   const searchFiltered = searchQuery
     ? products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.team.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -83,7 +104,7 @@ export default function StorePage() {
   const sorted = [...filtered].sort((a, b) => {
     if (sortBy === "price-low") return a.price - b.price;
     if (sortBy === "price-high") return b.price - a.price;
-    if (sortBy === "rating") return b.rating - a.rating;
+    if (sortBy === "rating") return b.rating - a.price;
     return 0;
   });
 
@@ -91,10 +112,47 @@ export default function StorePage() {
 
   return (
     <div className="container mx-auto px-4 py-8 animate-fade-in">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Official Jersey Store</h1>
-        <p className="text-muted-foreground">Authentic football jerseys from the world&apos;s biggest clubs</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Official Jersey Store</h1>
+          <p className="text-muted-foreground">Authentic football jerseys from the world&apos;s biggest clubs</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant={compareMode ? "default" : "outline"}
+            size="sm"
+            className={`gap-2 rounded-lg ${compareMode ? 'shadow-md shadow-primary/25' : ''}`}
+            onClick={() => { setCompareMode(!compareMode); if (compareMode) setCompareIds(new Set()); }}
+          >
+            <GitCompare className="w-4 h-4" />
+            {compareMode ? 'Exit Compare' : 'Compare'}
+          </Button>
+          {compareMode && compareIds.size > 0 && (
+            <Button
+              size="sm"
+              className="gap-2 rounded-lg"
+              onClick={() => setCompareOpen(true)}
+              disabled={compareIds.size < 2}
+            >
+              Compare ({compareIds.size}/3)
+            </Button>
+          )}
+        </div>
       </div>
+
+      {compareMode && (
+        <div className="mb-6 p-3 rounded-xl bg-primary/5 border border-primary/20 flex items-center gap-3 animate-fade-in">
+          <GitCompare className="w-4 h-4 text-primary" />
+          <span className="text-sm text-primary font-medium">
+            Compare mode: Select up to 3 jerseys to compare ({compareIds.size} selected)
+          </span>
+          {compareIds.size > 0 && (
+            <Button variant="ghost" size="sm" className="ml-auto h-7 text-xs gap-1" onClick={() => setCompareIds(new Set())}>
+              <Trash2 className="w-3 h-3" /> Clear
+            </Button>
+          )}
+        </div>
+      )}
 
       {searchQuery && (
         <div className="mb-6 flex items-center gap-2">
@@ -129,23 +187,80 @@ export default function StorePage() {
             <h2 className="text-xl font-bold">Featured Jerseys</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featured.slice(0, 4).map((product) => (<ProductCard key={product.id} product={product} onAddToCart={addToCart} onToggleFavorite={toggleFavorite} isFavorite={favoriteIds.has(product.id)} />))}
+            {featured.slice(0, 4).map((product) => (<ProductCard key={product.id} product={product} onAddToCart={addToCart} onToggleFavorite={toggleFavorite} isFavorite={favoriteIds.has(product.id)} compareMode={compareMode} isCompared={compareIds.has(product.id)} onToggleCompare={() => toggleCompare(product.id)} />))}
           </div>
         </div>
       )}
 
       <h2 className="text-xl font-bold mb-4">All Jerseys</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {sorted.map((product) => (<ProductCard key={product.id} product={product} onAddToCart={addToCart} onToggleFavorite={toggleFavorite} isFavorite={favoriteIds.has(product.id)} />))}
+        {sorted.map((product) => (<ProductCard key={product.id} product={product} onAddToCart={addToCart} onToggleFavorite={toggleFavorite} isFavorite={favoriteIds.has(product.id)} compareMode={compareMode} isCompared={compareIds.has(product.id)} onToggleCompare={() => toggleCompare(product.id)} />))}
       </div>
       {sorted.length === 0 && (
         <div className="text-center py-16 text-muted-foreground"><Store className="w-12 h-12 mx-auto mb-4 opacity-50" /><p>No jerseys found matching {searchQuery ? `"${searchQuery}"` : "your filter"}.</p></div>
       )}
+
+      {/* Comparison Dialog */}
+      <Dialog open={compareOpen} onOpenChange={setCompareOpen}>
+        <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <GitCompare className="w-5 h-5 text-primary" />
+              Jersey Comparison
+            </DialogTitle>
+            <DialogDescription>Side-by-side comparison of {compareProducts.length} jerseys</DialogDescription>
+          </DialogHeader>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+            {/* Header row */}
+            <div className="space-y-3" />
+            {compareProducts.map((p) => (
+              <div key={p.id} className="text-center space-y-3">
+                <img src={p.image} alt={p.name} className="w-24 h-24 object-cover rounded-xl mx-auto shadow-md" />
+                <h3 className="font-semibold text-sm">{p.name}</h3>
+                <Badge variant="outline" className="text-xs">{p.team}</Badge>
+              </div>
+            ))}
+
+            {/* Comparison rows */}
+            {[
+              { label: 'Price', icon: <Tag className="w-4 h-4" />, render: (p: any) => <span className="text-lg font-bold text-primary">£{p.price.toFixed(2)}</span>, best: (items: any[]) => Math.min(...items.map((i: any) => i.price)) },
+              { label: 'Rating', icon: <Star className="w-4 h-4" />, render: (p: any) => <div><div className="flex gap-0.5 justify-center">{[1,2,3,4,5].map(i => <Star key={i} className={`w-4 h-4 ${i <= Math.round(p.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />)}</div><span className="text-sm font-medium">{p.rating.toFixed(1)}</span></div>, best: (items: any[]) => Math.max(...items.map((i: any) => i.rating)) },
+              { label: 'Sizes Available', icon: <Ruler className="w-4 h-4" />, render: (p: any) => <div className="flex gap-1 justify-center flex-wrap">{(p.sizes?.split(',') || []).map((s: string) => <Badge key={s} variant="outline" className="text-xs">{s}</Badge>)}</div>, best: () => 0 },
+              { label: 'Stock', icon: <Package className="w-4 h-4" />, render: (p: any) => <Badge variant={p.stock > 20 ? 'default' : p.stock > 0 ? 'secondary' : 'destructive'} className="text-xs">{p.stock > 0 ? `${p.stock} in stock` : 'Out of stock'}</Badge>, best: (items: any[]) => Math.max(...items.map((i: any) => i.stock)) },
+              { label: 'Featured', icon: <Check className="w-4 h-4" />, render: (p: any) => p.featured ? <Badge className="bg-amber-500 text-white text-xs"><Star className="w-3 h-3 mr-1" />Featured</Badge> : <span className="text-muted-foreground text-xs">No</span>, best: () => 0 },
+            ].map((row, i) => (
+              <React.Fragment key={i}>
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 text-sm font-medium">
+                  {row.icon} {row.label}
+                </div>
+                {compareProducts.map((p) => {
+                  const bestVal = row.best ? row.best(compareProducts) : 0;
+                  const isBest = row.label === 'Price' ? p.price === bestVal : row.label === 'Rating' ? p.rating === bestVal : row.label === 'Stock' ? p.stock === bestVal : false;
+                  return (
+                    <div key={p.id} className={`p-3 rounded-lg text-center ${isBest ? 'bg-primary/5 border border-primary/20' : ''}`}>
+                      {row.render(p)}
+                    </div>
+                  );
+                })}
+              </React.Fragment>
+            ))}
+          </div>
+
+          <div className="flex gap-3 mt-4">
+            {compareProducts.map((p) => (
+              <Button key={p.id} size="sm" className="flex-1 rounded-lg gap-1" onClick={() => { addToCart(p.id); setCompareOpen(false); }}>
+                <Plus className="w-3 h-3" /> Add {p.team.split(' ')[0]}
+              </Button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
-function ProductCard({ product, onAddToCart, onToggleFavorite, isFavorite }: { product: any; onAddToCart: (id: string) => void; onToggleFavorite: (id: string, name: string) => void; isFavorite: boolean }) {
+function ProductCard({ product, onAddToCart, onToggleFavorite, isFavorite, compareMode, isCompared, onToggleCompare }: { product: any; onAddToCart: (id: string) => void; onToggleFavorite: (id: string, name: string) => void; isFavorite: boolean; compareMode: boolean; isCompared: boolean; onToggleCompare: () => void }) {
   const [selectedSize, setSelectedSize] = useState("M");
   const sizes = product.sizes?.split(",") || ["M"];
   const [reviews, setReviews] = useState<any[]>([]);
@@ -184,7 +299,6 @@ function ProductCard({ product, onAddToCart, onToggleFavorite, isFavorite }: { p
       if (data.success) {
         toast.success(data.updated ? 'Review updated!' : 'Review submitted!', { description: 'Thank you for your feedback' });
         setReviewDialogOpen(false);
-        // Refresh reviews
         const revRes = await fetch(`/api/reviews?productId=${product.id}`);
         const revData = await revRes.json();
         setReviews(revData.reviews || []);
@@ -214,11 +328,26 @@ function ProductCard({ product, onAddToCart, onToggleFavorite, isFavorite }: { p
 
   return (
     <>
-      <Card className="group overflow-hidden hover:shadow-xl transition-all duration-500 hover:-translate-y-1 card-shine">
+      <Card className={`group overflow-hidden hover:shadow-xl transition-all duration-500 hover:-translate-y-1 card-shine ${isCompared ? 'ring-2 ring-primary shadow-lg shadow-primary/10' : ''}`}>
         <div className="relative aspect-square overflow-hidden bg-muted">
           <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           {product.featured && <Badge className="absolute top-3 left-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-sm rounded-lg"><Star className="w-3 h-3 mr-1" /> Featured</Badge>}
+
+          {/* Compare checkbox */}
+          {compareMode && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onToggleCompare(); }}
+              className={`absolute top-3 left-3 ${product.featured ? 'left-24' : ''} w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 shadow-md z-10 ${
+                isCompared
+                  ? "bg-primary text-primary-foreground scale-100"
+                  : "bg-black/40 text-white/80 hover:bg-primary/80 hover:text-white"
+              }`}
+            >
+              <Check className="w-4 h-4" />
+            </button>
+          )}
+
           {/* Favorite Heart */}
           <button
             onClick={(e) => { e.stopPropagation(); onToggleFavorite(product.id, product.name); }}
@@ -265,7 +394,6 @@ function ProductCard({ product, onAddToCart, onToggleFavorite, isFavorite }: { p
             <DialogDescription>{totalReviews} review{totalReviews !== 1 ? 's' : ''} &bull; {avgRating.toFixed(1)} average</DialogDescription>
           </DialogHeader>
 
-          {/* Rating Summary */}
           <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/50">
             <div className="text-center">
               <div className="text-3xl font-bold text-primary">{avgRating.toFixed(1)}</div>
@@ -290,7 +418,6 @@ function ProductCard({ product, onAddToCart, onToggleFavorite, isFavorite }: { p
             </div>
           </div>
 
-          {/* Reviews List */}
           <div className="space-y-3 max-h-48 overflow-y-auto">
             {reviews.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-4">No reviews yet. Be the first to review!</p>
@@ -314,7 +441,6 @@ function ProductCard({ product, onAddToCart, onToggleFavorite, isFavorite }: { p
             )}
           </div>
 
-          {/* Write Review Button */}
           <Button className="w-full gap-2 rounded-xl" onClick={() => { setReviewsOpen(false); setTimeout(() => setReviewDialogOpen(true), 100); }}>
             <ThumbsUp className="w-4 h-4" /> Write a Review
           </Button>

@@ -15,7 +15,9 @@ export type Page =
   | 'favorites'
   | 'chat'
   | 'checkout'
-  | 'predictions';
+  | 'predictions'
+  | 'orders'
+  | 'news';
 
 interface User {
   id: string;
