@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useAppStore, type Page } from "@/store/useAppStore";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
@@ -24,22 +24,40 @@ import {
   Camera, Upload, Loader2, ArrowLeft, Play, Heart, Share2,
   Globe, Smartphone, Cpu, Target, Layers, TrendingUp,
   Award, Crown, Sparkles, CheckCircle2, AlertCircle, Info, Users,
-  ChevronRight, Flame, Search, User, Fingerprint, Megaphone, Database
+  ChevronRight, Flame, Search, User, Fingerprint, Megaphone, Database,
+  Bell, ArrowUp, Activity, Medal
 } from "lucide-react";
 
 // ==================== NAVBAR ====================
 function Navbar() {
-  const { currentPage, setCurrentPage, user, logout, cartCount, isLoading } = useAppStore();
+  const { currentPage, setCurrentPage, user, logout, cartCount, isLoading, searchQuery, setSearchQuery } = useAppStore();
   const { theme, setTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [mounted, setMounted] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
+  const localSearchQuery = useState(searchQuery);
 
   useEffect(() => {
     const timer = requestAnimationFrame(() => setMounted(true));
     return () => cancelAnimationFrame(timer);
+  }, []);
+
+  // Close profile dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setNotifOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const navItems: { page: Page; label: string; icon: React.ReactNode; auth?: boolean }[] = [
@@ -59,6 +77,24 @@ function Navbar() {
     setSearchOpen(false);
     window.scrollTo(0, 0);
   };
+
+  const handleSearchSubmit = () => {
+    if (localSearchQuery[0].trim()) {
+      setSearchQuery(localSearchQuery[0].trim());
+      setCurrentPage("store");
+      setSearchOpen(false);
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const notifications = [
+    { id: 1, title: "Ticket Confirmed", desc: "Your ticket for Liverpool vs Everton is confirmed", time: "5 min ago", icon: <CheckCircle2 className="w-4 h-4 text-primary" />, unread: true },
+    { id: 2, title: "New Highlight", desc: "Bicycle Kick Goal of the Week is now available", time: "1 hour ago", icon: <Play className="w-4 h-4 text-orange-500" />, unread: true },
+    { id: 3, title: "Flash Sale!", desc: "20% off all jerseys this weekend only", time: "3 hours ago", icon: <Flame className="w-4 h-4 text-red-500" />, unread: false },
+    { id: 4, title: "Match Reminder", desc: "Chelsea vs Arsenal kicks off tomorrow at 20:45", time: "Yesterday", icon: <Calendar className="w-4 h-4 text-blue-500" />, unread: false },
+  ];
+
+  const unreadCount = notifications.filter(n => n.unread).length;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl">
@@ -103,11 +139,11 @@ function Navbar() {
             <div className="relative flex items-center">
               <Input
                 autoFocus
-                placeholder="Search..."
+                placeholder="Search jerseys..."
                 className="w-40 md:w-56 h-9 text-sm rounded-lg"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                onKeyDown={e => { if (e.key === "Escape") setSearchOpen(false); }}
+                value={localSearchQuery[0]}
+                onChange={e => localSearchQuery[1](e.target.value)}
+                onKeyDown={e => { if (e.key === "Escape") setSearchOpen(false); if (e.key === "Enter") handleSearchSubmit(); }}
               />
               <Button variant="ghost" size="icon" className="h-9 w-9 ml-1" onClick={() => setSearchOpen(false)}>
                 <X className="w-4 h-4" />
@@ -119,6 +155,42 @@ function Navbar() {
             </Button>
           )}
 
+          {/* Notification Bell */}
+          <div className="relative" ref={notifRef}>
+            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg relative" onClick={() => setNotifOpen(!notifOpen)}>
+              <Bell className="w-4 h-4" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{unreadCount}</span>
+              )}
+            </Button>
+            {notifOpen && (
+              <div className="absolute right-0 top-full mt-1 w-80 bg-popover border rounded-xl shadow-xl z-50 animate-fade-in overflow-hidden">
+                <div className="px-4 py-3 border-b flex items-center justify-between">
+                  <h3 className="font-semibold text-sm">Notifications</h3>
+                  <Badge variant="secondary" className="text-xs">{unreadCount} new</Badge>
+                </div>
+                <div className="max-h-72 overflow-y-auto">
+                  {notifications.map(n => (
+                    <div key={n.id} className={`flex items-start gap-3 px-4 py-3 hover:bg-muted/50 transition-colors cursor-pointer ${n.unread ? "bg-primary/5" : ""}`}>
+                      <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 mt-0.5">{n.icon}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium text-sm">{n.title}</p>
+                          {n.unread && <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{n.desc}</p>
+                        <p className="text-xs text-muted-foreground/60 mt-1">{n.time}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="px-4 py-2.5 border-t">
+                  <Button variant="ghost" size="sm" className="w-full text-xs text-primary">View All Notifications</Button>
+                </div>
+              </div>
+            )}
+          </div>
+
           {mounted && (
             <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -128,7 +200,7 @@ function Navbar() {
           {isLoading ? (
             <Skeleton className="w-8 h-8 rounded-full" />
           ) : user ? (
-            <div className="hidden md:flex items-center gap-1.5 relative">
+            <div className="hidden md:flex items-center gap-1.5 relative" ref={profileRef}>
               <Button variant="ghost" size="sm" className="gap-1.5 rounded-lg h-9" onClick={() => setProfileOpen(!profileOpen)}>
                 <Avatar className="h-6 w-6 border-2 border-primary/30">
                   <AvatarFallback className="bg-gradient-to-br from-primary to-emerald-500 text-primary-foreground text-xs font-bold">
@@ -739,6 +811,142 @@ function MatchCenterPage() {
           </Card>
         ))}
       </div>
+
+      {/* Top Scorers */}
+      <div className="mt-10">
+        <h2 className="text-lg font-bold mb-4 flex items-center gap-2"><Flame className="w-5 h-5 text-orange-500" /> Top Scorers</h2>
+        <Card className="overflow-hidden">
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b bg-muted/50">
+                    <th className="text-left font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground w-12">Rank</th>
+                    <th className="text-left font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground">Player</th>
+                    <th className="text-left font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground">Team</th>
+                    <th className="text-center font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground w-16">Goals</th>
+                    <th className="text-center font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground w-16">Assists</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { rank: 1, name: "Erling Haaland", team: "Manchester City", goals: 24, assists: 5 },
+                    { rank: 2, name: "Mohamed Salah", team: "Liverpool FC", goals: 21, assists: 13 },
+                    { rank: 3, name: "Alexander Isak", team: "Newcastle United", goals: 18, assists: 4 },
+                    { rank: 4, name: "Cole Palmer", team: "Chelsea FC", goals: 16, assists: 8 },
+                    { rank: 5, name: "Bukayo Saka", team: "Arsenal FC", goals: 14, assists: 10 },
+                    { rank: 6, name: "Bruno Fernandes", team: "Manchester United", goals: 12, assists: 11 },
+                    { rank: 7, name: "Son Heung-min", team: "Tottenham Hotspur", goals: 11, assists: 5 },
+                    { rank: 8, name: "Ollie Watkins", team: "Aston Villa", goals: 10, assists: 7 },
+                  ].map((player) => (
+                    <tr key={player.rank} className="border-b last:border-b-0 hover:bg-muted/30 transition-colors">
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold ${player.rank <= 3 ? "bg-gradient-to-br from-yellow-400 to-amber-500 text-white" : "bg-muted text-muted-foreground"}`}>{player.rank}</span>
+                      </td>
+                      <td className="px-4 py-3 font-medium">{player.name}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{player.team}</td>
+                      <td className="px-4 py-3 text-center font-bold text-primary">{player.goals}</td>
+                      <td className="px-4 py-3 text-center text-muted-foreground">{player.assists}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* League Standings */}
+      <div className="mt-10">
+        <h2 className="text-lg font-bold mb-4 flex items-center gap-2"><Trophy className="w-5 h-5 text-yellow-500" /> Premier League Standings</h2>
+        <Card className="overflow-hidden">
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b bg-muted/50">
+                    <th className="text-left font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground w-12">#</th>
+                    <th className="text-left font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground">Team</th>
+                    <th className="text-center font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground w-12">P</th>
+                    <th className="text-center font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground w-12">W</th>
+                    <th className="text-center font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground w-12">D</th>
+                    <th className="text-center font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground w-12">L</th>
+                    <th className="text-center font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground w-12">GD</th>
+                    <th className="text-center font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground w-14 font-bold">Pts</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { pos: 1, team: "Liverpool FC", p: 29, w: 21, d: 5, l: 3, gd: 42, pts: 68 },
+                    { pos: 2, team: "Arsenal FC", p: 29, w: 19, d: 7, l: 3, gd: 38, pts: 64 },
+                    { pos: 3, team: "Manchester City", p: 29, w: 18, d: 5, l: 6, gd: 35, pts: 59 },
+                    { pos: 4, team: "Chelsea FC", p: 29, w: 16, d: 6, l: 7, gd: 22, pts: 54 },
+                    { pos: 5, team: "Newcastle United", p: 29, w: 15, d: 7, l: 7, gd: 20, pts: 52 },
+                    { pos: 6, team: "Aston Villa", p: 29, w: 14, d: 5, l: 10, gd: 10, pts: 47 },
+                  ].map((team) => (
+                    <tr key={team.pos} className="border-b last:border-b-0 hover:bg-muted/30 transition-colors">
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold ${team.pos <= 4 ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>{team.pos}</span>
+                      </td>
+                      <td className="px-4 py-3 font-medium">{team.team}</td>
+                      <td className="px-4 py-3 text-center text-muted-foreground">{team.p}</td>
+                      <td className="px-4 py-3 text-center text-muted-foreground">{team.w}</td>
+                      <td className="px-4 py-3 text-center text-muted-foreground">{team.d}</td>
+                      <td className="px-4 py-3 text-center text-muted-foreground">{team.l}</td>
+                      <td className={`px-4 py-3 text-center font-medium ${team.gd > 0 ? "text-primary" : team.gd < 0 ? "text-destructive" : "text-muted-foreground"}`}>{team.gd > 0 ? "+" : ""}{team.gd}</td>
+                      <td className="px-4 py-3 text-center font-bold">{team.pts}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Player Rankings */}
+      <div className="mt-10 mb-8">
+        <h2 className="text-lg font-bold mb-4 flex items-center gap-2"><Medal className="w-5 h-5 text-amber-500" /> Player Rankings</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[
+            { name: "Mohamed Salah", team: "Liverpool FC", position: "RW", goals: 21, assists: 13, rating: 8.7, initials: "MS", color: "from-red-500 to-red-600" },
+            { name: "Erling Haaland", team: "Manchester City", position: "ST", goals: 24, assists: 5, rating: 8.5, initials: "EH", color: "from-sky-500 to-sky-600" },
+            { name: "Martin Odegaard", team: "Arsenal FC", position: "CM", goals: 8, assists: 11, rating: 8.3, initials: "MO", color: "from-red-600 to-red-700" },
+            { name: "Cole Palmer", team: "Chelsea FC", position: "AM", goals: 16, assists: 8, rating: 8.2, initials: "CP", color: "from-blue-500 to-blue-700" },
+            { name: "Bruno Fernandes", team: "Manchester United", position: "CAM", goals: 12, assists: 11, rating: 7.9, initials: "BF", color: "from-red-600 to-red-800" },
+            { name: "Bukayo Saka", team: "Arsenal FC", position: "RW", goals: 14, assists: 10, rating: 8.1, initials: "BS", color: "from-red-600 to-red-700" },
+          ].map((player, i) => (
+            <Card key={i} className="hover:shadow-md transition-shadow group">
+              <CardContent className="p-5">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${player.color} flex items-center justify-center text-white font-bold text-sm shadow-md group-hover:scale-105 transition-transform`}>
+                    {player.initials}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-sm truncate">{player.name}</h3>
+                    <p className="text-xs text-muted-foreground">{player.team}</p>
+                  </div>
+                  <Badge variant="outline" className="text-xs rounded-lg">{player.position}</Badge>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="text-center p-2 rounded-lg bg-muted/50">
+                    <div className="text-lg font-bold text-primary">{player.goals}</div>
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Goals</div>
+                  </div>
+                  <div className="text-center p-2 rounded-lg bg-muted/50">
+                    <div className="text-lg font-bold text-primary">{player.assists}</div>
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Assists</div>
+                  </div>
+                  <div className="text-center p-2 rounded-lg bg-muted/50">
+                    <div className="text-lg font-bold text-amber-500">{player.rating}</div>
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wide flex items-center justify-center gap-0.5"><Star className="w-2.5 h-2.5" /> Rating</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -879,6 +1087,34 @@ function DashboardPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Recent Activity */}
+      <Card className="hover:shadow-md transition-shadow mt-6">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-lg"><Activity className="w-5 h-5 text-primary" /> Recent Activity</CardTitle>
+          <CardDescription>Your latest actions on PitchVision</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-1">
+            {[
+              { icon: <ShoppingCart className="w-4 h-4 text-purple-500" />, text: "You added Liverpool Home Kit to cart", time: "2 minutes ago", color: "bg-purple-500/10" },
+              { icon: <Eye className="w-4 h-4 text-orange-500" />, text: "You viewed Match Highlights", time: "15 minutes ago", color: "bg-orange-500/10" },
+              { icon: <ScanSearch className="w-4 h-4 text-primary" />, text: "You ran an AI Formation Analysis", time: "1 hour ago", color: "bg-primary/10" },
+              { icon: <Ticket className="w-4 h-4 text-blue-500" />, text: "You booked a ticket: Liverpool vs Everton", time: "3 hours ago", color: "bg-blue-500/10" },
+              { icon: <Heart className="w-4 h-4 text-red-500" />, text: "You saved \"Erling Haaland Hat-Trick\" highlight", time: "Yesterday", color: "bg-red-500/10" },
+              { icon: <Store className="w-4 h-4 text-emerald-500" />, text: "You browsed the Jersey Store", time: "Yesterday", color: "bg-emerald-500/10" },
+            ].map((activity, i) => (
+              <div key={i} className="flex items-center gap-3 p-3 rounded-xl hover:bg-muted/50 transition-colors">
+                <div className={`w-9 h-9 rounded-lg ${activity.color} flex items-center justify-center flex-shrink-0`}>{activity.icon}</div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm">{activity.text}</p>
+                </div>
+                <span className="text-xs text-muted-foreground whitespace-nowrap">{activity.time}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -889,7 +1125,7 @@ function StorePage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [sortBy, setSortBy] = useState("default");
-  const { token, setCurrentPage } = useAppStore();
+  const { token, setCurrentPage, searchQuery, setSearchQuery } = useAppStore();
 
   useEffect(() => {
     fetch("/api/products").then(res => res.json()).then(data => { setProducts(data.products || []); setLoading(false); }).catch(() => setLoading(false));
@@ -904,7 +1140,12 @@ function StorePage() {
   };
 
   const featured = products.filter(p => p.featured);
-  const filtered = filter === "featured" ? featured : filter === "all" ? products : products.filter(p => p.team.toLowerCase().includes(filter.toLowerCase()));
+  const searchFiltered = searchQuery
+    ? products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.team.toLowerCase().includes(searchQuery.toLowerCase()))
+    : null;
+  const filtered = searchFiltered !== null
+    ? searchFiltered
+    : filter === "featured" ? featured : filter === "all" ? products : products.filter(p => p.team.toLowerCase().includes(filter.toLowerCase()));
   const sorted = [...filtered].sort((a, b) => {
     if (sortBy === "price-low") return a.price - b.price;
     if (sortBy === "price-high") return b.price - a.price;
@@ -920,6 +1161,13 @@ function StorePage() {
         <h1 className="text-3xl font-bold mb-2">Official Jersey Store</h1>
         <p className="text-muted-foreground">Authentic football jerseys from the world&apos;s biggest clubs</p>
       </div>
+
+      {searchQuery && (
+        <div className="mb-6 flex items-center gap-2">
+          <Badge variant="secondary" className="gap-1 px-3 py-1.5"><Search className="w-3 h-3" /> Results for &ldquo;{searchQuery}&rdquo; ({filtered.length})</Badge>
+          <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setSearchQuery("")}><X className="w-3 h-3 mr-1" /> Clear</Button>
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-3 mb-6">
         {["all", "featured"].map(f => (
@@ -957,7 +1205,7 @@ function StorePage() {
         {sorted.map((product) => (<ProductCard key={product.id} product={product} onAddToCart={addToCart} />))}
       </div>
       {sorted.length === 0 && (
-        <div className="text-center py-16 text-muted-foreground"><Store className="w-12 h-12 mx-auto mb-4 opacity-50" /><p>No jerseys found matching your filter.</p></div>
+        <div className="text-center py-16 text-muted-foreground"><Store className="w-12 h-12 mx-auto mb-4 opacity-50" /><p>No jerseys found matching {searchQuery ? `"${searchQuery}"` : "your filter"}.</p></div>
       )}
     </div>
   );
@@ -1421,12 +1669,21 @@ function Footer() {
 export default function App() {
   const { currentPage, hydrateAuth, isLoading, user } = useAppStore();
   const [mounted, setMounted] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     hydrateAuth();
     const timer = requestAnimationFrame(() => setMounted(true));
     return () => cancelAnimationFrame(timer);
   }, [hydrateAuth]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   if (!mounted || isLoading) {
     return (
@@ -1481,6 +1738,16 @@ export default function App() {
       <Navbar />
       <main className="flex-1">{renderPage()}</main>
       <Footer />
+      {/* Scroll to Top Button */}
+      {showScrollTop && (
+        <Button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="fixed bottom-6 right-6 z-40 w-11 h-11 rounded-full shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 text-primary-foreground animate-fade-in transition-opacity"
+          size="icon"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </Button>
+      )}
     </div>
   );
 }

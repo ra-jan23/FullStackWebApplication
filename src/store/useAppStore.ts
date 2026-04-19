@@ -25,6 +25,7 @@ interface AppState {
   token: string | null;
   cartCount: number;
   isLoading: boolean;
+  searchQuery: string;
 
   setCurrentPage: (page: Page) => void;
   login: (user: User, token: string) => void;
@@ -32,6 +33,7 @@ interface AppState {
   setCartCount: (count: number) => void;
   setLoading: (loading: boolean) => void;
   hydrateAuth: () => void;
+  setSearchQuery: (query: string) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -40,6 +42,7 @@ export const useAppStore = create<AppState>((set) => ({
   token: null,
   cartCount: 0,
   isLoading: true,
+  searchQuery: '',
 
   setCurrentPage: (page) => set({ currentPage: page }),
   
@@ -61,6 +64,7 @@ export const useAppStore = create<AppState>((set) => ({
 
   setCartCount: (count) => set({ cartCount: count }),
   setLoading: (loading) => set({ isLoading: loading }),
+  setSearchQuery: (query) => set({ searchQuery: query }),
 
   hydrateAuth: () => {
     if (typeof window !== 'undefined') {

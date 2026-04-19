@@ -71,3 +71,72 @@ Stage Summary:
 - 9 total pages now available: Home, Login, Register, Dashboard, Match Center, Store, Cart, Highlights, Tickets, AI Analysis
 - Significant visual polish applied across all components
 - New Match Center page provides live match scores experience
+
+---
+Task ID: 3
+Agent: Cron Review Agent (Round 2)
+Task: QA testing, bug fixes, styling improvements, and new feature development
+
+Work Log:
+- QA tested all pages via agent-browser: Home (full scroll), Login (demo login), Dashboard, Store, Highlights, Match Center
+- Verified login flow works end-to-end with demo credentials
+- Verified all API endpoints return correct data (auth, products, highlights, tickets, cart, dashboard, analyze)
+- Confirmed zero lint errors, zero runtime errors, zero compile errors
+
+Bug Fixes:
+- Profile dropdown now closes when clicking outside (useRef + mousedown event listener)
+- Notification dropdown also closes when clicking outside (shared event handler)
+- Search bar is now functional: type query + Enter navigates to Store with filtered results
+- Store page reads searchQuery from Zustand store and filters products by name/team
+- Added "Clear" button for active search results and "Results for X" heading
+
+Styling Improvements:
+- Added `scroll-behavior: smooth` to html element in globals.css
+- Scroll-to-top floating button appears after scrolling 300px, with smooth scroll animation
+- Dashboard "Recent Activity" feed with 6 mock entries (cart, highlights, analysis, tickets, saves, browsing)
+- Each activity entry has contextual colored icon, description text, and relative timestamp
+
+New Features:
+- League Standings table in Match Center (Premier League top 6: Liverpool, Arsenal, Man City, Chelsea, Aston Villa, Newcastle)
+  - Columns: Position, Team, P, W, D, L, GD, Points
+  - Top 4 highlighted with primary color, GD colored green/red/neutral
+- Top Scorers table in Match Center (8 Premier League players)
+  - Columns: Rank, Player, Team, Goals, Assists
+  - Top 3 get gold gradient rank badges
+- Player Rankings section in Match Center (6 cards)
+  - Each card: colored initials avatar, player name, team, position badge, Goals/Assists/Rating stats
+  - Players: Salah (8.7), Haaland (8.5), Odegaard (8.3), Palmer (8.2), Saka (8.1), Fernandes (7.9)
+- Notification system in Navbar
+  - Bell icon button with red badge showing unread count (2)
+  - Dropdown with 4 mock notifications (Ticket Confirmed, New Highlight, Flash Sale, Match Reminder)
+  - Unread items have green dot indicator and subtle background highlight
+  - "View All Notifications" button at bottom
+
+Files Modified:
+- src/app/page.tsx — All UI changes (now ~1750 lines)
+- src/store/useAppStore.ts — Added searchQuery state and setSearchQuery action
+- src/app/globals.css — Added smooth scroll behavior
+
+Current Project Status:
+- 0 lint errors, 0 runtime errors, 0 compile errors
+- All 9 pages fully functional and tested via agent-browser
+- Demo credentials: demo@pitchvision.com / demo123
+- 14 AI-generated football images in public/images/
+- 8 API routes all returning correct data
+- Complete CRUD for: Auth, Products, Cart, Tickets, Highlights, AI Analysis
+- Dark/light theme toggle working
+- Mobile responsive design with hamburger menu
+- Search functionality across jersey store
+- Notification system with dropdown
+- League Standings, Top Scorers, Player Rankings in Match Center
+
+Unresolved Issues / Risks:
+- None identified — all features working correctly
+
+Priority Recommendations for Next Phase:
+1. Add WebSocket real-time match score updates (mini-service)
+2. Add user profile settings page (change name, avatar, password)
+3. Add product reviews/ratings system
+4. Add payment integration simulation for checkout
+5. Add internationalization (i18n) support
+6. Consider splitting page.tsx into separate component files for maintainability (file is now ~1750 lines)
