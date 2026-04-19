@@ -22,6 +22,7 @@ import ProfilePage from "@/components/pages/ProfilePage";
 import FavoritesPage from "@/components/pages/FavoritesPage";
 import ChatPage from "@/components/pages/ChatPage";
 import CheckoutPage from "@/components/pages/CheckoutPage";
+import PredictionsPage from "@/components/pages/PredictionsPage";
 import Footer from "@/components/pages/Footer";
 
 // ==================== MAIN APP ====================
@@ -47,12 +48,25 @@ export default function App() {
   if (!mounted || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center space-y-4 animate-fade-in">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center mx-auto shadow-xl shadow-primary/30 animate-pulse">
-            <Target className="w-8 h-8 text-primary-foreground" />
+        <div className="text-center space-y-6 animate-fade-in">
+          <div className="relative w-20 h-20 mx-auto">
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center shadow-xl shadow-primary/30 animate-bounce-in">
+              <Target className="w-10 h-10 text-primary-foreground" />
+            </div>
+            <div className="absolute inset-0 w-20 h-20 rounded-2xl border-2 border-primary/20 animate-pulse" />
           </div>
-          <div className="text-xl font-bold">Pitch<span className="text-primary">Vision</span></div>
-          <div className="text-sm text-muted-foreground">Loading your experience...</div>
+          <div>
+            <div className="text-2xl font-bold mb-1">Pitch<span className="text-primary">Vision</span></div>
+            <div className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+              Loading your experience
+              <span className="loading-dots flex gap-1">
+                <span /><span /><span />
+              </span>
+            </div>
+          </div>
+          <div className="w-48 h-1 rounded-full bg-muted overflow-hidden mx-auto">
+            <div className="h-full w-1/2 bg-gradient-to-r from-primary to-emerald-500 rounded-full animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
+          </div>
         </div>
       </div>
     );
@@ -92,6 +106,7 @@ export default function App() {
       case "favorites": return requireAuth(<FavoritesPage />);
       case "chat": return <ChatPage />;
       case "checkout": return requireAuth(<CheckoutPage />);
+      case "predictions": return <PredictionsPage />;
       default: return <HomePage />;
     }
   };

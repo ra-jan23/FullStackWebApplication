@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import {
   Home, LogIn, LogOut, UserPlus, LayoutDashboard, Store, ShoppingCart,
   Ticket, Video, ScanSearch, Moon, Sun, Menu, X, Search, User,
-  CheckCircle2, Play, Flame, Calendar, Target, Trophy, Bell, Heart, MessageCircle
+  CheckCircle2, Play, Flame, Calendar, Target, Trophy, Bell, Heart, MessageCircle, Brain
 } from "lucide-react";
 
 export default function Navbar() {
@@ -58,6 +58,7 @@ export default function Navbar() {
     { page: "tickets", label: "Tickets", icon: <Ticket className="w-4 h-4" />, auth: true },
     { page: "analyze", label: "AI Analysis", icon: <ScanSearch className="w-4 h-4" />, auth: true },
     { page: "chat", label: "AI Chat", icon: <MessageCircle className="w-4 h-4" /> },
+    { page: "predictions", label: "Predictions", icon: <Brain className="w-4 h-4" /> },
     { page: "cart", label: "Cart", icon: <ShoppingCart className="w-4 h-4" />, auth: true },
   ];
 

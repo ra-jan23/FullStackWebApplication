@@ -671,3 +671,215 @@ html {
 .confetti-piece {
   animation: confetti 1s ease-out forwards;
 }
+
+/* ===== ROUND 6 NEW ANIMATIONS ===== */
+
+@keyframes loadingDots {
+  0%, 20% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes gradientBorderSpin {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes slideInFromBottom {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(30px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(30px) rotate(-360deg); }
+}
+
+@keyframes wavePulse {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.8); }
+}
+
+@keyframes rotateIn {
+  from { opacity: 0; transform: rotate(-10deg) scale(0.9); }
+  to { opacity: 1; transform: rotate(0deg) scale(1); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight2 {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeOutUp {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Loading dots animation */
+.loading-dots span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: hsl(var(--primary));
+  animation: loadingDots 1.4s ease-in-out infinite both;
+}
+.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+.loading-dots span:nth-child(3) { animation-delay: 0s; }
+
+/* Animated gradient border for special cards */
+.animated-gradient-border {
+  position: relative;
+  background: linear-gradient(var(--card), var(--card)) padding-box,
+              linear-gradient(135deg, hsl(142 71% 35%), hsl(280 84% 60%), hsl(35 92% 60%), hsl(142 71% 35%)) border-box;
+  background-size: 100% 100%, 300% 300%;
+  border: 2px solid transparent;
+  animation: gradientBorderSpin 4s ease infinite;
+}
+
+/* Stagger fade in for grid children */
+.stagger-fade > * {
+  opacity: 0;
+  animation: fadeInScale 0.4s ease-out forwards;
+}
+.stagger-fade > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-fade > *:nth-child(2) { animation-delay: 60ms; }
+.stagger-fade > *:nth-child(3) { animation-delay: 120ms; }
+.stagger-fade > *:nth-child(4) { animation-delay: 180ms; }
+.stagger-fade > *:nth-child(5) { animation-delay: 240ms; }
+.stagger-fade > *:nth-child(6) { animation-delay: 300ms; }
+.stagger-fade > *:nth-child(7) { animation-delay: 360ms; }
+.stagger-fade > *:nth-child(8) { animation-delay: 420ms; }
+
+/* Orbit decoration animation */
+.orbit-decoration {
+  animation: orbit 6s linear infinite;
+}
+
+/* Wave pulse for equalizer/audio effects */
+.wave-bar {
+  width: 3px;
+  border-radius: 2px;
+  background: hsl(var(--primary));
+  animation: wavePulse 1.2s ease-in-out infinite;
+}
+.wave-bar:nth-child(1) { animation-delay: 0s; }
+.wave-bar:nth-child(2) { animation-delay: 0.15s; }
+.wave-bar:nth-child(3) { animation-delay: 0.3s; }
+.wave-bar:nth-child(4) { animation-delay: 0.45s; }
+.wave-bar:nth-child(5) { animation-delay: 0.6s; }
+
+/* Slide in from specific directions */
+.slide-in-left {
+  animation: slideInLeft 0.5s ease-out forwards;
+}
+.slide-in-right {
+  animation: slideInRight2 0.5s ease-out forwards;
+}
+.slide-in-bottom {
+  animation: slideInFromBottom 0.5s ease-out forwards;
+}
+
+/* Rotate in animation */
+.rotate-in {
+  animation: rotateIn 0.5s ease-out forwards;
+}
+
+/* Enhanced loading spinner */
+.loading-spinner {
+  position: relative;
+  width: 40px;
+  height: 40px;
+}
+.loading-spinner::before,
+.loading-spinner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid transparent;
+}
+.loading-spinner::before {
+  border-top-color: hsl(var(--primary));
+  animation: spin-slow 1s linear infinite;
+}
+.loading-spinner::after {
+  border-bottom-color: hsl(142 71% 35% / 0.3);
+  animation: spin-slow 1.5s linear infinite reverse;
+}
+
+/* Prediction card special glow */
+.prediction-glow {
+  box-shadow: 0 0 0 1px hsl(280 84% 60% / 0.1),
+              0 4px 16px hsl(280 84% 60% / 0.08),
+              0 0 32px hsl(280 84% 60% / 0.04);
+}
+
+/* Enhanced navbar active indicator */
+.nav-active-indicator {
+  position: relative;
+}
+.nav-active-indicator::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  border-radius: 1px;
+  background: hsl(var(--primary));
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Interactive hover scale effect for feature cards */
+.hover-scale {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+.hover-scale:active {
+  transform: scale(0.98);
+}
+
+/* Text gradient animation */
+.text-gradient-animate {
+  background: linear-gradient(90deg, hsl(142 71% 35%), hsl(280 84% 60%), hsl(35 92% 60%), hsl(142 71% 35%));
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientBorderSpin 6s ease infinite;
+}
+
+/* Subtle pulse for interactive badges */
+.badge-pulse {
+  animation: countdownPulse 3s ease-in-out infinite;
+}
+
+/* Improved card border on hover */
+.card-border-hover {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.card-border-hover:hover {
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+/* Stats number large display */
+.stat-number {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}

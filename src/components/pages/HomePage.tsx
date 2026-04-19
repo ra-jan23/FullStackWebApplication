@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   ScanSearch, Store, Ticket, Video, Sparkles, Crown, Cpu, Upload,
   CheckCircle2, Star, ArrowLeft, Play, Zap, Flame, CircleDot,
-  ChevronRight, Megaphone, Users, BarChart3, Shield, Target, MessageCircle
+  ChevronRight, Megaphone, Users, BarChart3, Shield, Target, MessageCircle, Brain
 } from "lucide-react";
 
 export default function HomePage() {
@@ -135,6 +135,7 @@ export default function HomePage() {
             { icon: <Store className="w-8 h-8" />, title: "Jersey Store", desc: "Shop authentic football jerseys from top clubs and national teams.", page: "store" as Page, gradient: "from-blue-500 to-indigo-500", bg: "bg-blue-500/10" },
             { icon: <Ticket className="w-8 h-8" />, title: "Match Tickets", desc: "Book tickets for upcoming matches and experience the atmosphere live.", page: "tickets" as Page, gradient: "from-purple-500 to-pink-500", bg: "bg-purple-500/10" },
             { icon: <Crown className="w-8 h-8" />, title: "Live Match Scores", desc: "Follow live matches with real-time scores, events, and play-by-play commentary.", page: "match-center" as Page, gradient: "from-amber-500 to-orange-500", bg: "bg-amber-500/10" },
+            { icon: <Brain className="w-8 h-8" />, title: "AI Match Predictions", desc: "Get AI-powered match predictions with score forecasts, tactical analysis, and key player insights.", page: "predictions" as Page, gradient: "from-violet-500 to-purple-600", bg: "bg-violet-500/10" },
           ].map((feature, i) => (
             <Card
               key={i}
