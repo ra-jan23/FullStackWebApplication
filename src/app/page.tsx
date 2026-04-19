@@ -25,7 +25,7 @@ import {
   Globe, Smartphone, Cpu, Target, Layers, TrendingUp,
   Award, Crown, Sparkles, CheckCircle2, AlertCircle, Info, Users,
   ChevronRight, Flame, Search, User, Fingerprint, Megaphone, Database,
-  Bell, ArrowUp, Activity, Medal
+  Bell, ArrowUp, Activity, Medal, Timer, CircleDot, TimerReset, Settings
 } from "lucide-react";
 
 // ==================== NAVBAR ====================
@@ -354,9 +354,29 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Trusted By / Logos */}
+      {/* Trending Teams Marquee */}
       <section className="border-b bg-muted/30">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center gap-3 mb-3">
+            <Flame className="w-4 h-4 text-orange-500" />
+            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider whitespace-nowrap">Trending Now</p>
+          </div>
+          <div className="marquee-container">
+            <div className="flex gap-8 animate-marquee whitespace-nowrap">
+              {["Liverpool FC", "Real Madrid", "Arsenal FC", "Bayern Munich", "FC Barcelona", "Chelsea FC", "AC Milan", "Manchester City", "Juventus", "PSG", "Borussia Dortmund", "Inter Milan", "Tottenham", "Newcastle United", "Aston Villa", "Liverpool FC", "Real Madrid", "Arsenal FC", "Bayern Munich", "FC Barcelona", "Chelsea FC", "AC Milan", "Manchester City", "Juventus", "PSG", "Borussia Dortmund", "Inter Milan"].map((team, i) => (
+                <span key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <CircleDot className="w-2 h-2 text-primary/50" />
+                  {team}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trusted By / Logos */}
+      <section className="border-b bg-muted/20">
+        <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between gap-8 overflow-x-auto">
             <p className="text-xs text-muted-foreground whitespace-nowrap font-medium uppercase tracking-wider">Powered by</p>
             {["Next.js 16", "React 19", "Prisma", "Tailwind CSS", "VLM AI", "Zustand"].map((t, i) => (
@@ -452,7 +472,7 @@ function HomePage() {
             { step: "03", title: "Get Results", desc: "View detected formation, player count, and tactical analysis", icon: <CheckCircle2 className="w-7 h-7" />, color: "from-teal-500 to-cyan-500" },
           ].map((item, i) => (
             <div key={i} className="text-center relative group">
-              <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center mx-auto mb-5 text-white shadow-lg group-hover:scale-105 transition-transform duration-300`}>
+              <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center mx-auto mb-5 text-white shadow-lg group-hover:scale-105 transition-transform duration-300 animate-float`} style={{ animationDelay: `${i * 0.5}s` }}>
                 {item.icon}
               </div>
               <Badge variant="secondary" className="mb-3 text-xs font-mono">{item.step}</Badge>
@@ -460,6 +480,46 @@ function HomePage() {
               <p className="text-muted-foreground text-sm leading-relaxed max-w-xs mx-auto">{item.desc}</p>
             </div>
           ))}
+        </div>
+        {/* Mini Pitch Diagram */}
+        <div className="mt-16 max-w-2xl mx-auto">
+          <div className="relative bg-gradient-to-b from-emerald-900/90 to-emerald-800/90 rounded-2xl p-6 shadow-2xl overflow-hidden">
+            <div className="absolute inset-0 opacity-10">
+              <div className="w-full h-full" style={{ background: "repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.1) 40px, rgba(255,255,255,0.1) 41px), repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.1) 40px, rgba(255,255,255,0.1) 41px)" }} />
+            </div>
+            <div className="relative">
+              <div className="text-center mb-3"><Badge className="bg-white/10 text-white border-white/20 text-xs">4-3-3 Formation Detected</Badge></div>
+              {/* Pitch markings */}
+              <div className="relative border-2 border-white/30 rounded-lg h-48">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-10 border-b-2 border-l-0 border-r-0 border-white/30 border-t-0" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-white/20" />
+                <div className="absolute top-1/2 left-0 w-16 h-16 border-r-2 border-white/30" />
+                <div className="absolute top-1/2 right-0 w-16 h-16 border-l-2 border-white/30" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full border-2 border-white/30" />
+                {/* Player dots - GK */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-yellow-400 border-2 border-white shadow-md" title="GK" />
+                {/* Defenders - 4 back */}
+                <div className="absolute bottom-12 left-[15%] w-5 h-5 rounded-full bg-primary border-2 border-white shadow-md" />
+                <div className="absolute bottom-12 left-[35%] w-5 h-5 rounded-full bg-primary border-2 border-white shadow-md" />
+                <div className="absolute bottom-12 right-[35%] w-5 h-5 rounded-full bg-primary border-2 border-white shadow-md" />
+                <div className="absolute bottom-12 right-[15%] w-5 h-5 rounded-full bg-primary border-2 border-white shadow-md" />
+                {/* Midfielders - 3 */}
+                <div className="absolute top-[55%] left-[22%] w-5 h-5 rounded-full bg-amber-500 border-2 border-white shadow-md" />
+                <div className="absolute top-[55%] left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-amber-500 border-2 border-white shadow-md" />
+                <div className="absolute top-[55%] right-[22%] w-5 h-5 rounded-full bg-amber-500 border-2 border-white shadow-md" />
+                {/* Forwards - 3 */}
+                <div className="absolute top-6 left-[18%] w-5 h-5 rounded-full bg-red-500 border-2 border-white shadow-md" />
+                <div className="absolute top-6 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-red-500 border-2 border-white shadow-md animate-pulse" />
+                <div className="absolute top-6 right-[18%] w-5 h-5 rounded-full bg-red-500 border-2 border-white shadow-md" />
+              </div>
+              <div className="flex items-center justify-center gap-4 mt-3 text-[10px] text-white/70">
+                <span className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-yellow-400" /> GK</span>
+                <span className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-primary" /> DEF</span>
+                <span className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-amber-500" /> MID</span>
+                <span className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-red-500" /> FWD</span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -478,7 +538,7 @@ function HomePage() {
               { name: "Sarah K.", role: "Arsenal Fan", text: "Finally a platform that combines everything — jerseys, tickets, and highlights. The UI is beautiful and super easy to use.", avatar: "SK", rating: 5 },
               { name: "James P.", role: "Sports Journalist", text: "The match analysis feature saves me hours of work. I can quickly identify formations and tactical setups from match photos.", avatar: "JP", rating: 4 },
             ].map((t, i) => (
-              <Card key={i} className="bg-background border hover:shadow-md transition-shadow">
+              <Card key={i} className="glass hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <CardContent className="p-6">
                   <div className="flex gap-0.5 mb-4">
                     {Array.from({ length: 5 }).map((_, j) => (
@@ -607,6 +667,11 @@ function LoginPage() {
                 Sign In
               </Button>
             </form>
+            <div className="relative my-5"><div className="absolute inset-0 flex items-center"><Separator /></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">or continue with</span></div></div>
+            <div className="grid grid-cols-2 gap-3">
+              <Button variant="outline" className="gap-2 h-10 rounded-xl text-sm" onClick={() => toast.info("Social login coming soon!")}><Globe className="w-4 h-4" /> Google</Button>
+              <Button variant="outline" className="gap-2 h-10 rounded-xl text-sm" onClick={() => toast.info("Social login coming soon!")}><Layers className="w-4 h-4" /> GitHub</Button>
+            </div>
             <div className="mt-5 p-4 rounded-xl bg-primary/5 border border-primary/10">
               <div className="flex items-center gap-2 mb-1.5">
                 <Fingerprint className="w-4 h-4 text-primary" />
@@ -635,6 +700,10 @@ function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { login, setCurrentPage } = useAppStore();
+
+  const passwordStrength = password.length === 0 ? 0 : password.length < 6 ? 1 : password.length < 10 ? 2 : /[A-Z]/.test(password) && /[0-9]/.test(password) ? 4 : 3;
+  const strengthLabels = ["", "Weak", "Fair", "Good", "Strong"];
+  const strengthColors = ["", "bg-red-500", "bg-amber-500", "bg-yellow-500", "bg-primary"];
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -675,6 +744,16 @@ function RegisterPage() {
                 <div className="space-y-2">
                   <Label htmlFor="reg-password">Password</Label>
                   <Input id="reg-password" type="password" placeholder="Min 6 chars" value={password} onChange={(e) => setPassword(e.target.value)} required className="h-11" />
+                  {password.length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 flex gap-1">
+                        {[1, 2, 3, 4].map(i => (
+                          <div key={i} className={`h-1.5 flex-1 rounded-full transition-colors ${i <= passwordStrength ? strengthColors[passwordStrength] : "bg-muted"}`} />
+                        ))}
+                      </div>
+                      <span className={`text-xs font-medium ${passwordStrength >= 3 ? "text-primary" : passwordStrength >= 2 ? "text-amber-500" : "text-red-500"}`}>{strengthLabels[passwordStrength]}</span>
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirm-password">Confirm</Label>
@@ -686,6 +765,11 @@ function RegisterPage() {
                 Create Account
               </Button>
             </form>
+            <div className="relative my-5"><div className="absolute inset-0 flex items-center"><Separator /></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">or continue with</span></div></div>
+            <div className="grid grid-cols-2 gap-3">
+              <Button variant="outline" className="gap-2 h-10 rounded-xl text-sm" onClick={() => toast.info("Social login coming soon!")}><Globe className="w-4 h-4" /> Google</Button>
+              <Button variant="outline" className="gap-2 h-10 rounded-xl text-sm" onClick={() => toast.info("Social login coming soon!")}><Layers className="w-4 h-4" /> GitHub</Button>
+            </div>
           </CardContent>
         </Card>
         <div className="mt-6 text-center text-sm text-muted-foreground">
@@ -700,6 +784,7 @@ function RegisterPage() {
 // ==================== MATCH CENTER PAGE ====================
 function MatchCenterPage() {
   const { setCurrentPage, user } = useAppStore();
+  const [activeLeague, setActiveLeague] = useState("all");
 
   const matches = [
     { id: 1, home: "Liverpool FC", away: "Manchester City", homeScore: 3, awayScore: 2, status: "FT", date: "Mar 15", competition: "Premier League", venue: "Anfield" },
@@ -715,6 +800,21 @@ function MatchCenterPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Match Center</h1>
         <p className="text-muted-foreground">Live scores, results, and upcoming fixtures</p>
+      </div>
+
+      {/* League Tabs */}
+      <div className="flex flex-wrap gap-2 mb-8">
+        {[
+          { key: "all", label: "All Leagues", icon: <Globe className="w-3.5 h-3.5" /> },
+          { key: "Premier League", label: "Premier League", icon: <Trophy className="w-3.5 h-3.5" /> },
+          { key: "La Liga", label: "La Liga", icon: <Trophy className="w-3.5 h-3.5" /> },
+          { key: "Serie A", label: "Serie A", icon: <Trophy className="w-3.5 h-3.5" /> },
+          { key: "Bundesliga", label: "Bundesliga", icon: <Trophy className="w-3.5 h-3.5" /> },
+        ].map(league => (
+          <Button key={league.key} variant={activeLeague === league.key ? "default" : "outline"} size="sm" className="gap-1.5 rounded-lg text-xs" onClick={() => setActiveLeague(league.key)}>
+            {league.icon} {league.label}
+          </Button>
+        ))}
       </div>
 
       {/* Live Now */}
@@ -873,18 +973,19 @@ function MatchCenterPage() {
                     <th className="text-center font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground w-12">L</th>
                     <th className="text-center font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground w-12">GD</th>
                     <th className="text-center font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground w-14 font-bold">Pts</th>
+                    <th className="text-center font-semibold px-4 py-3 text-xs uppercase tracking-wide text-muted-foreground w-28">Form</th>
                   </tr>
                 </thead>
                 <tbody>
                   {[
-                    { pos: 1, team: "Liverpool FC", p: 29, w: 21, d: 5, l: 3, gd: 42, pts: 68 },
-                    { pos: 2, team: "Arsenal FC", p: 29, w: 19, d: 7, l: 3, gd: 38, pts: 64 },
-                    { pos: 3, team: "Manchester City", p: 29, w: 18, d: 5, l: 6, gd: 35, pts: 59 },
-                    { pos: 4, team: "Chelsea FC", p: 29, w: 16, d: 6, l: 7, gd: 22, pts: 54 },
-                    { pos: 5, team: "Newcastle United", p: 29, w: 15, d: 7, l: 7, gd: 20, pts: 52 },
-                    { pos: 6, team: "Aston Villa", p: 29, w: 14, d: 5, l: 10, gd: 10, pts: 47 },
+                    { pos: 1, team: "Liverpool FC", p: 29, w: 21, d: 5, l: 3, gd: 42, pts: 68, form: ["W", "W", "D", "W", "W"] },
+                    { pos: 2, team: "Arsenal FC", p: 29, w: 19, d: 7, l: 3, gd: 38, pts: 64, form: ["W", "D", "W", "W", "L"] },
+                    { pos: 3, team: "Manchester City", p: 29, w: 18, d: 5, l: 6, gd: 35, pts: 59, form: ["L", "W", "W", "D", "W"] },
+                    { pos: 4, team: "Chelsea FC", p: 29, w: 16, d: 6, l: 7, gd: 22, pts: 54, form: ["W", "W", "L", "W", "D"] },
+                    { pos: 5, team: "Newcastle United", p: 29, w: 15, d: 7, l: 7, gd: 20, pts: 52, form: ["D", "W", "W", "L", "W"] },
+                    { pos: 6, team: "Aston Villa", p: 29, w: 14, d: 5, l: 10, gd: 10, pts: 47, form: ["L", "L", "W", "D", "W"] },
                   ].map((team) => (
-                    <tr key={team.pos} className="border-b last:border-b-0 hover:bg-muted/30 transition-colors">
+                    <tr key={team.pos} className={`border-b last:border-b-0 hover:bg-muted/30 transition-colors ${team.pos <= 4 ? "bg-primary/[0.02]" : ""}`}>
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold ${team.pos <= 4 ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>{team.pos}</span>
                       </td>
@@ -895,6 +996,13 @@ function MatchCenterPage() {
                       <td className="px-4 py-3 text-center text-muted-foreground">{team.l}</td>
                       <td className={`px-4 py-3 text-center font-medium ${team.gd > 0 ? "text-primary" : team.gd < 0 ? "text-destructive" : "text-muted-foreground"}`}>{team.gd > 0 ? "+" : ""}{team.gd}</td>
                       <td className="px-4 py-3 text-center font-bold">{team.pts}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-center gap-1">
+                          {team.form.map((f, fi) => (
+                            <div key={fi} className={`w-5 h-5 rounded text-[9px] font-bold flex items-center justify-center text-white ${f === "W" ? "bg-primary" : f === "D" ? "bg-amber-500" : "bg-destructive"}`}>{f}</div>
+                          ))}
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -1027,7 +1135,34 @@ function DashboardPage() {
       </div>
 
       {/* Spending & Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Match Day Countdown */}
+        <Card className="gradient-border hover:shadow-md transition-shadow overflow-hidden">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg"><Timer className="w-5 h-5 text-red-500" /> Next Match Countdown</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center mb-3">
+              <p className="text-sm font-semibold">Chelsea FC vs Arsenal FC</p>
+              <p className="text-xs text-muted-foreground">Premier League • Tomorrow 20:45</p>
+            </div>
+            <div className="grid grid-cols-4 gap-2 text-center">
+              {[
+                { val: "0", label: "Days" },
+                { val: "18", label: "Hours" },
+                { val: "42", label: "Mins" },
+                { val: "15", label: "Secs" },
+              ].map((t, i) => (
+                <div key={i} className="p-2 rounded-xl bg-muted/50">
+                  <div className="text-xl font-extrabold text-primary animate-countdown-pulse">{t.val}</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{t.label}</div>
+                </div>
+              ))}
+            </div>
+            <Button size="sm" variant="outline" className="w-full mt-3 gap-1 rounded-lg" onClick={() => setCurrentPage("tickets")}><Ticket className="w-3 h-3" /> Book Tickets</Button>
+          </CardContent>
+        </Card>
+
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg"><CreditCard className="w-5 h-5 text-primary" /> Total Spent</CardTitle>
@@ -1557,7 +1692,7 @@ function AnalyzePage() {
               {previewUrl ? (
                 <div className="relative"><img src={previewUrl} alt="Preview" className="max-h-64 mx-auto rounded-xl object-cover" /><Button variant="ghost" size="sm" className="mt-2 rounded-lg" onClick={(e) => { e.stopPropagation(); setImage(null); setPreviewUrl(null); setResult(null); }}><Upload className="w-4 h-4 mr-1" /> Upload Different</Button></div>
               ) : (
-                <div className="space-y-4"><div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto"><Upload className="w-8 h-8 text-primary" /></div><div><p className="font-medium">Click to upload</p><p className="text-sm text-muted-foreground mt-1">Upload a screenshot or photo of a football match</p></div></div>
+                <div className="space-y-4"><div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto animate-pulse"><Upload className="w-8 h-8 text-primary" /></div><div><p className="font-medium">Click to upload</p><p className="text-sm text-muted-foreground mt-1">Upload a screenshot or photo of a football match</p></div><div className="flex items-center gap-2 justify-center text-xs text-muted-foreground"><Camera className="w-3 h-3" /> PNG, JPEG, WebP supported</div></div>
               )}
             </div>
             <input id="image-upload" type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
@@ -1652,6 +1787,11 @@ function Footer() {
             <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
               <p>PitchVision is a Work-Based Learning project demonstrating modern web development with AI integration.</p>
               <p className="flex items-center gap-2"><Award className="w-3.5 h-3.5 text-primary" /> HiveMind Project 2025</p>
+            </div>
+            <div className="flex items-center gap-3 mt-4">
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary" onClick={() => toast.info("Follow us on X/Twitter!")}><Share2 className="w-4 h-4" /></Button>
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary" onClick={() => toast.info("Follow us on Instagram!")}><Camera className="w-4 h-4" /></Button>
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary" onClick={() => toast.info("Subscribe on YouTube!")}><Play className="w-4 h-4" /></Button>
             </div>
           </div>
         </div>
