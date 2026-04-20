@@ -8,17 +8,46 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter,
+  DialogHeader, DialogTitle, DialogTrigger
+} from "@/components/ui/dialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 import {
   Ticket, Video, ScanSearch, ShoppingCart, Store, Play, Eye,
-  CreditCard, TrendingUp, Camera, Timer, Trophy, Activity, Heart,
-  Brain, MessageCircle, Zap, BarChart3, Calendar, ArrowUpRight, Bell
+  CreditCard, Camera, Timer, Trophy, Activity, Heart,
+  Brain, MessageCircle, Zap, BarChart3, Calendar, ArrowUpRight, Bell,
+  Settings, Monitor, Palette, Gauge, BellRing, Tag, Mail,
+  Shield, Database, Download, Trash2, Lock, UserX, CheckCircle2,
+  Sun, Moon, Sparkles, Users, ChevronRight, AlertTriangle, Save
 } from "lucide-react";
 
 export default function DashboardPage() {
   const { user, token, setCurrentPage } = useAppStore();
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"overview" | "activity" | "insights">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "activity" | "insights" | "settings">("overview");
+
+  // Settings state
+  const [animationSpeed, setAnimationSpeed] = useState<"reduced" | "normal" | "enhanced">("normal");
+  const [notifMatchReminders, setNotifMatchReminders] = useState(true);
+  const [notifTransferNews, setNotifTransferNews] = useState(true);
+  const [notifPriceDrops, setNotifPriceDrops] = useState(false);
+  const [notifNewsletter, setNotifNewsletter] = useState(true);
+  const [favoriteTeam, setFavoriteTeam] = useState("liverpool");
+  const [favoriteLeague, setFavoriteLeague] = useState("premier_league");
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordChanged, setPasswordChanged] = useState(false);
+  const [settingsSaved, setSettingsSaved] = useState(false);
+  const [clearChatOpen, setClearChatOpen] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -32,6 +61,43 @@ export default function DashboardPage() {
     };
     fetchStats();
   }, [token]);
+
+  const handleExportData = () => {
+    const exportData = {
+      user: { name: user?.name, email: user?.email, role: user?.role },
+      preferences: { favoriteTeam, favoriteLeague, commentaryLang, viewMode, animationSpeed },
+      notifications: { matchReminders: notifMatchReminders, transferNews: notifTransferNews, priceDrops: notifPriceDrops, newsletter: notifNewsletter },
+      privacy: { showOnLeaderboard, allowActivityTracking },
+      stats: stats?.stats || {},
+      exportedAt: new Date().toISOString(),
+      platform: "PitchVision",
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `pitchvision-data-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleChangePassword = () => {
+    if (!newPassword || newPassword.length < 6) return;
+    if (newPassword !== confirmPassword) return;
+    setPasswordChanged(true);
+    setTimeout(() => {
+      setChangePasswordOpen(false);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setPasswordChanged(false);
+    }, 1500);
+  };
+
+  const handleSaveSettings = () => {
+    setSettingsSaved(true);
+    setTimeout(() => setSettingsSaved(false), 2500);
+  };
 
   if (loading) {
     return (
@@ -125,6 +191,7 @@ export default function DashboardPage() {
           { key: "overview" as const, label: "Overview", icon: <BarChart3 className="w-3.5 h-3.5" /> },
           { key: "activity" as const, label: "Activity", icon: <Activity className="w-3.5 h-3.5" /> },
           { key: "insights" as const, label: "Insights", icon: <Zap className="w-3.5 h-3.5" /> },
+          { key: "settings" as const, label: "Settings", icon: <Settings className="w-3.5 h-3.5" /> },
         ].map((tab) => (
           <Button
             key={tab.key}
@@ -401,8 +468,403 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Trending Highlights */}
-      {stats?.topHighlights && stats.topHighlights.length > 0 && (
+      {/* ==================== SETTINGS TAB ==================== */}
+      {activeTab === "settings" && (
+        <div className="space-y-6 max-w-3xl animate-fade-in stagger-fade">
+
+          {/* ---- Display Preferences ---- */}
+          <Card className="gradient-border card-glass-enhanced">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Monitor className="w-5 h-5 text-primary" /> Display Preferences
+              </CardTitle>
+              <CardDescription>Customize how PitchVision looks and feels</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              {/* Theme Toggle Reference */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-muted/30 border">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center">
+                    <Palette className="w-4 h-4 text-violet-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Theme</p>
+                    <p className="text-xs text-muted-foreground">Dark mode is managed via the theme toggle in the navbar</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Sun className="w-3.5 h-3.5" />
+                  <span>/</span>
+                  <Moon className="w-3.5 h-3.5" />
+                </div>
+              </div>
+
+              {/* Animation Speed - Button Group */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-muted/30 border">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                    <Gauge className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Animation Speed</p>
+                    <p className="text-xs text-muted-foreground">Control UI animation speed</p>
+                  </div>
+                </div>
+                <div className="flex gap-1 bg-muted rounded-lg p-0.5">
+                  {(["reduced", "normal", "enhanced"] as const).map(speed => (
+                    <Button
+                      key={speed}
+                      variant={animationSpeed === speed ? "default" : "ghost"}
+                      size="sm"
+                      className="rounded-md text-xs px-3 h-7 capitalize"
+                      onClick={() => setAnimationSpeed(speed)}
+                    >
+                      {speed}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* ---- Notification Preferences ---- */}
+          <Card className="gradient-border card-glass-enhanced">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <BellRing className="w-5 h-5 text-amber-500" /> Notification Preferences
+              </CardTitle>
+              <CardDescription>Choose what notifications you receive</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {[
+                { label: "Match Reminders", desc: "Get notified before your favorite team's matches", icon: <Timer className="w-4 h-4 text-blue-500" />, checked: notifMatchReminders, onChange: setNotifMatchReminders },
+                { label: "Transfer News Alerts", desc: "Breaking transfer news and rumors", icon: <Sparkles className="w-4 h-4 text-violet-500" />, checked: notifTransferNews, onChange: setNotifTransferNews },
+                { label: "Price Drop Alerts", desc: "Notifications when jersey prices drop in the store", icon: <Tag className="w-4 h-4 text-emerald-500" />, checked: notifPriceDrops, onChange: setNotifPriceDrops },
+                { label: "Weekly Newsletter", desc: "Weekly digest of highlights, scores, and news", icon: <Mail className="w-4 h-4 text-rose-500" />, checked: notifNewsletter, onChange: setNotifNewsletter },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/30 transition-colors border">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-muted/50 flex items-center justify-center">
+                      {item.icon}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{item.label}</p>
+                      <p className="text-xs text-muted-foreground">{item.desc}</p>
+                    </div>
+                  </div>
+                  <div
+                    className={`relative w-11 h-6 rounded-full transition-colors duration-200 cursor-pointer ${item.checked ? "bg-primary" : "bg-muted-foreground/25"}`}
+                    onClick={() => item.onChange(!item.checked)}
+                    role="switch"
+                    aria-checked={item.checked}
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); item.onChange(!item.checked); } }}
+                  >
+                    <div className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${item.checked ? "translate-x-5" : "translate-x-0"}`} />
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* ---- Football Preferences ---- */}
+          <Card className="gradient-border card-glass-enhanced">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Trophy className="w-5 h-5 text-primary" /> Football Preferences
+              </CardTitle>
+              <CardDescription>Personalize your football experience</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Favorite Team */}
+              <div className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/30 transition-colors border">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center">
+                    <Users className="w-4 h-4 text-red-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Favorite Team</p>
+                    <p className="text-xs text-muted-foreground">Get personalized content for your team</p>
+                  </div>
+                </div>
+                <Select value={favoriteTeam} onValueChange={setFavoriteTeam}>
+                  <SelectTrigger className="w-[160px] h-9 text-xs rounded-lg">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="liverpool">Liverpool</SelectItem>
+                    <SelectItem value="arsenal">Arsenal</SelectItem>
+                    <SelectItem value="man_city">Man City</SelectItem>
+                    <SelectItem value="chelsea">Chelsea</SelectItem>
+                    <SelectItem value="real_madrid">Real Madrid</SelectItem>
+                    <SelectItem value="barcelona">Barcelona</SelectItem>
+                    <SelectItem value="bayern">Bayern Munich</SelectItem>
+                    <SelectItem value="ac_milan">AC Milan</SelectItem>
+                    <SelectItem value="inter">Inter Milan</SelectItem>
+                    <SelectItem value="psg">PSG</SelectItem>
+                    <SelectItem value="juventus">Juventus</SelectItem>
+                    <SelectItem value="dortmund">Dortmund</SelectItem>
+                    <SelectItem value="man_utd">Man Utd</SelectItem>
+                    <SelectItem value="tottenham">Tottenham</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Favorite League */}
+              <div className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/30 transition-colors border">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                    <Trophy className="w-4 h-4 text-blue-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Favorite League</p>
+                    <p className="text-xs text-muted-foreground">Prioritize league content</p>
+                  </div>
+                </div>
+                <Select value={favoriteLeague} onValueChange={setFavoriteLeague}>
+                  <SelectTrigger className="w-[160px] h-9 text-xs rounded-lg">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="premier_league">Premier League</SelectItem>
+                    <SelectItem value="la_liga">La Liga</SelectItem>
+                    <SelectItem value="serie_a">Serie A</SelectItem>
+                    <SelectItem value="bundesliga">Bundesliga</SelectItem>
+                    <SelectItem value="ligue_1">Ligue 1</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* ---- Data & Storage ---- */}
+          <Card className="gradient-border card-glass-enhanced">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Database className="w-5 h-5 text-blue-500" /> Data & Storage
+              </CardTitle>
+              <CardDescription>Manage your local data and exports</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Data Stats */}
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { label: "Chat Sessions", value: "12", icon: <MessageCircle className="w-3.5 h-3.5" />, color: "text-cyan-500", bg: "bg-cyan-500/10" },
+                  { label: "Predictions", value: "8", icon: <Brain className="w-3.5 h-3.5" />, color: "text-violet-500", bg: "bg-violet-500/10" },
+                  { label: "Analyses", value: stats?.stats?.totalAnalyses || 0, icon: <ScanSearch className="w-3.5 h-3.5" />, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+                ].map((stat, i) => (
+                  <div key={i} className="p-3 rounded-xl border text-center">
+                    <div className={`w-8 h-8 rounded-lg ${stat.bg} flex items-center justify-center mx-auto mb-2`}>
+                      <span className={stat.color}>{stat.icon}</span>
+                    </div>
+                    <p className="text-lg font-bold">{stat.value}</p>
+                    <p className="text-[10px] text-muted-foreground">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+
+              <Separator />
+
+              {/* Clear Chat History with Confirmation */}
+              <AlertDialog open={clearChatOpen} onOpenChange={setClearChatOpen}>
+                <div className="flex items-center justify-between p-3 rounded-xl border hover:bg-muted/30 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-muted/50 flex items-center justify-center">
+                      <MessageCircle className="w-4 h-4 text-cyan-500" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">Clear Chat History</p>
+                      <p className="text-xs text-muted-foreground">Remove all AI chat conversations</p>
+                    </div>
+                  </div>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-1.5 rounded-lg text-xs h-8">
+                      <Trash2 className="w-3.5 h-3.5" /> Clear
+                    </Button>
+                  </AlertDialogTrigger>
+                </div>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-2">
+                      <AlertTriangle className="w-5 h-5 text-amber-500" />
+                      Clear Chat History
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to clear all your chat history? This action cannot be undone. All AI chat conversations will be permanently deleted.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+                      onClick={() => setClearChatOpen(false)}
+                    >
+                      Clear History
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+
+              {/* Export Data */}
+              <div className="flex items-center justify-between p-3 rounded-xl border bg-primary/5">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Download className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Export My Data</p>
+                    <p className="text-xs text-muted-foreground">Download all your data as a JSON file</p>
+                  </div>
+                </div>
+                <Button size="sm" className="gap-1.5 rounded-lg text-xs h-8" onClick={handleExportData}>
+                  <Download className="w-3.5 h-3.5" /> Export
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* ---- Account Actions ---- */}
+          <Card className="gradient-border card-glass-enhanced">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Shield className="w-5 h-5 text-emerald-500" /> Account Actions
+              </CardTitle>
+              <CardDescription>Manage your account security and data</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {/* Change Password */}
+              <Dialog open={changePasswordOpen} onOpenChange={setChangePasswordOpen}>
+                <DialogTrigger asChild>
+                  <div className="flex items-center justify-between p-3 rounded-xl border hover:bg-muted/30 transition-colors cursor-pointer">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                        <Lock className="w-4 h-4 text-amber-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">Change Password</p>
+                        <p className="text-xs text-muted-foreground">Update your account password</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Change Password</DialogTitle>
+                    <DialogDescription>Enter your current and new password below</DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-2">
+                    <div>
+                      <label className="text-sm font-medium mb-1.5 block">Current Password</label>
+                      <input
+                        type="password"
+                        className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground"
+                        placeholder="Enter current password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-1.5 block">New Password</label>
+                      <input
+                        type="password"
+                        className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground"
+                        placeholder="Min. 6 characters"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-1.5 block">Confirm New Password</label>
+                      <input
+                        type="password"
+                        className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring placeholder:text-muted-foreground"
+                        placeholder="Re-enter new password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                      />
+                    </div>
+                    {passwordChanged && (
+                      <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-sm animate-fade-in">
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>Password updated successfully!</span>
+                      </div>
+                    )}
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setChangePasswordOpen(false)}>Cancel</Button>
+                    <Button onClick={handleChangePassword} disabled={!currentPassword || !newPassword || newPassword !== confirmPassword || newPassword.length < 6}>
+                      Update Password
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              {/* Delete Account */}
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <div className="flex items-center justify-between p-3 rounded-xl border border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors cursor-pointer group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center">
+                        <UserX className="w-4 h-4 text-red-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-red-600 dark:text-red-400">Delete Account</p>
+                        <p className="text-xs text-muted-foreground">Permanently delete your account and all data</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-red-300 group-hover:text-red-500 transition-colors" />
+                  </div>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-2">
+                      <AlertTriangle className="w-5 h-5 text-red-500" />
+                      Delete Account
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete your account and remove all your data from our servers, including:
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="ml-6 space-y-1 text-sm text-muted-foreground">
+                    <p>• Your profile information</p>
+                    <p>• Match tickets and booking history</p>
+                    <p>• Cart items and orders</p>
+                    <p>• Saved highlights and favorites</p>
+                    <p>• AI analysis history</p>
+                    <p>• Chat conversation history</p>
+                  </div>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction className="bg-red-600 hover:bg-red-700 focus:ring-red-600">
+                      Yes, Delete My Account
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </CardContent>
+          </Card>
+
+          {/* ---- Save Button ---- */}
+          <div className="flex items-center justify-between pt-2">
+            {settingsSaved && (
+              <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-sm animate-fade-in">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Settings saved successfully!</span>
+              </div>
+            )}
+            <div className="ml-auto">
+              <Button className="gap-2 rounded-xl shadow-md shadow-primary/20" onClick={handleSaveSettings}>
+                <Save className="w-4 h-4" />
+                Save Settings
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Trending Highlights (shown on all tabs except settings) */}
+      {activeTab !== "settings" && stats?.topHighlights && stats.topHighlights.length > 0 && (
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">

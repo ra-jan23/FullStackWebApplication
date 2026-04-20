@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         maxTokens: 1024,
       });
 
-      const rawResponse = completion?.choices?.[0]?.message?.content || '';
+      const rawResponse = completion.content || '';
 
       // Try to parse JSON from the response
       let prediction;
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
         match,
         prediction,
         rawAnalysis: rawResponse,
-        model: 'GLM 4.5 Air',
+        model: completion.model || 'GLM 4.5 Air',
       });
     }
 

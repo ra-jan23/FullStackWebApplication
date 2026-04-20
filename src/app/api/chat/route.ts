@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
         maxTokens: 1024,
       });
 
-      const aiResponse = completion?.choices?.[0]?.message?.content || 'Sorry, I could not generate a response. Please try again.';
+      const aiResponse = completion.content || 'Sorry, I could not generate a response. Please try again.';
 
       // Add assistant response to history
       history.push({ role: 'assistant', content: aiResponse });
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
         success: true,
         response: aiResponse,
         messageCount: history.length - 1,
-        model: 'GLM 4.5 Air',
+        model: completion.model || 'GLM 4.5 Air',
       });
     }
 

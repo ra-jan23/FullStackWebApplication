@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
         maxTokens: 2048,
       });
 
-      let responseText = completion?.choices?.[0]?.message?.content || '';
+      let responseText = completion.content || '';
 
       // Clean response - remove markdown code blocks if present
       responseText = responseText.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim();
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
         questions: validatedQuestions,
         totalQuestions: validatedQuestions.length,
         category: cat,
-        model: 'GLM 4.5 Air',
+        model: completion.model || 'GLM 4.5 Air',
       });
     }
 

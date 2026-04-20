@@ -71,7 +71,7 @@ export default function HomePage() {
 
         <div className="relative container mx-auto px-4 py-28 md:py-40">
           <div className="max-w-2xl">
-            <Badge className="mb-6 bg-primary/20 text-primary-foreground border-primary/30 backdrop-blur-sm px-4 py-1.5">
+            <Badge className="mb-6 badge-gradient px-4 py-1.5 text-white border-0 shadow-lg">
               <Sparkles className="w-3 h-3 mr-1.5" /> AI-Powered Football Platform
             </Badge>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-[1.1] tracking-tight">
@@ -85,7 +85,7 @@ export default function HomePage() {
               Analyze formations with AI, watch stunning highlights, shop official jerseys, and book match tickets — all in one platform.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button size="lg" className="gap-2 text-base rounded-xl shadow-lg shadow-primary/30 h-12 px-6 btn-press" onClick={() => setCurrentPage(user ? "analyze" : "register")}>
+              <Button size="lg" className="gap-2 text-base rounded-xl shadow-lg shadow-primary/30 h-12 px-6 btn-press btn-glow" onClick={() => setCurrentPage(user ? "analyze" : "register")}>
                 <ScanSearch className="w-5 h-5" /> Try AI Analysis
               </Button>
               <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl border-white/25 text-white hover:bg-white/15 hover:text-white h-12 px-6 backdrop-blur-sm btn-press" onClick={() => setCurrentPage("store")}>
@@ -170,7 +170,7 @@ export default function HomePage() {
           ].map((feature, i) => (
             <Card
               key={i}
-              className="group cursor-pointer hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border hover:border-primary/20 relative overflow-hidden card-hover-lift hover-glow card-glass"
+              className="group cursor-pointer hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border hover:border-primary/20 relative overflow-hidden card-hover-lift hover-glow card-glass card-3d-hover"
               onClick={() => setCurrentPage(feature.page === "analyze" && !user ? "login" : feature.page)}
             >
               <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
@@ -298,7 +298,7 @@ export default function HomePage() {
               { name: "Sarah K.", role: "Arsenal Fan", text: "Finally a platform that combines everything — jerseys, tickets, and highlights. The UI is beautiful and super easy to use.", avatar: "SK", rating: 5 },
               { name: "James P.", role: "Sports Journalist", text: "The match analysis feature saves me hours of work. I can quickly identify formations and tactical setups from match photos.", avatar: "JP", rating: 4 },
             ].map((t, i) => (
-              <Card key={i} className="card-glass glass hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <Card key={i} className="card-glass-enhanced hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <CardContent className="p-6">
                   <div className="flex gap-0.5 mb-4">
                     {Array.from({ length: 5 }).map((_, j) => (
@@ -367,7 +367,7 @@ export default function HomePage() {
           Join thousands of football fans using PitchVision to understand the beautiful game at a deeper level.
         </p>
         <div className="flex flex-wrap gap-3 justify-center">
-          <Button size="lg" className="gap-2 text-base rounded-xl shadow-lg shadow-primary/20 h-12 px-6 btn-press" onClick={() => setCurrentPage(user ? "analyze" : "register")}>
+          <Button size="lg" className="gap-2 text-base rounded-xl shadow-lg shadow-primary/20 h-12 px-6 btn-press btn-glow" onClick={() => setCurrentPage(user ? "analyze" : "register")}>
             <Zap className="w-5 h-5" /> Get Started Free
           </Button>
           <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl h-12 px-6 btn-press" onClick={() => setCurrentPage("highlights")}>

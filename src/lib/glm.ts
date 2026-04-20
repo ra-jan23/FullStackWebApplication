@@ -1,15 +1,39 @@
 /**
  * GLM 4.5 Air (Free) API wrapper
- * Uses the routeway.ai API endpoint for text-based LLM completions
- * Includes retry logic for rate limiting (429 errors)
+ * Uses OpenAI SDK with OpenRouter endpoint for text-based LLM completions
+ * Includes built-in retry logic via OpenAI SDK
  */
 
-export function getGLMConfig() {
-  return {
-    apiUrl: process.env.GLM_API_URL || 'https://api.routeway.ai/v1/chat/completions',
-    apiKey: process.env.GLM_API_KEY || '',
-    model: process.env.GLM_MODEL || 'glm-4.5-air:free',
-  };
+import OpenAI from 'openai';
+
+let _openaiClient: OpenAI | null = null;
+
+function getOpenAIClient(): OpenAI {
+  if (_openaiClient) return _openaiClient;
+
+  const apiKey = process.env.GLM_API_KEY || '';
+  const baseURL = process.env.GLM_API_URL || 'https://openrouter.ai/api/v1';
+
+  if (!apiKey) {
+    throw new Error('GLM_API_KEY is not configured. Please set it in .env file.');
+  }
+
+  _openaiClient = new OpenAI({
+    baseURL,
+    apiKey,
+    defaultHeaders: {
+      'HTTP-Referer': 'https://pitchvision.app',
+      'X-OpenRouter-Title': 'PitchVision',
+    },
+    timeout: 30000,
+    maxRetries: 2,
+  });
+
+  return _openaiClient;
+}
+
+function getModel(): string {
+  return process.env.GLM_MODEL || 'z-ai/glm-4.5-air:free';
 }
 
 interface GLMMessage {
@@ -17,21 +41,9 @@ interface GLMMessage {
   content: string;
 }
 
-interface GLMChoice {
-  index: number;
-  message: {
-    role: string;
-    content: string;
-  };
-  finish_reason: string;
-}
-
-interface GLMResponse {
-  id: string;
-  object: string;
-  created: number;
+export interface GLMResponseContent {
+  content: string;
   model: string;
-  choices: GLMChoice[];
   usage?: {
     prompt_tokens: number;
     completion_tokens: number;
@@ -45,54 +57,53 @@ export async function glmChatCompletion(
     temperature?: number;
     maxTokens?: number;
     topP?: number;
-    maxRetries?: number;
   }
-): Promise<GLMResponse> {
-  const config = getGLMConfig();
-
-  if (!config.apiKey) {
-    throw new Error('GLM_API_KEY is not configured. Please set it in .env file.');
-  }
-
-  const body: Record<string, any> = {
-    model: config.model,
-    messages,
-    temperature: options?.temperature ?? 0.7,
-    max_tokens: options?.maxTokens ?? 2048,
-    top_p: options?.topP ?? 0.9,
-  };
-
-  const maxRetries = options?.maxRetries ?? 2;
+): Promise<GLMResponseContent> {
+  const client = getOpenAIClient();
+  const model = getModel();
+  const maxRetries = 3;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    const response = await fetch(config.apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${config.apiKey}`,
-      },
-      body: JSON.stringify(body),
-    });
+    try {
+      const completion = await client.chat.completions.create({
+        model,
+        messages: messages.map(m => ({ role: m.role, content: m.content })),
+        temperature: options?.temperature ?? 0.7,
+        max_tokens: options?.maxTokens ?? 2048,
+        top_p: options?.topP ?? 0.9,
+      });
 
-    // Handle rate limiting (429) with retry
-    if (response.status === 429 && attempt < maxRetries) {
-      const waitTime = 12000 * (attempt + 1); // 12s, 24s
-      console.warn(`GLM API rate limited (429). Retrying in ${waitTime / 1000}s (attempt ${attempt + 1}/${maxRetries})...`);
-      await new Promise(resolve => setTimeout(resolve, waitTime));
-      continue;
+      const choice = completion.choices[0];
+      if (!choice || !choice.message) {
+        throw new Error('No response from GLM model');
+      }
+
+      return {
+        content: choice.message.content || '',
+        model: completion.model,
+        usage: completion.usage
+          ? {
+              prompt_tokens: completion.usage.prompt_tokens,
+              completion_tokens: completion.usage.completion_tokens,
+              total_tokens: completion.usage.total_tokens,
+            }
+          : undefined,
+      };
+    } catch (error: any) {
+      const isRateLimit = error?.status === 429 || error?.code === 429 ||
+        error?.message?.includes('429') || error?.message?.includes('rate');
+      
+      if (isRateLimit && attempt < maxRetries) {
+        const waitTime = 5000 * (attempt + 1); // 5s, 10s, 15s
+        console.warn(`OpenRouter rate limited. Retrying in ${waitTime / 1000}s (attempt ${attempt + 1}/${maxRetries})...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+      throw error;
     }
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('GLM API error:', response.status, errorText);
-      throw new Error(`GLM API error (${response.status}): ${errorText}`);
-    }
-
-    const data: GLMResponse = await response.json();
-    return data;
   }
 
-  throw new Error('GLM API rate limit exceeded after maximum retries.');
+  throw new Error('OpenRouter rate limit exceeded after maximum retries.');
 }
 
 /**
@@ -102,9 +113,9 @@ export async function glmChatCompletion(
 export function toGLMMessages(
   messages: Array<{ role: string; content: string }>
 ): GLMMessage[] {
-  return messages.map((m) => {
+  return messages.map((m, i) => {
     let role: GLMMessage['role'];
-    if (m.role === 'assistant' && messages.indexOf(m) === 0) {
+    if (m.role === 'assistant' && i === 0) {
       // First assistant message in z-ai SDK is typically the system prompt
       role = 'system';
     } else if (m.role === 'user' || m.role === 'assistant') {
@@ -120,5 +131,5 @@ export function toGLMMessages(
  * Check if GLM API is properly configured
  */
 export function isGLMConfigured(): boolean {
-  return !!getGLMConfig().apiKey;
+  return !!process.env.GLM_API_KEY;
 }
