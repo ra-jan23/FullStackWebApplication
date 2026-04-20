@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { glmChatCompletion, isGLMConfigured } from '@/lib/glm';
+import { glmChatCompletion } from '@/lib/glm';
 
 const conversations = new Map<string, { role: string; content: string }[]>();
 
@@ -23,13 +23,6 @@ export async function POST(request: NextRequest) {
     }
 
     const sid = sessionId || 'default';
-
-    if (!isGLMConfigured()) {
-      return NextResponse.json({
-        success: false,
-        error: 'AI model not configured. Please set GLM_API_KEY or OPENROUTER_API_KEY in environment variables.'
-      }, { status: 500 });
-    }
 
     // Get or create conversation history
     let history = conversations.get(sid) || [];
@@ -66,7 +59,6 @@ export async function POST(request: NextRequest) {
       success: true,
       response: aiResponse,
       messageCount: history.length,
-      model: completion.model,
       provider: completion.provider,
     });
   } catch (error: any) {
