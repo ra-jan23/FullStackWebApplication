@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Progress } from "@/components/ui/progress";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
@@ -22,22 +23,165 @@ import {
 import {
   User, Mail, Calendar, ShoppingBag, Ticket, ScanSearch, Heart,
   Save, Loader2, Trash2, Shield, Trophy, CheckCircle2, Link2, LucideIcon,
+  Brain, TrendingUp, MessageSquare, Users, Clock, Star, Award, Target,
+  HelpCircle, BarChart3, ThumbsUp, MessageCircle, Zap, ArrowRight,
 } from "lucide-react";
 import AvatarSelector from "@/components/ui/AvatarSelector";
 import { getAvatarOption } from "@/lib/avatars";
 
-const TOP_TEAMS = [
-  "Liverpool FC", "Real Madrid", "Arsenal FC", "Bayern Munich", "FC Barcelona",
-  "Manchester City", "Chelsea FC", "AC Milan", "Juventus", "PSG",
-  "Inter Milan", "Borussia Dortmund", "Tottenham Hotspur", "Newcastle United",
-  "Aston Villa", "Atletico Madrid", "Napoli", "AS Roma", "Benfica", "Ajax",
+const PREMIER_LEAGUE_TEAMS = [
+  "Arsenal",
+  "Aston Villa",
+  "Bournemouth",
+  "Brentford",
+  "Brighton & Hove Albion",
+  "Chelsea",
+  "Crystal Palace",
+  "Everton",
+  "Fulham",
+  "Ipswich Town",
+  "Leicester City",
+  "Liverpool",
+  "Manchester City",
+  "Manchester United",
+  "Newcastle United",
+  "Nottingham Forest",
+  "Southampton",
+  "Tottenham Hotspur",
+  "West Ham United",
+  "Wolverhampton Wanderers",
+];
+
+const FOOTBALL_STATS = [
+  {
+    title: "Quiz Performance",
+    icon: Brain,
+    gradient: "from-emerald-500 to-emerald-700",
+    gradientBg: "from-emerald-500/10 to-emerald-600/5",
+    iconBg: "bg-gradient-to-br from-emerald-500 to-emerald-700",
+    items: [
+      { label: "Total Quizzes", value: "24" },
+      { label: "Best Score", value: "1,820 pts" },
+      { label: "Accuracy", value: "72%", bar: 72 },
+      { label: "Favorite Category", value: "Tactics" },
+    ],
+  },
+  {
+    title: "Match Predictions",
+    icon: TrendingUp,
+    gradient: "from-amber-500 to-amber-700",
+    gradientBg: "from-amber-500/10 to-amber-600/5",
+    iconBg: "bg-gradient-to-br from-amber-500 to-amber-700",
+    items: [
+      { label: "Predictions Made", value: "18" },
+      { label: "Accuracy", value: "61%", bar: 61 },
+      { label: "Streak", value: "4 correct" },
+      { label: "Favorite League", value: "Premier League" },
+    ],
+  },
+  {
+    title: "AI Chat Usage",
+    icon: MessageSquare,
+    gradient: "from-violet-500 to-violet-700",
+    gradientBg: "from-violet-500/10 to-violet-600/5",
+    iconBg: "bg-gradient-to-br from-violet-500 to-violet-700",
+    items: [
+      { label: "Total Sessions", value: "47" },
+      { label: "Messages Sent", value: "312" },
+      { label: "Avg. per Session", value: "6.6" },
+      { label: "Top Topic", value: "Tactics" },
+    ],
+  },
+  {
+    title: "Community Activity",
+    icon: Users,
+    gradient: "from-rose-500 to-rose-700",
+    gradientBg: "from-rose-500/10 to-rose-600/5",
+    iconBg: "bg-gradient-to-br from-rose-500 to-rose-700",
+    items: [
+      { label: "Posts", value: "12" },
+      { label: "Replies", value: "45" },
+      { label: "Likes Received", value: "89" },
+      { label: "Reputation", value: "Rising Star" },
+    ],
+  },
+];
+
+const RECENT_ACTIVITIES = [
+  {
+    icon: Brain,
+    description: "Completed quiz \"Premier League Trivia\" with a score of 850",
+    timestamp: "2h ago",
+    color: "emerald",
+    accent: "border-emerald-500",
+    iconBg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  },
+  {
+    icon: TrendingUp,
+    description: "Predicted Arsenal vs Chelsea — predicted 2-1 Arsenal win",
+    timestamp: "5h ago",
+    color: "amber",
+    accent: "border-amber-500",
+    iconBg: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  },
+  {
+    icon: MessageSquare,
+    description: "Had a chat session about \"4-3-3 pressing tactics\" (8 messages)",
+    timestamp: "Yesterday",
+    color: "violet",
+    accent: "border-violet-500",
+    iconBg: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
+  },
+  {
+    icon: MessageCircle,
+    description: "Replied to community thread \"Best defensive midfielder 2025\"",
+    timestamp: "Yesterday",
+    color: "rose",
+    accent: "border-rose-500",
+    iconBg: "bg-rose-500/10 text-rose-600 dark:text-rose-400",
+  },
+  {
+    icon: Brain,
+    description: "Completed quiz \"World Cup History\" — 90% accuracy",
+    timestamp: "2 days ago",
+    color: "emerald",
+    accent: "border-emerald-500",
+    iconBg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  },
+  {
+    icon: ThumbsUp,
+    description: "Received 12 likes on your post about Haaland's goal record",
+    timestamp: "3 days ago",
+    color: "amber",
+    accent: "border-amber-500",
+    iconBg: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  },
+  {
+    icon: MessageSquare,
+    description: "Chat session: \"Comparing Serie A vs La Liga playing styles\"",
+    timestamp: "3 days ago",
+    color: "violet",
+    accent: "border-violet-500",
+    iconBg: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
+  },
+  {
+    icon: Zap,
+    description: "Achievement unlocked: \"Quiz Master\" — completed 20 quizzes",
+    timestamp: "5 days ago",
+    color: "rose",
+    accent: "border-rose-500",
+    iconBg: "bg-rose-500/10 text-rose-600 dark:text-rose-400",
+  },
 ];
 
 export default function ProfilePage() {
-  const { user, token, login, logout, setCurrentPage, userAvatar, setUserAvatar } = useAppStore();
+  const {
+    user, token, login, logout, setCurrentPage,
+    userAvatar, setUserAvatar, favoriteTeam, setFavoriteTeam,
+  } = useAppStore();
   const [name, setName] = useState(user?.name || "");
   const [avatar, setAvatar] = useState<string>(userAvatar || "trophy");
-  const [favoriteTeam, setFavoriteTeam] = useState<string>("");
+  const [localFavoriteTeam, setLocalFavoriteTeam] = useState<string>(favoriteTeam || "");
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -59,7 +203,7 @@ export default function ProfilePage() {
         if (data.user) {
           setProfileData({ avatar: data.user.avatar, favoriteTeam: data.user.favoriteTeam });
           if (data.user.avatar) setAvatar(data.user.avatar);
-          if (data.user.favoriteTeam) setFavoriteTeam(data.user.favoriteTeam);
+          if (data.user.favoriteTeam) setLocalFavoriteTeam(data.user.favoriteTeam);
           setName(data.user.name || user?.name || "");
         }
       }
@@ -98,7 +242,7 @@ export default function ProfilePage() {
       const res = await fetch("/api/user/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ name, avatar, favoriteTeam }),
+        body: JSON.stringify({ name, avatar, favoriteTeam: localFavoriteTeam }),
       });
       if (res.ok) {
         const data = await res.json();
@@ -108,6 +252,8 @@ export default function ProfilePage() {
             token || ""
           );
         }
+        // Sync to Zustand store
+        setFavoriteTeam(localFavoriteTeam);
         toast.success("Profile updated!", { description: "Your changes have been saved successfully." });
       } else {
         const data = await res.json();
@@ -231,21 +377,30 @@ export default function ProfilePage() {
 
           <Separator />
 
-          {/* Favorite Team */}
+          {/* Favorite Premier League Team */}
           <div className="space-y-2">
             <Label className="text-sm font-medium flex items-center gap-1.5">
-              <Trophy className="w-3.5 h-3.5" /> Favorite Team
+              <Trophy className="w-3.5 h-3.5" /> Favorite Premier League Team
             </Label>
-            <Select value={favoriteTeam} onValueChange={setFavoriteTeam}>
+            <Select
+              value={localFavoriteTeam}
+              onValueChange={(val) => setLocalFavoriteTeam(val)}
+            >
               <SelectTrigger className="max-w-sm h-11">
                 <SelectValue placeholder="Select your favorite team..." />
               </SelectTrigger>
               <SelectContent className="max-h-64 overflow-y-auto">
-                {TOP_TEAMS.map((team) => (
+                {PREMIER_LEAGUE_TEAMS.map((team) => (
                   <SelectItem key={team} value={team}>{team}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            {localFavoriteTeam && (
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <Star className="w-3 h-3 text-amber-500" />
+                Showing your support for {localFavoriteTeam}
+              </p>
+            )}
           </div>
 
           <Separator />
@@ -264,7 +419,7 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
-      {/* Stats Section */}
+      {/* Account Stats Section */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
@@ -291,6 +446,110 @@ export default function ProfilePage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* ===== My Football Stats Section ===== */}
+      <div className="mb-6 animate-fade-slide-up">
+        <div className="flex items-center gap-2 mb-4">
+          <Award className="w-5 h-5 text-primary" />
+          <h2 className="text-xl font-bold">My Football Stats</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 stagger-fade">
+          {FOOTBALL_STATS.map((stat) => {
+            const IconComp = stat.icon;
+            return (
+              <Card
+                key={stat.title}
+                className="card-hover-lift card-border-hover overflow-hidden"
+              >
+                <CardContent className="p-5">
+                  {/* Card header with gradient icon */}
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`w-11 h-11 rounded-xl ${stat.iconBg} flex items-center justify-center text-white shadow-lg`}>
+                      <IconComp className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-sm">{stat.title}</h3>
+                    </div>
+                  </div>
+
+                  {/* Stats items */}
+                  <div className="space-y-3">
+                    {stat.items.map((item) => (
+                      <div
+                        key={item.label}
+                        className="flex items-center justify-between"
+                      >
+                        <span className="text-xs text-muted-foreground">{item.label}</span>
+                        {item.bar ? (
+                          <div className="flex items-center gap-2">
+                            <Progress
+                              value={item.bar}
+                              className={`h-1.5 w-16 rounded-full [&>div]:bg-gradient-to-r [&>div]:${stat.gradient}`}
+                            />
+                            <span className="text-xs font-semibold stat-number">{item.value}</span>
+                          </div>
+                        ) : (
+                          <span className="text-xs font-semibold">{item.value}</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ===== Recent Activity Timeline ===== */}
+      <div className="mb-6 animate-fade-slide-up" style={{ animationDelay: "0.3s" }}>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Clock className="w-5 h-5 text-primary" />
+            <h2 className="text-xl font-bold">Recent Activity</h2>
+          </div>
+          <Badge variant="secondary" className="text-xs">
+            {RECENT_ACTIVITIES.length} events
+          </Badge>
+        </div>
+        <Card>
+          <CardContent className="p-5">
+            <div className="space-y-0">
+              {RECENT_ACTIVITIES.map((activity, index) => {
+                const IconComp = activity.icon;
+                const isLast = index === RECENT_ACTIVITIES.length - 1;
+                return (
+                  <div key={index} className="relative">
+                    {/* Timeline line */}
+                    {!isLast && (
+                      <div className="absolute left-[19px] top-[40px] bottom-0 w-px bg-border" />
+                    )}
+                    {/* Activity entry */}
+                    <div className="flex gap-3 pb-5 last:pb-0 group">
+                      {/* Icon with colored border accent */}
+                      <div className={`relative flex-shrink-0`}>
+                        <div
+                          className={`w-[40px] h-[40px] rounded-xl ${activity.iconBg} flex items-center justify-center border-l-[3px] ${activity.accent} shadow-sm`}
+                        >
+                          <IconComp className="w-4 h-4" />
+                        </div>
+                      </div>
+                      {/* Content */}
+                      <div className="flex-1 min-w-0 pt-1">
+                        <p className="text-sm leading-snug">{activity.description}</p>
+                        <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {activity.timestamp}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Connected Accounts */}
       <Card className="mb-6">

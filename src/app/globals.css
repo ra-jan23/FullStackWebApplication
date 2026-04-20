@@ -3138,4 +3138,248 @@ button:focus-visible {
   .page-enter { animation: none; }
   .card-enter { animation: none; }
   .fade-in-left { animation: none; }
+  .card-shimmer { animation: none; }
+  .btn-ripple::after { transition: none; }
+  .hover-glow:hover { box-shadow: none; }
+  .slide-in-stagger > * { animation: none; opacity: 1; }
+  .progress-bar-animated { animation: none; }
+  .badge-bounce { animation: none; }
+  .glass-card { backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+/* ===== TASK 18-A: CSS MICRO-INTERACTIONS ===== */
+
+/* 1. .card-shimmer — Shimmer/skeleton loading effect for cards */
+@keyframes cardShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.card-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 0%,
+    hsl(var(--muted-foreground) / 0.08) 20%,
+    hsl(var(--muted-foreground) / 0.15) 40%,
+    hsl(var(--muted-foreground) / 0.08) 60%,
+    hsl(var(--muted)) 80%,
+    hsl(var(--muted)) 100%
+  );
+  background-size: 200% 100%;
+  animation: cardShimmer 2s ease-in-out infinite;
+  border-radius: var(--radius-lg);
+}
+
+.dark .card-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 0%,
+    hsl(var(--muted-foreground) / 0.05) 20%,
+    hsl(var(--muted-foreground) / 0.1) 40%,
+    hsl(var(--muted-foreground) / 0.05) 60%,
+    hsl(var(--muted)) 80%,
+    hsl(var(--muted)) 100%
+  );
+  background-size: 200% 100%;
+}
+
+/* 2. .btn-ripple — Ripple effect on button click (CSS-only with pseudo-elements) */
+@keyframes btnRipple {
+  0% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  margin-left: -10px;
+  background: hsl(var(--primary-foreground) / 0.3);
+  border-radius: 50%;
+  transform: scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.btn-ripple:active::after {
+  animation: btnRipple 0.5s ease-out;
+}
+
+/* 3. .text-balance — Text balance utility for better typography */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* 4. .glass-card — Glassmorphism card with backdrop blur and subtle border */
+.glass-card {
+  background: hsl(var(--card) / 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid hsl(var(--border) / 0.5);
+  box-shadow:
+    0 4px 6px hsl(0 0% 0% / 0.02),
+    0 10px 30px hsl(0 0% 0% / 0.04);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.glass-card:hover {
+  box-shadow:
+    0 4px 6px hsl(0 0% 0% / 0.03),
+    0 16px 40px hsl(0 0% 0% / 0.06);
+  border-color: hsl(var(--primary) / 0.15);
+}
+
+.dark .glass-card {
+  background: hsl(var(--card) / 0.4);
+  border: 1px solid hsl(var(--border) / 0.3);
+  box-shadow:
+    0 4px 6px hsl(0 0% 0% / 0.1),
+    0 10px 30px hsl(0 0% 0% / 0.15);
+}
+
+.dark .glass-card:hover {
+  box-shadow:
+    0 4px 6px hsl(0 0% 0% / 0.15),
+    0 16px 40px hsl(0 0% 0% / 0.25);
+  border-color: hsl(var(--primary) / 0.2);
+}
+
+/* 5. .hover-glow — Glow effect on hover for interactive elements */
+.hover-glow {
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.hover-glow:hover {
+  box-shadow:
+    0 0 15px hsl(var(--primary) / 0.15),
+    0 0 30px hsl(var(--primary) / 0.08),
+    0 4px 12px hsl(0 0% 0% / 0.04);
+}
+
+.dark .hover-glow:hover {
+  box-shadow:
+    0 0 15px hsl(var(--primary) / 0.2),
+    0 0 30px hsl(var(--primary) / 0.12),
+    0 4px 12px hsl(0 0% 0% / 0.15);
+}
+
+/* 6. .slide-in-stagger — Staggered slide-in animation for list items */
+@keyframes slideInStagger {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in-stagger > * {
+  opacity: 0;
+  animation: slideInStagger 0.4s ease-out forwards;
+}
+
+.slide-in-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.slide-in-stagger > *:nth-child(2) { animation-delay: 60ms; }
+.slide-in-stagger > *:nth-child(3) { animation-delay: 120ms; }
+.slide-in-stagger > *:nth-child(4) { animation-delay: 180ms; }
+.slide-in-stagger > *:nth-child(5) { animation-delay: 240ms; }
+.slide-in-stagger > *:nth-child(6) { animation-delay: 300ms; }
+.slide-in-stagger > *:nth-child(7) { animation-delay: 360ms; }
+.slide-in-stagger > *:nth-child(8) { animation-delay: 420ms; }
+.slide-in-stagger > *:nth-child(9) { animation-delay: 480ms; }
+.slide-in-stagger > *:nth-child(10) { animation-delay: 540ms; }
+
+/* 7. .progress-bar-animated — Animated progress bar fill effect */
+@keyframes progressFillAnimated {
+  0% { width: 0%; }
+  100% { width: var(--progress-width, 75%); }
+}
+
+.progress-bar-animated {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(160 84% 39%));
+  animation: progressFillAnimated 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar-animated::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(0 0% 100% / 0.2) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: cardShimmer 2s ease-in-out infinite;
+}
+
+/* 8. .badge-bounce — Subtle bounce animation for notification badges */
+@keyframes badgeBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.badge-bounce {
+  animation: badgeBounce 2s ease-in-out infinite;
+}
+
+/* ===== TASK 18-A: ENHANCED BUTTON STYLES ===== */
+
+/* Global button hover/active state enhancement */
+button:not(:disabled) {
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+button:not(:disabled):hover {
+  transform: scale(1.02);
+  box-shadow: 0 2px 8px hsl(0 0% 0% / 0.06);
+}
+
+button:not(:disabled):active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 2px hsl(0 0% 0% / 0.04);
+}
+
+.dark button:not(:disabled):hover {
+  box-shadow: 0 2px 8px hsl(0 0% 0% / 0.2);
+}
+
+.dark button:not(:disabled):active {
+  box-shadow: 0 1px 2px hsl(0 0% 0% / 0.15);
+}
+
+/* Exception: icon-only buttons get a subtler scale */
+button[size="icon"]:not(:disabled):hover {
+  transform: scale(1.06);
+}
+
+button[size="icon"]:not(:disabled):active {
+  transform: scale(0.94);
 }

@@ -25,7 +25,7 @@ function getPrimaryClient(): OpenAI {
   _primaryClient = new OpenAI({
     baseURL,
     apiKey,
-    timeout: 15000, // 15s timeout (fail fast, switch to fallback)
+    timeout: 30000, // 30s timeout (GLM free tier can be slow)
     maxRetries: 0,
   });
 
@@ -151,8 +151,9 @@ export async function glmChatCompletion(
   const mappedMessages = messages.map(m => ({ role: m.role, content: m.content }));
   const opts = options || {};
 
+  let primaryErrorMessage = 'unknown error';
+
   // === Strategy 1: Try Primary Provider (routeway.ai) ===
-  // Only try once with short timeout - fail fast to fallback
   try {
     const client = getPrimaryClient();
     const model = getPrimaryModel();
@@ -160,14 +161,15 @@ export async function glmChatCompletion(
     console.log(`[LLM] ✅ Primary (${model}) succeeded: ${result.content.length} chars`);
     return result;
   } catch (primaryError: any) {
+    primaryErrorMessage = primaryError?.message || String(primaryError);
     const isRetryable = isRetryableError(primaryError);
-    console.error(`[LLM] Primary failed: ${primaryError?.status || primaryError?.code || 'unknown'} - ${primaryError?.message || primaryError}`);
+    console.error(`[LLM] Primary failed: ${primaryError?.status || primaryError?.code || 'unknown'} - ${primaryErrorMessage}`);
 
     // Only retry primary once for rate limits
     if (isRetryable) {
       try {
-        console.log('[LLM] Retrying primary once after 3s...');
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        console.log('[LLM] Retrying primary once after 5s...');
+        await new Promise(resolve => setTimeout(resolve, 5000));
         const client = getPrimaryClient();
         const model = getPrimaryModel();
         const result = await callProvider(client, model, mappedMessages, opts, 'routeway.ai');
@@ -190,11 +192,11 @@ export async function glmChatCompletion(
       return result;
     } catch (fallbackError: any) {
       console.error('[LLM] Fallback also failed:', fallbackError?.message || fallbackError);
-      throw new Error(`AI providers unavailable. Primary: ${primaryError?.message || 'error'}. Fallback: ${fallbackError?.message || 'error'}`);
+      throw new Error(`AI providers unavailable. Primary: ${primaryErrorMessage}. Fallback: ${fallbackError?.message || 'error'}`);
     }
   }
 
-  throw new Error('AI providers unavailable. No fallback configured.');
+  throw new Error(`AI providers unavailable. Primary: ${primaryErrorMessage}. No fallback configured.`);
 }
 
 /**

@@ -41,6 +41,7 @@ interface AppState {
   checkoutItems: any[];
   checkoutTotal: number;
   userAvatar: string | null;
+  favoriteTeam: string | null;
 
   setCurrentPage: (page: Page) => void;
   login: (user: User, token: string) => void;
@@ -55,6 +56,7 @@ interface AppState {
   quizScore: number;
   setQuizScore: (score: number) => void;
   setUserAvatar: (avatarId: string | null) => void;
+  setFavoriteTeam: (team: string | null) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -69,6 +71,7 @@ export const useAppStore = create<AppState>((set) => ({
   checkoutTotal: 0,
   quizScore: 0,
   userAvatar: typeof window !== 'undefined' ? localStorage.getItem('pv_avatar') : null,
+  favoriteTeam: typeof window !== 'undefined' ? localStorage.getItem('pv_favorite_team') : null,
 
   setCurrentPage: (page) => set({ currentPage: page }),
 
@@ -96,6 +99,16 @@ export const useAppStore = create<AppState>((set) => ({
       }
     }
     set({ userAvatar: avatarId });
+  },
+  setFavoriteTeam: (team) => {
+    if (typeof window !== 'undefined') {
+      if (team) {
+        localStorage.setItem('pv_favorite_team', team);
+      } else {
+        localStorage.removeItem('pv_favorite_team');
+      }
+    }
+    set({ favoriteTeam: team });
   },
 
   setCartCount: (count) => set({ cartCount: count }),

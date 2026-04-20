@@ -19,6 +19,12 @@ import {
   CheckCircle2, Play, Flame, Calendar, Target, Trophy, Bell, Heart, MessageCircle, Brain, Newspaper, ShoppingBag, ArrowLeftRight, Zap, Users
 } from "lucide-react";
 
+const liveMatches = [
+  { id: 1, home: "Liverpool", away: "Arsenal", homeScore: 2, awayScore: 1, minute: "67'" },
+  { id: 2, home: "Barcelona", away: "Real Madrid", homeScore: 1, awayScore: 1, minute: "34'" },
+  { id: 3, home: "Bayern", away: "Dortmund", homeScore: 3, awayScore: 0, minute: "81'" },
+];
+
 export default function Navbar() {
   const { currentPage, setCurrentPage, user, logout, cartCount, favoritesCount, isLoading, searchQuery, setSearchQuery, userAvatar } = useAppStore();
   const { theme, setTheme } = useTheme();
@@ -27,6 +33,7 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [tickerIndex, setTickerIndex] = useState(0);
   const profileRef = useRef<HTMLDivElement>(null);
   const localSearchQuery = useState(searchQuery);
 
@@ -40,6 +47,14 @@ export default function Navbar() {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Auto-scroll ticker every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTickerIndex((prev) => (prev + 1) % liveMatches.length);
+    }, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   // Close profile dropdown on click outside
@@ -101,10 +116,14 @@ export default function Navbar() {
   const navAvatarOption = getAvatarOption(userAvatar);
   const NavAvatarIcon: LucideIcon | undefined = navAvatarOption?.icon;
 
+  const currentMatch = liveMatches[tickerIndex];
+  const nextMatch = liveMatches[(tickerIndex + 1) % liveMatches.length];
+
   return (
     <header className={`sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl navbar-scroll-shadow ${scrolled ? "scrolled navbar-scrolled" : ""}`}>
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleNavClick("home")}>
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-3">
+        {/* Logo */}
+        <div className="flex items-center gap-2 cursor-pointer shrink-0" onClick={() => handleNavClick("home")}>
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center shadow-lg shadow-primary/25">
             <Target className="w-5 h-5 text-primary-foreground" />
           </div>
@@ -148,7 +167,36 @@ export default function Navbar() {
           })}
         </nav>
 
-        <div className="flex items-center gap-1.5">
+        {/* Live Match Score Ticker (md+ only) */}
+        <div
+          className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/5 border border-red-500/15 cursor-pointer hover:bg-red-500/10 transition-all duration-300 shrink-0 max-w-xs"
+          onClick={() => handleNavClick("match-center")}
+          role="button"
+          tabIndex={0}
+          aria-label={`Live match: ${currentMatch.home} ${currentMatch.homeScore} - ${currentMatch.awayScore} ${currentMatch.away}, ${currentMatch.minute}`}
+        >
+          <span className="relative flex h-2 w-2 shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-red-500 shrink-0">Live</span>
+          <div className="overflow-hidden flex-1 min-w-0">
+            <div
+              className="flex items-center gap-1.5 transition-all duration-500 ease-in-out"
+              key={tickerIndex}
+            >
+              <span className="text-xs font-semibold truncate text-foreground">{currentMatch.home}</span>
+              <span className="text-xs font-bold text-foreground tabular-nums shrink-0">
+                {currentMatch.homeScore} - {currentMatch.awayScore}
+              </span>
+              <span className="text-xs font-semibold truncate text-foreground">{currentMatch.away}</span>
+            </div>
+          </div>
+          <span className="text-[10px] text-muted-foreground font-medium shrink-0">{currentMatch.minute}</span>
+        </div>
+
+        {/* Right Side Icons */}
+        <div className="flex items-center gap-1.5 shrink-0">
           {/* Search */}
           {searchOpen ? (
             <div className="relative flex items-center">
