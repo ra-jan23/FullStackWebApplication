@@ -166,6 +166,7 @@ export default function HomePage() {
             { icon: <Brain className="w-8 h-8" />, title: "AI Match Predictions", desc: "Get AI-powered match predictions with score forecasts and tactical analysis.", page: "predictions" as Page, gradient: "from-fuchsia-500 to-violet-600", bg: "bg-fuchsia-500/10" },
             { icon: <Newspaper className="w-8 h-8" />, title: "Football News Hub", desc: "Stay updated with the latest transfer rumors, match results, and football headlines.", page: "news" as Page, gradient: "from-orange-500 to-red-600", bg: "bg-orange-500/10" },
             { icon: <ArrowLeftRight className="w-8 h-8" />, title: "Transfer Market", desc: "Track latest transfer rumors, player values, and completed deals from around the world.", page: "transfers" as Page, gradient: "from-teal-500 to-cyan-600", bg: "bg-teal-500/10" },
+            { icon: <Zap className="w-8 h-8" />, title: "Football Quiz", desc: "Test your football knowledge with AI-generated trivia across 6 exciting categories.", page: "quiz" as Page, gradient: "from-amber-500 to-orange-600", bg: "bg-amber-500/10" },
           ].map((feature, i) => (
             <Card
               key={i}
@@ -374,6 +375,9 @@ export default function HomePage() {
           </Button>
           <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl h-12 px-6 btn-press" onClick={() => setCurrentPage("chat")}>
             <MessageCircle className="w-5 h-5" /> Chat with AI
+          </Button>
+          <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl h-12 px-6 btn-press" onClick={() => setCurrentPage("quiz")}>
+            <Zap className="w-5 h-5" /> Play Quiz
           </Button>
         </div>
       </section>

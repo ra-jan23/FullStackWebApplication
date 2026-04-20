@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   Target, Globe, Cpu, Smartphone, Shield, Database,
   Award, Share2, Camera, Play, Brain, MessageCircle,
-  Heart, ArrowUp
+  Heart, ArrowUp, Zap
 } from "lucide-react";
 
 export default function Footer() {
@@ -71,6 +71,7 @@ export default function Footer() {
                 { label: "Match Tickets", page: "tickets" as Page },
                 { label: "Football News", page: "news" as Page },
                 { label: "Transfer Market", page: "transfers" as Page },
+                { label: "Football Quiz", page: "quiz" as Page },
               ].map((item) => (
                 <button key={item.page} className="block text-sm text-muted-foreground hover:text-primary transition-colors hover:translate-x-0.5 transform focus-ring">
                   {item.label}
@@ -91,6 +92,9 @@ export default function Footer() {
               </button>
               <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors focus-ring" onClick={() => setCurrentPage("predictions")}>
                 <Brain className="w-3.5 h-3.5" /> Match Predictions
+              </button>
+              <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors focus-ring" onClick={() => setCurrentPage("quiz")}>
+                <Zap className="w-3.5 h-3.5" /> Football Quiz
               </button>
             </div>
           </div>

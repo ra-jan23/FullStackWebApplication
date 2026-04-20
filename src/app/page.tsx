@@ -27,6 +27,7 @@ import OrdersPage from "@/components/pages/OrdersPage";
 import NewsPage from "@/components/pages/NewsPage";
 import TransferMarketPage from "@/components/pages/TransferMarketPage";
 import NotificationsPage from "@/components/pages/NotificationsPage";
+import QuizPage from "@/components/pages/QuizPage";
 import Footer from "@/components/pages/Footer";
 
 // ==================== MAIN APP ====================
@@ -129,6 +130,7 @@ export default function App() {
       case "news": return <NewsPage />;
       case "transfers": return <TransferMarketPage />;
       case "notifications": return <NotificationsPage />;
+      case "quiz": return <QuizPage />;
       default: return <HomePage />;
     }
   };

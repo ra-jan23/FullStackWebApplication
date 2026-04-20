@@ -19,7 +19,8 @@ export type Page =
   | 'orders'
   | 'news'
   | 'transfers'
-  | 'notifications';
+  | 'notifications'
+  | 'quiz';
 
 interface User {
   id: string;
@@ -49,6 +50,8 @@ interface AppState {
   setSearchQuery: (query: string) => void;
   setCheckoutData: (items: any[], total: number) => void;
   clearCheckoutData: () => void;
+  quizScore: number;
+  setQuizScore: (score: number) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -61,6 +64,7 @@ export const useAppStore = create<AppState>((set) => ({
   searchQuery: '',
   checkoutItems: [],
   checkoutTotal: 0,
+  quizScore: 0,
 
   setCurrentPage: (page) => set({ currentPage: page }),
 
@@ -86,6 +90,7 @@ export const useAppStore = create<AppState>((set) => ({
   setSearchQuery: (query) => set({ searchQuery: query }),
   setCheckoutData: (items, total) => set({ checkoutItems: items, checkoutTotal: total }),
   clearCheckoutData: () => set({ checkoutItems: [], checkoutTotal: 0 }),
+  setQuizScore: (quizScore) => set({ quizScore }),
 
   hydrateAuth: () => {
     if (typeof window !== 'undefined') {
