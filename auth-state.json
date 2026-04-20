@@ -1,0 +1,31 @@
+{
+  "cookies": [
+    {
+      "name": "NID",
+      "value": "530=AdVjhHbeDAiul3W20sIDWyc1epShSF_93NT1c8OQDfuMJdAnh6aaYF2-Af1VWeOwaBuIHXth6PsZe9m939JbkDZFzxcOzU7kiwFtVtmxcov315575aZ86iqoWtT1OWtLO75aPX2EC7QWF7jtGOm3j_rw07rZuIhvS0XDk6dQNZPFO7AVVr-8B1fU1_mAKI91ZHRCk7wuhs8sy3OO",
+      "domain": ".google.com",
+      "path": "/",
+      "expires": 1792498209.617502,
+      "size": 215,
+      "httpOnly": true,
+      "secure": false,
+      "session": false
+    }
+  ],
+  "origins": [
+    {
+      "origin": "http://localhost:3000",
+      "localStorage": [
+        {
+          "name": "pv_token",
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtbzY5MHJhbTAwMDBzdzc0NWhpcHBwZWEiLCJlbWFpbCI6ImRlbW9AcGl0Y2h2aXNpb24uY29tIiwibmFtZSI6IkZvb3RiYWxsIEZhbiIsImV4cCI6MTc3NzI5MTg3MDEzMn0=.eyJ2IjoiNjU3OTRhNjg2MjQ3NjM2OTRmNjk0YTQ5NTU3YTQ5MzE0ZTY5NDk3MzQ5NmU1MjM1NjM0MzQ5MzY0OTZiNzA1ODU2NDM0YTM5MmU2NTc5NGE3MDVhNDM0OTM2NDk2ZDRlNzQ2MjdhNTkzNTRkNDg0YTY4NjI1NDQxNzc0ZDQ0NDI3YTY0N2E2MzMwNGU1NzY4NzA2MzQ4NDI3NzVhNTc0NTY5NGM0MzRhNmM2MjU3NDY3MDYyNDM0OTM2NDk2ZDUyNmM2MjU3Mzk0MTYzNDc2YzMwNTkzMjY4MzI2MTU4NGU3MDYyMzIzNDc1NTkzMjM5NzQ0OTY5Nzc2OTYyNmQ0Njc0NWE1MzQ5MzY0OTZiNWE3NjYyMzM1MjY5NTk1Nzc4NzM0OTQ1NWE2ODYyNjk0OTczNDk2ZDU2MzQ2MzQzNDkzNjRkNTQ2MzMzNGU3YTQ5MzU0ZDU0NjczMzRkNDQ0NTdhNGQ2ZTMwM2QyZTcwNjk3NDYzNjg3NjY5NzM2OTZmNmUyZDczNjU2MzcyNjU3NDJkNmI2NTc5MmQzMjMwMzIzNSJ9"
+        },
+        {
+          "name": "pv_user",
+          "value": "{\"id\":\"cmo690ram0000sw745hipppea\",\"email\":\"demo@pitchvision.com\",\"name\":\"Football Fan\",\"role\":\"user\"}"
+        }
+      ],
+      "sessionStorage": []
+    }
+  ]
+}

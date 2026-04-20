@@ -3,6 +3,8 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { toast } from "sonner";
+import { getAvatarOption } from "@/lib/avatars";
+import type { LucideIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -64,7 +66,7 @@ function LoadingTimer() {
 }
 
 export default function ChatPage() {
-  const { user } = useAppStore();
+  const { user, userAvatar } = useAppStore();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -74,6 +76,9 @@ export default function ChatPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  const chatAvatarOption = getAvatarOption(userAvatar);
+  const ChatAvatarIcon: LucideIcon | undefined = chatAvatarOption?.icon;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -270,9 +275,9 @@ export default function ChatPage() {
                   <div key={msg.id}>
                     {msg.role === 'user' && (
                       <div className="flex gap-3 flex-row-reverse animate-fade-in">
-                        <Avatar className="w-8 h-8 flex-shrink-0 bg-muted">
-                          <AvatarFallback className="text-xs font-bold text-foreground">
-                            {user?.name?.charAt(0) || 'U'}
+                        <Avatar className="w-8 h-8 flex-shrink-0">
+                          <AvatarFallback className={`text-xs font-bold text-white ${chatAvatarOption ? `bg-gradient-to-br ${chatAvatarOption.from} ${chatAvatarOption.to}` : "bg-muted text-foreground"}`}>
+                            {ChatAvatarIcon ? <ChatAvatarIcon className="w-4 h-4" strokeWidth={2.5} /> : <span>{user?.name?.charAt(0) || 'U'}</span>}
                           </AvatarFallback>
                         </Avatar>
                         <div className="max-w-[80%] items-end">

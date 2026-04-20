@@ -1378,3 +1378,107 @@ Files Modified:
 1. Consider adding streaming support for real-time token-by-token display
 2. Consider upgrading GLM plan or switching to a faster model
 3. Continue styling improvements and feature additions via cron job
+
+---
+Task ID: 13-a
+Agent: Avatar Feature Agent
+Task: Add user avatar selection to profile page
+
+Work Log:
+- Read worklog.md and assessed current project status (17+ pages, 20 API routes, 10 DB models)
+- Created `src/lib/avatars.ts` with 20 avatar options configuration (avatar ID, gradient colors, lucide-react icon, label)
+  - Icons used: Trophy, Target, Swords, Zap, Flame, Star, Crown, Shield, Award, Medal, Rocket, Diamond, Compass, Hexagon, CircleDot, Sunrise, Activity, Infinity, Sparkles, Wind
+  - Each avatar has a unique gradient color combination
+- Created `src/components/ui/AvatarSelector.tsx` — reusable grid component
+  - Supports 3 sizes: sm (36px), md (48px), lg (56px)
+  - 5-column grid on mobile, 10-column on tablet+
+  - Selected avatar shows ring highlight + checkmark badge
+  - Hover scale animation on all options
+  - Label text shown below each avatar (hidden in sm mode)
+- Updated `src/store/useAppStore.ts`:
+  - Added `userAvatar: string | null` state
+  - Added `setUserAvatar(avatarId)` action
+  - localStorage persistence with key `pv_avatar`
+  - Hydrated from localStorage on store creation
+- Updated `src/components/pages/ProfilePage.tsx`:
+  - Replaced the old 6-color gradient picker with new AvatarSelector (20 icon-based options)
+  - Avatar preview now shows selected icon inside gradient circle
+  - Selecting avatar immediately updates preview display
+  - Avatar ID stored in both local state (for save) and Zustand store (for persistence)
+  - "Choose Your Avatar" label with Trophy icon
+- Updated `src/components/pages/Navbar.tsx`:
+  - Profile dropdown avatar now renders user's selected avatar icon with matching gradient
+  - Falls back to initial letter if no avatar selected
+- Updated `src/components/pages/ChatPage.tsx`:
+  - User message bubbles now show selected avatar icon with gradient
+  - Falls back to initial letter on muted background if no avatar selected
+- Lint: 0 errors, 0 warnings
+- Compile: successful, no runtime errors
+
+Stage Summary:
+- AvatarSelector with 20 icon+gradient options created and integrated
+- Selected avatar persists in Zustand + localStorage (pv_avatar)
+- Avatar displayed in Profile page preview, Navbar dropdown, and AI Chat messages
+- Falls back to initial letter when no avatar selected
+
+---
+Task ID: 17
+Agent: Main Agent (Round 12 - Critical API Fix)
+Task: Fix AI chat 502 errors - dual-provider LLM with automatic failover
+
+Work Log:
+- User reported "Failed to respond / Server error: 502" in AI chat
+- Investigated all 3 API endpoints with curl:
+  - OpenRouter z-ai/glm-4.5-air:free → ❌ 429 Rate Limited upstream
+  - OpenRouter nvidia/nemotron-3-super-120b-a12b:free → ✅ 200 OK (slow ~10-25s)
+  - routeway.ai glm-4.5-air:free → ❌ 503 Provider Error (service down)
+
+Root Cause: 
+- Previous config pointed to OpenRouter with GLM 4.5 Air Free → upstream rate limited
+- routeway.ai was the original working provider but now returning 503 errors
+- No fallback mechanism existed — if one provider failed, the entire AI chat was broken
+
+Fix Applied (glm.ts - complete rewrite):
+- Implemented dual-provider architecture with automatic failover:
+  - Primary: routeway.ai (GLM 4.5 Air Free) — fast when available (~1-5s)
+  - Fallback: OpenRouter (nvidia nemotron-3-super-120b-a12b:free) — reliable (~10-25s)
+- Smart retry logic: try primary once, wait 3s, retry once, then immediately switch to fallback
+- Fail-fast on primary (15s timeout) to minimize user wait time
+- Proper optional chaining on completion.choices[0]
+- Comprehensive error detection: 429, 502, 503, 504, timeouts, ECONNREFUSED, provider errors
+- Detailed logging: [LLM] prefix on all log messages for easy debugging
+- Response includes provider name for transparency
+
+Files Modified:
+- .env — Added OPENROUTER_* vars as fallback config
+- src/lib/glm.ts — Complete rewrite with dual-provider failover
+- src/app/api/chat/route.ts — Updated to use new provider field in response
+
+Verification Results:
+- Lint: 0 errors
+- Chat API: ✅ Working via OpenRouter fallback (routeway.ai primary currently 503)
+- Predictions API: ✅ Working, returns score predictions (2-1 etc.)
+- Quiz API: ✅ Working, generates football trivia questions
+- Failover timing: Primary fails in ~3-5s, fallback responds in ~15-25s total
+- All 3 AI endpoints confirmed functional with automatic provider switching
+
+Files Modified:
+- .env (added OPENROUTER_API_URL, OPENROUTER_API_KEY, OPENROUTER_MODEL)
+- src/lib/glm.ts (complete rewrite - dual-provider with auto-failover)
+- src/app/api/chat/route.ts (removed unused stream destructuring, uses new provider field)
+
+## Current Project Status Assessment
+- **0 lint errors, 0 compile errors, 0 runtime errors, 0 console errors**
+- AI LLM: Dual-provider (routeway.ai primary + OpenRouter nvidia nemotron fallback)
+- All 3 AI endpoints (Chat, Predictions, Quiz) working with automatic failover
+- When routeway.ai recovers, responses will be much faster (~1-5s vs ~15-25s)
+
+## Unresolved Issues / Risks
+- routeway.ai returning 503 errors (external service issue, not code)
+- OpenRouter nvidia nemotron is slower but reliable as fallback
+- GLM free tier rate limit: 5 RPM on OpenRouter
+
+## Priority Recommendations for Next Phase
+1. Monitor routeway.ai recovery — switch back to primary when 503 resolves
+2. Consider upgrading to a paid OpenRouter model for faster/more reliable responses
+3. Continue styling improvements and feature additions

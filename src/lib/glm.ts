@@ -1,40 +1,72 @@
 /**
- * GLM 4.5 Air (Free) API wrapper
- * Uses OpenAI SDK with OpenRouter endpoint for text-based LLM completions
- * Includes built-in retry logic for rate limiting
+ * Multi-provider LLM API wrapper
+ * Primary: routeway.ai (GLM 4.5 Air Free) - fast when available
+ * Fallback: OpenRouter (nvidia nemotron) - reliable backup
+ * Automatic failover with smart retry logic
  */
 
 import OpenAI from 'openai';
 
-let _openaiClient: OpenAI | null = null;
+// ============ Provider Clients ============
 
-function getOpenAIClient(): OpenAI {
-  if (_openaiClient) return _openaiClient;
+let _primaryClient: OpenAI | null = null;
+let _fallbackClient: OpenAI | null = null;
+
+function getPrimaryClient(): OpenAI {
+  if (_primaryClient) return _primaryClient;
 
   const apiKey = process.env.GLM_API_KEY || '';
-  const baseURL = process.env.GLM_API_URL || 'https://openrouter.ai/api/v1';
+  const baseURL = process.env.GLM_API_URL || 'https://api.routeway.ai/v1';
 
   if (!apiKey) {
-    throw new Error('GLM_API_KEY is not configured. Please set it in .env file.');
+    throw new Error('GLM_API_KEY is not configured.');
   }
 
-  _openaiClient = new OpenAI({
+  _primaryClient = new OpenAI({
+    baseURL,
+    apiKey,
+    timeout: 15000, // 15s timeout (fail fast, switch to fallback)
+    maxRetries: 0,
+  });
+
+  return _primaryClient;
+}
+
+function getFallbackClient(): OpenAI | null {
+  if (_fallbackClient) return _fallbackClient;
+
+  const apiKey = process.env.OPENROUTER_API_KEY || '';
+  const baseURL = process.env.OPENROUTER_API_URL || 'https://openrouter.ai/api/v1';
+
+  if (!apiKey) return null;
+
+  _fallbackClient = new OpenAI({
     baseURL,
     apiKey,
     defaultHeaders: {
       'HTTP-Referer': 'https://pitchvision.app',
       'X-OpenRouter-Title': 'PitchVision',
     },
-    timeout: 60000, // 60s timeout for free tier
-    maxRetries: 1, // Only 1 retry at SDK level (we do our own retry below)
+    timeout: 45000, // 45s timeout (nemotron is slower)
+    maxRetries: 0,
   });
 
-  return _openaiClient;
+  return _fallbackClient;
 }
 
-function getModel(): string {
-  return process.env.GLM_MODEL || 'z-ai/glm-4.5-air:free';
+function getPrimaryModel(): string {
+  return process.env.GLM_MODEL || 'glm-4.5-air:free';
 }
+
+function getFallbackModel(): string {
+  return process.env.OPENROUTER_MODEL || 'nvidia/nemotron-3-super-120b-a12b:free';
+}
+
+function hasFallback(): boolean {
+  return !!process.env.OPENROUTER_API_KEY;
+}
+
+// ============ Types ============
 
 interface GLMMessage {
   role: 'system' | 'user' | 'assistant';
@@ -44,6 +76,7 @@ interface GLMMessage {
 export interface GLMResponseContent {
   content: string;
   model: string;
+  provider: string;
   usage?: {
     prompt_tokens: number;
     completion_tokens: number;
@@ -51,6 +84,62 @@ export interface GLMResponseContent {
   };
 }
 
+// ============ Core Function ============
+
+async function callProvider(
+  client: OpenAI,
+  model: string,
+  messages: { role: string; content: string }[],
+  options: { temperature?: number; maxTokens?: number; topP?: number },
+  providerName: string
+): Promise<GLMResponseContent> {
+  console.log(`[LLM] Calling ${providerName} with model ${model}...`);
+
+  const completion = await client.chat.completions.create({
+    model,
+    messages: messages.map(m => ({ role: m.role, content: m.content })),
+    temperature: options.temperature ?? 0.7,
+    max_tokens: options.maxTokens ?? 1024,
+    top_p: options.topP ?? 0.9,
+  });
+
+  const choice = completion.choices?.[0];
+  if (!choice || !choice.message) {
+    throw new Error(`No response from ${providerName} (empty choices)`);
+  }
+
+  return {
+    content: choice.message.content || '',
+    model: completion.model,
+    provider: providerName,
+    usage: completion.usage
+      ? {
+          prompt_tokens: completion.usage.prompt_tokens,
+          completion_tokens: completion.usage.completion_tokens,
+          total_tokens: completion.usage.total_tokens,
+        }
+      : undefined,
+  };
+}
+
+/**
+ * Check if an error is retryable (transient, might work on retry)
+ */
+function isRetryableError(error: any): boolean {
+  if (!error) return false;
+  const status = error?.status || error?.statusCode || error?.code;
+  // 429 = rate limit, 502/503/504 = server errors, timeouts
+  return [429, 502, 503, 504].includes(Number(status)) ||
+    error?.message?.includes('rate') ||
+    error?.message?.includes('timeout') ||
+    error?.message?.includes('ETIMEDOUT') ||
+    error?.message?.includes('ECONNREFUSED') ||
+    error?.message?.includes('Provider error');
+}
+
+/**
+ * Main completion function with automatic failover
+ */
 export async function glmChatCompletion(
   messages: GLMMessage[],
   options?: {
@@ -59,67 +148,58 @@ export async function glmChatCompletion(
     topP?: number;
   }
 ): Promise<GLMResponseContent> {
-  const client = getOpenAIClient();
-  const model = getModel();
-  const maxRetries = 2;
+  const mappedMessages = messages.map(m => ({ role: m.role, content: m.content }));
+  const opts = options || {};
 
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      const completion = await client.chat.completions.create({
-        model,
-        messages: messages.map(m => ({ role: m.role, content: m.content })),
-        temperature: options?.temperature ?? 0.7,
-        max_tokens: options?.maxTokens ?? 2048,
-        top_p: options?.topP ?? 0.9,
-      });
+  // === Strategy 1: Try Primary Provider (routeway.ai) ===
+  // Only try once with short timeout - fail fast to fallback
+  try {
+    const client = getPrimaryClient();
+    const model = getPrimaryModel();
+    const result = await callProvider(client, model, mappedMessages, opts, 'routeway.ai');
+    console.log(`[LLM] ✅ Primary (${model}) succeeded: ${result.content.length} chars`);
+    return result;
+  } catch (primaryError: any) {
+    const isRetryable = isRetryableError(primaryError);
+    console.error(`[LLM] Primary failed: ${primaryError?.status || primaryError?.code || 'unknown'} - ${primaryError?.message || primaryError}`);
 
-      const choice = completion.choices[0];
-      if (!choice || !choice.message) {
-        throw new Error('No response from GLM model');
+    // Only retry primary once for rate limits
+    if (isRetryable) {
+      try {
+        console.log('[LLM] Retrying primary once after 3s...');
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        const client = getPrimaryClient();
+        const model = getPrimaryModel();
+        const result = await callProvider(client, model, mappedMessages, opts, 'routeway.ai');
+        console.log(`[LLM] ✅ Primary retry (${model}) succeeded: ${result.content.length} chars`);
+        return result;
+      } catch (retryError: any) {
+        console.error(`[LLM] Primary retry also failed: ${retryError?.message || retryError}`);
       }
-
-      return {
-        content: choice.message.content || '',
-        model: completion.model,
-        usage: completion.usage
-          ? {
-              prompt_tokens: completion.usage.prompt_tokens,
-              completion_tokens: completion.usage.completion_tokens,
-              total_tokens: completion.usage.total_tokens,
-            }
-          : undefined,
-      };
-    } catch (error: any) {
-      const status = error?.status || error?.statusCode;
-      const isRateLimit = status === 429 || error?.code === 429 ||
-        error?.message?.includes('429') || error?.message?.includes('rate');
-      const isTimeout = error?.message?.includes('timeout') || error?.message?.includes('ETIMEDOUT') ||
-        error?.message?.includes('504') || error?.code === 'ETIMEDOUT';
-
-      if (isRateLimit && attempt < maxRetries) {
-        const waitTime = 5000 * (attempt + 1); // 5s, 10s
-        console.warn(`Rate limited. Retrying in ${waitTime / 1000}s (attempt ${attempt + 1}/${maxRetries})...`);
-        await new Promise(resolve => setTimeout(resolve, waitTime));
-        continue;
-      }
-
-      if (isTimeout && attempt < maxRetries) {
-        console.warn(`Timeout. Retrying (attempt ${attempt + 1}/${maxRetries})...`);
-        // Reset client to clear connection pool
-        _openaiClient = null;
-        continue;
-      }
-
-      throw error;
     }
   }
 
-  throw new Error('GLM API failed after maximum retries.');
+  // === Strategy 2: Try Fallback Provider (OpenRouter) ===
+  if (hasFallback()) {
+    console.log('[LLM] Switching to fallback provider (OpenRouter nvidia nemotron)...');
+    try {
+      const client = getFallbackClient();
+      const model = getFallbackModel();
+      const result = await callProvider(client, model, mappedMessages, opts, 'OpenRouter');
+      console.log(`[LLM] ✅ Fallback (${model}) succeeded: ${result.content.length} chars`);
+      return result;
+    } catch (fallbackError: any) {
+      console.error('[LLM] Fallback also failed:', fallbackError?.message || fallbackError);
+      throw new Error(`AI providers unavailable. Primary: ${primaryError?.message || 'error'}. Fallback: ${fallbackError?.message || 'error'}`);
+    }
+  }
+
+  throw new Error('AI providers unavailable. No fallback configured.');
 }
 
 /**
- * Check if GLM API is properly configured
+ * Check if at least one LLM API is configured
  */
 export function isGLMConfigured(): boolean {
-  return !!process.env.GLM_API_KEY;
+  return !!process.env.GLM_API_KEY || !!process.env.OPENROUTER_API_KEY;
 }

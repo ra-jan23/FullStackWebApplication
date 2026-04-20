@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useAppStore, type Page } from "@/store/useAppStore";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
+import { getAvatarOption } from "@/lib/avatars";
+import type { LucideIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +20,7 @@ import {
 } from "lucide-react";
 
 export default function Navbar() {
-  const { currentPage, setCurrentPage, user, logout, cartCount, favoritesCount, isLoading, searchQuery, setSearchQuery } = useAppStore();
+  const { currentPage, setCurrentPage, user, logout, cartCount, favoritesCount, isLoading, searchQuery, setSearchQuery, userAvatar } = useAppStore();
   const { theme, setTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -95,6 +97,9 @@ export default function Navbar() {
   ];
 
   const unreadCount = notifications.filter(n => n.unread).length;
+
+  const navAvatarOption = getAvatarOption(userAvatar);
+  const NavAvatarIcon: LucideIcon | undefined = navAvatarOption?.icon;
 
   return (
     <header className={`sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl navbar-scroll-shadow ${scrolled ? "scrolled navbar-scrolled" : ""}`}>
@@ -185,8 +190,8 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-1.5 relative" ref={profileRef}>
               <Button variant="ghost" size="sm" className="gap-1.5 rounded-lg h-9" onClick={() => setProfileOpen(!profileOpen)}>
                 <Avatar className="h-6 w-6 border-2 border-primary/30">
-                  <AvatarFallback className="bg-gradient-to-br from-primary to-emerald-500 text-primary-foreground text-xs font-bold">
-                    {user.name?.charAt(0) || "U"}
+                  <AvatarFallback className={`bg-gradient-to-br ${navAvatarOption ? `${navAvatarOption.from} ${navAvatarOption.to}` : "from-primary to-emerald-500"} text-primary-foreground text-xs`}>
+                    {NavAvatarIcon ? <NavAvatarIcon className="w-3.5 h-3.5" strokeWidth={2.5} /> : <span className="font-bold">{user.name?.charAt(0) || "U"}</span>}
                   </AvatarFallback>
                 </Avatar>
                 <span className="hidden xl:inline max-w-20 truncate">{user.name}</span>

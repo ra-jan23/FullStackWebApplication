@@ -21,17 +21,10 @@ import {
 } from "@/components/ui/select";
 import {
   User, Mail, Calendar, ShoppingBag, Ticket, ScanSearch, Heart,
-  Save, Loader2, Trash2, Shield, Palette, Trophy, CheckCircle2, Link2,
+  Save, Loader2, Trash2, Shield, Trophy, CheckCircle2, Link2, LucideIcon,
 } from "lucide-react";
-
-const AVATAR_GRADIENTS = [
-  { id: "emerald", from: "from-emerald-500", to: "to-teal-600", label: "Emerald" },
-  { id: "orange", from: "from-orange-500", to: "to-red-500", label: "Sunset" },
-  { id: "violet", from: "from-violet-500", to: "to-purple-600", label: "Violet" },
-  { id: "rose", from: "from-rose-500", to: "to-pink-500", label: "Rose" },
-  { id: "amber", from: "from-amber-500", to: "to-yellow-600", label: "Amber" },
-  { id: "cyan", from: "from-cyan-500", to: "to-sky-600", label: "Cyan" },
-];
+import AvatarSelector from "@/components/ui/AvatarSelector";
+import { getAvatarOption } from "@/lib/avatars";
 
 const TOP_TEAMS = [
   "Liverpool FC", "Real Madrid", "Arsenal FC", "Bayern Munich", "FC Barcelona",
@@ -41,9 +34,9 @@ const TOP_TEAMS = [
 ];
 
 export default function ProfilePage() {
-  const { user, token, login, logout, setCurrentPage } = useAppStore();
+  const { user, token, login, logout, setCurrentPage, userAvatar, setUserAvatar } = useAppStore();
   const [name, setName] = useState(user?.name || "");
-  const [avatar, setAvatar] = useState<string>("emerald");
+  const [avatar, setAvatar] = useState<string>(userAvatar || "trophy");
   const [favoriteTeam, setFavoriteTeam] = useState<string>("");
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -142,7 +135,8 @@ export default function ProfilePage() {
     }
   };
 
-  const selectedGradient = AVATAR_GRADIENTS.find(g => g.id === avatar) || AVATAR_GRADIENTS[0];
+  const selectedAvatar = getAvatarOption(avatar);
+  const SelectedIcon: LucideIcon | null = selectedAvatar ? selectedAvatar.icon : null;
   const userInitials = (name || user?.name || "U").split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
   const joinDate = user ? new Date().toLocaleDateString("en-US", { year: "numeric", month: "long" }) : "N/A";
 
@@ -179,31 +173,27 @@ export default function ProfilePage() {
           <div className="flex flex-col sm:flex-row gap-6 items-start">
             <div className="flex flex-col items-center gap-3">
               <Avatar className="h-20 w-20 border-4 border-primary/20 shadow-lg">
-                <AvatarFallback className={`bg-gradient-to-br ${selectedGradient.from} ${selectedGradient.to} text-white text-2xl font-bold`}>
-                  {userInitials}
+                <AvatarFallback className={`bg-gradient-to-br ${selectedAvatar ? `${selectedAvatar.from} ${selectedAvatar.to}` : "from-primary to-emerald-500"} text-white text-2xl`}>
+                  {SelectedIcon ? <SelectedIcon className="w-9 h-9" strokeWidth={2} /> : userInitials}
                 </AvatarFallback>
               </Avatar>
               <span className="text-xs text-muted-foreground font-medium">Avatar Preview</span>
             </div>
 
             <div className="flex-1 space-y-4 w-full">
-              {/* Gradient Color Picker */}
-              <div className="space-y-2">
+              {/* Avatar Picker */}
+              <div className="space-y-3">
                 <Label className="text-sm font-medium flex items-center gap-1.5">
-                  <Palette className="w-3.5 h-3.5" /> Avatar Color
+                  <Trophy className="w-3.5 h-3.5" /> Choose Your Avatar
                 </Label>
-                <div className="flex flex-wrap gap-2">
-                  {AVATAR_GRADIENTS.map((g) => (
-                    <button
-                      key={g.id}
-                      onClick={() => setAvatar(g.id)}
-                      className={`w-9 h-9 rounded-xl bg-gradient-to-br ${g.from} ${g.to} transition-all duration-200 hover:scale-110 ${
-                        avatar === g.id ? "ring-2 ring-primary ring-offset-2 ring-offset-background scale-110" : ""
-                      }`}
-                      title={g.label}
-                    />
-                  ))}
-                </div>
+                <AvatarSelector
+                  selectedId={avatar}
+                  onSelect={(id) => {
+                    setAvatar(id);
+                    setUserAvatar(id);
+                  }}
+                  size="sm"
+                />
               </div>
 
               {/* Name */}

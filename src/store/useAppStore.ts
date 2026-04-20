@@ -40,6 +40,7 @@ interface AppState {
   searchQuery: string;
   checkoutItems: any[];
   checkoutTotal: number;
+  userAvatar: string | null;
 
   setCurrentPage: (page: Page) => void;
   login: (user: User, token: string) => void;
@@ -53,6 +54,7 @@ interface AppState {
   clearCheckoutData: () => void;
   quizScore: number;
   setQuizScore: (score: number) => void;
+  setUserAvatar: (avatarId: string | null) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -66,6 +68,7 @@ export const useAppStore = create<AppState>((set) => ({
   checkoutItems: [],
   checkoutTotal: 0,
   quizScore: 0,
+  userAvatar: typeof window !== 'undefined' ? localStorage.getItem('pv_avatar') : null,
 
   setCurrentPage: (page) => set({ currentPage: page }),
 
@@ -83,6 +86,16 @@ export const useAppStore = create<AppState>((set) => ({
       localStorage.removeItem('pv_user');
     }
     set({ user: null, token: null, currentPage: 'home' });
+  },
+  setUserAvatar: (avatarId) => {
+    if (typeof window !== 'undefined') {
+      if (avatarId) {
+        localStorage.setItem('pv_avatar', avatarId);
+      } else {
+        localStorage.removeItem('pv_avatar');
+      }
+    }
+    set({ userAvatar: avatarId });
   },
 
   setCartCount: (count) => set({ cartCount: count }),
