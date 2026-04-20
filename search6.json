@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://www.prisma.io",
+    "name": "Prisma | Instant Postgres plus an ORM for simpler db workflows",
+    "snippet": "Prisma is a next-generation Node.js and TypeScript ORM for PostgreSQL, MySQL, SQL Server, SQLite, MongoDB, and CockroachDB. It provides type-safety, ...\nPrisma is a next-generation Node.js and TypeScript ORM for PostgreSQL, MySQL, SQL Server, SQLite, MongoDB, and CockroachDB. It provides type-safety, ... Missing: SQLite 2020",
+    "host_name": "www.prisma.io",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.prisma.io/docs/prisma-orm/quickstart/sqlite",
+    "name": "Quickstart: Prisma ORM with SQLite (5 min)",
+    "snippet": "In this guide, you will learn how to set up a new TypeScript project from scratch, connect it to SQLite using Prisma ORM , and generate a Prisma Client for easy, ...\nIn this guide, you will learn how to set up a new TypeScript project from scratch, connect it to SQLite using Prisma ORM, and generate a Prisma Client for easy, ... Missing: web 2020",
+    "host_name": "www.prisma.io",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.prisma.io/orm",
+    "name": "Prisma ORM | Next-generation database toolkit for TypeScript",
+    "snippet": "Prisma ORM combines a clean schema, type-safe queries, and developer-friendly workflows for building with Postgres and other databases in TypeScript.",
+    "host_name": "www.prisma.io",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://lalatenduswain.medium.com/mastering-prisma-orm-streamlining-database-magic-in-modern-web-development-05206864342f",
+    "name": "Mastering Prisma ORM: Streamlining Database Magic in",
+    "snippet": "6 Dec 2025 — Mastering Prisma ORM : Streamlining Database Magic in Modern Web Development In the fast-paced world of web development , managing database",
+    "host_name": "lalatenduswain.medium.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://dev.to/aaryan_tsx/getting-started-with-prisma-orm-simplifying-database-management-3cai",
+    "name": "Getting Started with Prisma ORM: Simplifying Database",
+    "snippet": "9 Sept 2024 — The question now is: Which database should we use? You have two main options: NoSQL or SQL databases. Initially, we might lean toward MongoDB (a ...",
+    "host_name": "dev.to",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.prisma.io/docs/orm/core-concepts/supported-databases/sqlite",
+    "name": "SQLite database connector | Prisma Documentation",
+    "snippet": "Prisma ORM supports SQLite and SQLite-compatible databases . This includes local SQLite files, Turso's distributed libSQL, and Cloudflare's serverless D1.\nPrisma ORM supports SQLite and SQLite-compatible databases. This includes local SQLite files, Turso's distributed libSQL, and Cloudflare's serverless D1. Missing: management web 2020",
+    "host_name": "www.prisma.io",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://blog.logrocket.com/prisma-orm-adoption-guide",
+    "name": "Prisma ORM adoption guide: Overview, examples, and",
+    "snippet": "7 Mar 2024 — Prisma is an ORM for Node.js and Typescript that serves as an alternative to writing plain SQL or using other database access tools, such as Knex or Sequelize.",
+    "host_name": "blog.logrocket.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://strapi.io/blog/orms-for-developers",
+    "name": "Top 5 ORMs for Developers in 2026",
+    "snippet": "16 Mar 2026 — Support for PostgreSQL, MySQL, SQLite , SQL Server, MongoDB, and CockroachDB. Prisma Client for strongly typed queries with compile-time ...",
+    "host_name": "strapi.io",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://mintlify.com/prisma/prisma/introduction",
+    "name": "Introduction to Prisma ORM",
+    "snippet": "Prisma ORM is a next-generation ORM that makes working with databases easy and type-safe. It consists of powerful tools that work together to provide an ...",
+    "host_name": "mintlify.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://prisma.tw/docs/getting-started/prisma-orm/add-to-existing-project/sqlite",
+    "name": "將Prisma ORM 新增到現有SQLite 專案",
+    "snippet": "在本指南中，您將學習如何將Prisma ORM 新增到現有TypeScript 專案中，將其連線到SQLite，內省現有資料庫模式，並開始使用型別安全的Prisma Client 進行查詢。 先決條件​. 您 ...",
+    "host_name": "prisma.tw",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

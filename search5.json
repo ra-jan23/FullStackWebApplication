@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://www.researchgate.net/publication/368085936_WebSocket_in_real_time_application",
+    "name": "WebSocket in real time application | Request PDF - ResearchGate",
+    "snippet": "Data transmission is carried out in real time via WebSockets, as outlined by Ogundeyi and Yinka-Banjo (Ogundeyi & Yinka-Banjo, 2019) . The data ...",
+    "host_name": "www.researchgate.net",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://emily-elim04.medium.com/building-real-time-apps-using-websockets-dc137ccdd34b",
+    "name": "WebSockets and Real-Time Applications | by Emily Lim - Medium",
+    "snippet": "To establish a WebSocket connection the client can send an HTTP “hand shake” request with an upgraded header, specifying that the client wants ...",
+    "host_name": "emily-elim04.medium.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://socket.io",
+    "name": "Socket.IO",
+    "snippet": "In most cases, the connection will be established with WebSocket, providing a low-overhead communication channel between the server and the client. Reliable. Missing: 2019 | Show results with: 2019",
+    "host_name": "socket.io",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://namastedev.com/blog/building-real-time-features-with-websockets-and-event-emitters",
+    "name": "Building Real-Time Features with WebSockets and Event Emitters",
+    "snippet": "Real-time chat applications; Live sports updates and score tracking; Online gaming; Collaborative document editing; Stock market data streaming ...",
+    "host_name": "namastedev.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://hackernoon.com/how-websockets-power-real-time-apps",
+    "name": "How WebSockets Power Real-Time Apps - HackerNoon",
+    "snippet": "“Let's say real-time life updates, such as live sports scores. ... Use WebSockets with live updates and REST for performing CRUD operations.",
+    "host_name": "hackernoon.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "http://eprints.umsida.ac.id/16101/1/296%20Real-Time%20Web%20Applications%20with%20Node.js%20Leveraging%20WebSockets%20and%20Socket.IO%20for%20Seamless%20Communication.pdf",
+    "name": "[PDF] Leveraging WebSockets and Socket.IO for Seamless Communication",
+    "snippet": "Real-time web applications are those that allow instant data transmission between clients and servers, enabling live interaction without needing to refresh or ... Missing: 2024 | Show results with: 2024",
+    "host_name": "eprints.umsida.ac.id",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://journal.umg.ac.id/index.php/justi/article/view/10794",
+    "name": "PENERAPAN PROTOKOL WEBSOCKET UNTUK SISTEM",
+    "snippet": "Penelitian ini bertujuan merancang dan mengimplementasikan sistem notifikasi live update pada aplikasi web e-commerce menggunakan protokol ... Missing: sports 2019",
+    "host_name": "journal.umg.ac.id",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/mrniko/netty-socketio",
+    "name": "GitHub - mrniko/netty-socketio: Socket.IO server implemented on",
+    "snippet": "This project is an open-source Java implementation of Socket.IO server. Based on Netty server framework. Licensed under the Apache License 2.0. Features. 1.x - ...",
+    "host_name": "github.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.emqx.com/en/blog/mqtt-vs-websocket",
+    "name": "MQTT vs WebSocket: Key Differences & Applications | EMQ - EMQX",
+    "snippet": "Real-Time Notifications: Delivers immediate alerts for financial trading and social media. Live Content Updates: Updates news feeds and sports ...",
+    "host_name": "www.emqx.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://socket.io/docs/v4",
+    "name": "Introduction | Socket.IO",
+    "snippet": "Socket.IO is a library that enables low-latency, bidirectional and event-based communication between a client and a server. Missing: 2019 | Show results with: 2019",
+    "host_name": "socket.io",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

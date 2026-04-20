@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://www.researchgate.net/publication/378252427_Restful_API_Security_Using_JSON_Web_Token_JWT_With_HMAC-Sha512_Algorithm_in_Session_Management",
+    "name": "(PDF) Restful API Security Using JSON Web Token (JWT) With",
+    "snippet": "In this study, security has been implemented in web services using JSON Web Token (JWT) with the HMAC-SHA512 algorithm which is stored in browser cookies.",
+    "host_name": "www.researchgate.net",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://medium.com/decathlondigital/api-security-diving-into-authentication-and-json-web-token-2387c6d49d3c",
+    "name": "API Security, Diving into Authentication and Json Web Token - Medium",
+    "snippet": "JWT are tokens containing claims encoded as a Json object, that can be digitally signed and/or encrypted. It is composed of two to three parts:.",
+    "host_name": "medium.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.borntodev.com/2023/11/01/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%83%E0%B8%8A%E0%B9%89%E0%B8%87%E0%B8%B2%E0%B8%99-jwt-json-web-tokens-%E0%B9%83%E0%B8%99%E0%B8%81%E0%B8%B2%E0%B8%A3-authentication",
+    "name": "การใช้งาน JWT (JSON Web Tokens) ในการ Authentication - BorntoDev",
+    "snippet": "การสร้าง Web Application ขึ้นมาเพื่อให้บริการข้อมูลแก่บุคคลทั่วไป อะไรคือสิ่งแรกที่เราควรต้องทำ แน่นอนว่าคำตอบก็คือ ระบบ Authentication. Missing: REST 2019",
+    "host_name": "www.borntodev.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://jwt.io/introduction",
+    "name": "JSON Web Token Introduction - jwt.io",
+    "snippet": "JSON Web Token (JWT) is an open standard (RFC 7519) that defines a compact and self-contained way for securely transmitting information between parties as a ... Missing: 2019 2024",
+    "host_name": "jwt.io",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.kern-it.be/en/definitions/jwt",
+    "name": "JWT (JSON Web Token) - Definition - KERN-IT",
+    "snippet": "JWT (JSON Web Token) is an open standard (RFC 7519) for securely transmitting information between parties as a compact, self-signed token. Missing: 2019 2024",
+    "host_name": "www.kern-it.be",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.tmssoftware.com/site/blog.asp?post=342&srsltid=AfmBOor85xkJiYwcGlAYlqqG4mfLzKQbNqbueCLZi5diIr-rB5Ha_xlr",
+    "name": "Blog | Rest Server Authentication using JWT (JSON Web Token)",
+    "snippet": "This blog post will show you how to use authorization and authentication using JSON Web Tokens.",
+    "host_name": "www.tmssoftware.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://codegive.com/blog/jwt_token_in_web_api.php",
+    "name": "Mastering JWT Tokens in Web API (2024) - CodeGive",
+    "snippet": "Learn how to implement JWT token in Web API for robust, stateless authentication and authorization. This tutorial covers implementation, ...",
+    "host_name": "codegive.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.facebook.com/groups/527494768253796/posts/1655298152140113",
+    "name": "Java Spring Boot + JWT Authentication | Secure REST APIs Step-by",
+    "snippet": "In this video you will learn: ✓ What JWT authentication is ✓ How JWT works in REST APIs ✓ How to build a login endpoint ✓ How to generate JWT ...",
+    "host_name": "www.facebook.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://dev.to/kimmaida/signing-and-validating-json-web-tokens-jwt-for-everyone-25fb",
+    "name": "Signing and Validating JSON Web Tokens (JWT) For Everyone",
+    "snippet": "This article aims to demystify signing and validating JSON Web Tokens, with little need for security or cryptography knowledge.",
+    "host_name": "dev.to",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developer.boc-group.com/adoxx/en/jwt-authentication",
+    "name": "JSON Web Token Authentication | BOC Developer Portal",
+    "snippet": "JSON Web Token Authentication. JSON Web Tokens are an open, industry standard RFC 7519 method for representing claims securely between two parties. Missing: 2019 2024",
+    "host_name": "developer.boc-group.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

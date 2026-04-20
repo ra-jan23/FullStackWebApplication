@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://files.sdiarticle5.com/wp-content/uploads/2025/01/Revised-ms_AJRCOS_129430_v1.pdf",
+    "name": "[PDF] Reliability of the Type System in TypeScript in Software Development",
+    "snippet": "Abstract. The article examines the TypeScript type system as a critical element influencing its use in software development. The primary objective of the ... Missing: Semantic Scholar\nThe article explores the principles underlying the type system, its vulnerabilities such as the use of the any type, type assertions, issues with object and ...",
+    "host_name": "files.sdiarticle5.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://journalajrcos.com/index.php/AJRCOS/article/view/561",
+    "name": "Reliability of the Type System in TypeScript in Software Development",
+    "snippet": "Page: 50-59. Issue: 2025 - Volume 18 [Issue 2]. Maksim Zemskov *. Yandex, Belgrade, Serbia. *Author to whom correspondence should be addressed. Missing: Semantic Scholar\nZemskov, Maksim. 2025. “Reliability of the Type System in TypeScript in Software Development”. Asian Journal of Research in Computer Science 18 ...",
+    "host_name": "journalajrcos.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://files.sdiarticle5.com/wp-content/uploads/2025/01/Ms_AJRCOS_129430.pdf",
+    "name": "[PDF] Reliability of the Type System in TypeScript - OPEN PEER REVIEW",
+    "snippet": "Abstract. The article examines the TypeScript type system as a critical element influencing its use in software development. The primary objective of the ... Missing: Semantic Scholar\nThe authors highlight current trends in the programming sphere, focusing on languages such as Python,. JavaScript, Java, as well as more specialized languages ...",
+    "host_name": "files.sdiarticle5.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.semanticscholar.org/paper/Understanding-TypeScript-Bierman-Abadi/1469b0cbb109c2a788a346dd0480070de8334dea",
+    "name": "[PDF] Understanding TypeScript - Semantic Scholar",
+    "snippet": "The goal of this paper is to capture the essence of TypeScript by giving a precise definition of this type system on a core set of constructs of the ... Missing: Reliability 2025 journal volume pages",
+    "host_name": "www.semanticscholar.org",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://dl.acm.org/doi/10.1016/j.jss.2025.112445",
+    "name": "An empirical study on bugs in TypeScript programming language",
+    "snippet": "The TypeScript programming language adds static types to JavaScript, which can be seen as a superset of JavaScript.",
+    "host_name": "dl.acm.org",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  }
+]

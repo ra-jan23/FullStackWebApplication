@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://tailwindcss.com",
+    "name": "Tailwind CSS - Rapidly build modern websites without ever leaving",
+    "snippet": "Tailwind CSS is a utility-first CSS framework for rapidly building modern websites without ever leaving your HTML. Missing: 2020 2024",
+    "host_name": "tailwindcss.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.researchgate.net/publication/386325676_Comparison_of_Utility-First_CSS_Framework",
+    "name": "(PDF) Comparison of Utility-First CSS Framework - ResearchGate",
+    "snippet": "This paper addresses the problem of choosing between two of the leading utility-first CSS frameworks Tailwind CSS and Tachyons by providing a comparative ...\nThe results revealed that while both frameworks are robust, Tachyons excels in performance and simplicity due to its smaller size, whereas Tailwind CSS offers ...",
+    "host_name": "www.researchgate.net",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://v1.tailwindcss.com",
+    "name": "Tailwind CSS - A Utility-First CSS Framework for Rapidly Building",
+    "snippet": "Tailwind is written in PostCSS and configured in JavaScript, which means you have the full power of a real programming language at your fingertips. Tailwind is ...\nA utility-first CSS framework for rapidly building custom designs. Tailwind CSS is a highly customizable, low-level CSS framework that gives you all of the ... Missing: performance | Show results with: performance",
+    "host_name": "v1.tailwindcss.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://dev.to/aniruddhaadak/tailwind-css-utility-first-css-framework-57l7",
+    "name": "Tailwind CSS: Utility-First CSS Framework - DEV Community",
+    "snippet": "Tailwind CSS is a utility-first CSS framework that provides a set of low-level utility classes to help you build custom designs quickly and efficiently.",
+    "host_name": "dev.to",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.reddit.com/r/reactjs/comments/1hey5ma/why_almost_everyone_i_see_uses_tailwind_css_whats",
+    "name": "Why almost everyone I see uses Tailwind CSS? What's the hype?",
+    "snippet": "I can style an entire component without changing files, without thinking about classes names, without worrying about media queries, and it just flows.",
+    "host_name": "www.reddit.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.ramotion.com/blog/what-is-tailwindcss",
+    "name": "What is TailwindCSS? The Utility-First Framework | Ramotion Agency",
+    "snippet": "It's an open-source, utility-first CSS framework that revolutionizes how developers style websites directly within HTML using concise utility ... Missing: 2020 2024",
+    "host_name": "www.ramotion.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://medium.com/@vansh.khandelwal06/a-complete-guide-to-tailwind-css-the-utility-first-css-framework-thats-changing-web-design-0189d58940a1",
+    "name": "A Complete Guide to Tailwind CSS: The Utility-First CSS Framework",
+    "snippet": "Tailwind CSS is a utility-first CSS framework that provides a comprehensive set of predefined classes. These classes cover almost every aspect of styling.",
+    "host_name": "medium.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.linkedin.com/posts/umaabu_tailwind-css-the-utility-first-framework-activity-7345876940324577280-CVuD",
+    "name": "Tailwind CSS – The utility-first framework that's changed the way",
+    "snippet": "Tailwind CSS – The utility-first framework that's changed the way developers build UIs. Here's what makes it so popular and why frontend ... Missing: performance study 2020 2024",
+    "host_name": "www.linkedin.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.geeksforgeeks.org/blogs/tailwind-css-utility-first-styling-for-rapid-ui-development",
+    "name": "Tailwind CSS: Utility-First Styling for Rapid UI Development",
+    "snippet": "Tailwind CSS is a utility-first CSS framework that simplifies web development by providing a set of pre-designed utility classes. Missing: 2020 | Show results with: 2020",
+    "host_name": "www.geeksforgeeks.org",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://yittbox.com/blog-detail/a-comprehensive-guide-to-tailwind-css",
+    "name": "The Utility-First CSS Framework Revolutionizing Web Design - YittBox",
+    "snippet": "Tailwind CSS is a utility-first CSS framework designed to streamline the process of building responsive, modern websites. Missing: study 2020",
+    "host_name": "yittbox.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

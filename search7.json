@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://www.researchgate.net/publication/380361058_The_Role_of_TypeScript_in_Enhancing_Development_with_Modern_JavaScript_Frameworks",
+    "name": "The Role of TypeScript in Enhancing Development with Modern",
+    "snippet": "TypeScript has emerged as a key player in enhancing the robustness and maintainability of applications developed with modern JavaScript frameworks.",
+    "host_name": "www.researchgate.net",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://ieeexplore.ieee.org/iel8/6287639/10820123/11072672.pdf",
+    "name": "Bridging Language Barriers in Coding: An NLP-Powered Tool for",
+    "snippet": "This study presents an interactive web-based tool that leverages Natural Language Processing. (NLP) to teach fundamental programming concepts in ...",
+    "host_name": "ieeexplore.ieee.org",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://files.sdiarticle5.com/wp-content/uploads/2025/01/Ms_AJRCOS_129430.pdf",
+    "name": "[PDF] Reliability of the Type System in TypeScript - OPEN PEER REVIEW",
+    "snippet": "The growing use of TypeScript in web application and software system development underscores the relevance of this topic. The reliability of the type system is ...",
+    "host_name": "files.sdiarticle5.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://hupp.tech/blog/typescript/typescript-in-large-scale-applications-pros-and-cons",
+    "name": "TypeScript in Large-Scale Applications: Pros and Cons",
+    "snippet": "1. Enhanced Code Quality · 2. Improved Developer Productivity · 3. Better Team Collaboration · 4. Scalability and Maintainability · 5. Compatibility ... Missing: programming language IEEE journal 2020",
+    "host_name": "hupp.tech",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://medium.com/@invictarasolutions/why-typescript-is-becoming-the-go-to-for-large-scale-javascript-projects-5439aabf4bb7",
+    "name": "Why TypeScript is Becoming the Go-To for Large-Scale JavaScript",
+    "snippet": "TypeScript allows developers to define types explicitly for variables, function parameters, and return values, helping catch potential errors at ... Missing: IEEE journal 2020",
+    "host_name": "medium.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.researchgate.net/publication/398372209_EMPIRICAL_STUDY_OF_THE_IMPACT_OF_TYPESCRIPT_ON_CODE_QUALITY_AND_DEVELOPMENT_PRODUCTIVITY_OF_WEB_APPLICATIONS",
+    "name": "EMPIRICAL STUDY OF THE IMPACT OF TYPESCRIPT ON CODE",
+    "snippet": "The results show that TypeScript leads to lower code-smell density and lower cognitive complexity, but requires more time to implement new ...",
+    "host_name": "www.researchgate.net",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.linkedin.com/pulse/10-advantages-using-typescript-scalable-web-janvi-lalwani-g37nf",
+    "name": "10 Advantages of Using TypeScript for Scalable Web Applications",
+    "snippet": "1. Type Safety for Reduced Bugs and Errors · 2. Improved Code Readability and Maintainability · 3. Enhanced Developer Productivity with Better IDE ... Missing: IEEE journal 2020",
+    "host_name": "www.linkedin.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://eleorex.com/why-typescript-development-is-the-game-changer-for-scalable-web-apps-in-2026",
+    "name": "Why TypeScript Development Powers Scalable Web Apps in 2026",
+    "snippet": "One of the most significant advantages of TypeScript development is how it makes developers' jobs easier. When you write code in JavaScript, ...",
+    "host_name": "eleorex.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://dev.to/jigar_online/8-reasons-why-typescript-is-becoming-the-go-to-for-large-scale-javascript-projects-2hla",
+    "name": "8 Reasons Why TypeScript is Becoming the Go-To for Large-Scale",
+    "snippet": "TypeScript's type system helps developers to prevent type-related bugs early, which minimizes runtime errors and makes the app more reliable.",
+    "host_name": "dev.to",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://ieeexplore.ieee.org/document/10743426",
+    "name": "TypeScript: An Open-Source Programming Language with Options",
+    "snippet": "TypeScript is a syntactical superset of JavaScript, offering features to enhance code quality and support large-scale applications.",
+    "host_name": "ieeexplore.ieee.org",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

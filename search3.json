@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://en.wikipedia.org/wiki/Single-page_application",
+    "name": "Single-page application - Wikipedia",
+    "snippet": "A single-page application (SPA) is a web application or website that interacts with the user by dynamically rewriting the current web page with new data ...",
+    "host_name": "en.wikipedia.org",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.researchgate.net/publication/357118994_The_Single_Page_Application_architecture_when_developing_secure_Web_services",
+    "name": "The Single Page Application architecture when developing secure",
+    "snippet": "The article is devoted to the development of a prototype of a secure single page-application (SPA) web service for automating user information accounting.",
+    "host_name": "www.researchgate.net",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.geeksforgeeks.org/javascript/what-is-single-page-application",
+    "name": "Single Page Application - GeeksforGeeks",
+    "snippet": "A Single Page Application (SPA) is a web app that loads content dynamically without refreshing the whole page. It uses JavaScript to update ...",
+    "host_name": "www.geeksforgeeks.org",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://iopscience.iop.org/article/10.1088/1742-6596/2091/1/012065",
+    "name": "The Single Page Application architecture when developing secure",
+    "snippet": "The article is devoted to the development of a prototype of a secure single page-application (SPA) web service for automating user information accounting.",
+    "host_name": "iopscience.iop.org",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://softwaremind.com/blog/what-is-a-single-page-application-spa",
+    "name": "What is a Single Page Application (SPA)? - Software Mind",
+    "snippet": "A Single Page Application (SPA) is a web application or website that loads a single HTML page and dynamically updates content as users ... Missing: API 2018",
+    "host_name": "softwaremind.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=TQDTqplX9QY",
+    "name": "What is a Single-Page Application (SPA)? - YouTube",
+    "snippet": "Let's demystify Single Page Applications (SPAs)! In this video, we'll explore what makes SPAs different from traditional websites, ... Missing: API 2018 2024",
+    "host_name": "www.youtube.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://radixweb.com/blog/guide-to-single-page-applications",
+    "name": "A Simple Yet Complete Guide to Single Page Applications - Radixweb",
+    "snippet": "In this guide we will discuss what single page applications are and how to build one with their examples, advantages and disadvantages.",
+    "host_name": "radixweb.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://business.adobe.com/blog/basics/learn-the-benefits-of-single-page-apps-spa",
+    "name": "Single-page applications (SPAs) — what they are and how they work",
+    "snippet": "A single-page application is a website that loads a single document and overwrites the existing page with new data from a web server rather than reloading ... Missing: REST 2018 2024",
+    "host_name": "business.adobe.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://wittgeo.medium.com/api-driven-single-page-applications-888b1335a42f",
+    "name": "API-Driven Single Page Applications | by George Witt - Medium",
+    "snippet": "In an API-driven SPA architecture, the frontend, typically built with JavaScript frameworks like React, Angular, or Vue.js, operates entirely in ... Missing: 2018 2024",
+    "host_name": "wittgeo.medium.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.rishabhsoft.com/blog/single-page-application-development",
+    "name": "Single Page Application Development - Rishabh Software",
+    "snippet": "This article covers SPA development benefits, its architecture and how being a leading single-page application development company helps you ... Missing: API 2018 2024",
+    "host_name": "www.rishabhsoft.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

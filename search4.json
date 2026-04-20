@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://ieeexplore.ieee.org/iel8/52/5204063/11217279.pdf",
+    "name": "Web Application State Management - IEEE Xplore",
+    "snippet": "This base application was replicated six times using a different state management library: Re- dux, MobX, React useContext, Zustand, Jotai, and. Recoil.",
+    "host_name": "ieeexplore.ieee.org",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.researchgate.net/publication/396964470_Web_Application_State_Management_A_Review_of_Leading_React_Frameworks",
+    "name": "Web Application State Management: A Review of Leading React",
+    "snippet": "... web development. This paper evaluates the six most popular. state management libraries—Redux, MobX, React's Context API, Zustand, Jotai,. and ...",
+    "host_name": "www.researchgate.net",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://ijsrcseit.com/index.php/home/article/view/CSEIT24106172",
+    "name": "State Management in React: Redux vs Zustand",
+    "snippet": "Abstract. This comprehensive article examines the current state of React state management solutions, focusing on Redux and Zustand as primary ... Missing: web 2020",
+    "host_name": "ijsrcseit.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.computer.org/csdl/magazine/so/2026/02/11217279/2b4UGTZpTqM",
+    "name": "Web Application State Management: A Review of Leading React",
+    "snippet": "We evaluate the six most popular state management libraries—Redux, MobX, React's Context API (application programming interface), Zustand, Jotai, and Recoil ...",
+    "host_name": "www.computer.org",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.academia.edu/143642010/STATE_MANAGEMENT_IN_LARGE_SCALE_REACT_APPLICATIONS_A_COMPREHENSIVE_ANALYSIS",
+    "name": "state management in large-scale react applications - Academia.edu",
+    "snippet": "This article provides a comprehensive analysis of state management approaches in large-scale React applications. As React applications grow in complexity, ...",
+    "host_name": "www.academia.edu",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.researchgate.net/publication/385694701_State_Management_in_React_Redux_vs_Zustand_-_A_Comprehensive_Guide",
+    "name": "(PDF) State Management in React: Redux vs Zustand - ResearchGate",
+    "snippet": "This comprehensive article examines the current state of React state management solutions, focusing on Redux and Zustand as primary implementation options. Missing: 2020 | Show results with: 2020",
+    "host_name": "www.researchgate.net",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://medium.com/globant/react-state-management-b0c81e0cbbf3",
+    "name": "React State Management — using Zustand - Medium",
+    "snippet": "Then this article is for you — it will show you how to handle React state using a simple external library called Zustand. Indeed! State and ... Missing: 2020 journal",
+    "host_name": "medium.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://javascript-conference.com/blog/react-state-management-context-zustand-jotai",
+    "name": "React State Management: Efficient Use of Context, Zustand & Jotai",
+    "snippet": "In this article, you learned about different approaches to state management in a React application. We focused on lightweight approaches ... Missing: 2020 2024",
+    "host_name": "javascript-conference.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.indium.tech/whitepapers/discovering-zustand-elevate-your-react-state-management.pdf",
+    "name": "[PDF] Discovering Zustand- Elevate Your React State Management",
+    "snippet": "Early 2020s: As React applications grew more complex, developers sought simpler alternatives to Redux. Creation of Zustand: Zustand was developed to leverage.",
+    "host_name": "www.indium.tech",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.iflair.com/state-management-redux-toolkit-vs-zustand-vs-jotai",
+    "name": "React State Management - Redux Toolkit vs Zustand vs Jotai - iFlair",
+    "snippet": "React state management is key for scalable apps. Learn how Redux Toolkit, Zustand, and Jotai help build maintainable UIs.",
+    "host_name": "www.iflair.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]
