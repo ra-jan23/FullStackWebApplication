@@ -63,10 +63,25 @@ function getModel(): string {
   return process.env.GLM_MODEL || 'glm-4.5-air:free';
 }
 
+// ============ Retry Logic ============
+
+const MAX_RETRIES = 2;
+const RETRY_DELAY_MS = 5000; // 5s between retries
+
+function isRetryableError(error: any): boolean {
+  const status = error?.status || error?.statusCode || error?.code;
+  return [429, 502, 503, 504].includes(Number(status));
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // ============ Core Function ============
 
 /**
  * Call Routeway.ai chat completions (OpenAI-compatible)
+ * Automatically retries on transient errors (503, 429, etc.)
  */
 export async function glmChatCompletion(
   messages: GLMMessage[],
@@ -79,35 +94,55 @@ export async function glmChatCompletion(
   const client = getClient();
   const model = getModel();
 
-  console.log(`[LLM] Calling Routeway.ai (${model}) with ${messages.length} messages...`);
+  let lastError: any;
 
-  const completion = await client.chat.completions.create({
-    model,
-    messages: messages.map(m => ({ role: m.role, content: m.content })),
-    temperature: options?.temperature ?? 0.7,
-    max_tokens: options?.maxTokens ?? 1024,
-    top_p: options?.topP ?? 0.9,
-  });
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      console.log(`[LLM] Calling Routeway.ai (${model}) — attempt ${attempt}/${MAX_RETRIES}...`);
 
-  const choice = completion.choices?.[0];
-  if (!choice?.message) {
-    throw new Error(`No response from Routeway.ai (empty choices)`);
+      const completion = await client.chat.completions.create({
+        model,
+        messages: messages.map(m => ({ role: m.role, content: m.content })),
+        temperature: options?.temperature ?? 0.7,
+        max_tokens: options?.maxTokens ?? 1024,
+        top_p: options?.topP ?? 0.9,
+      });
+
+      const choice = completion.choices?.[0];
+      if (!choice?.message) {
+        throw new Error('No response from AI (empty choices)');
+      }
+
+      console.log(`[LLM] ✅ Response received: ${(choice.message.content || '').length} chars`);
+
+      return {
+        content: choice.message.content || '',
+        model: completion.model,
+        provider: 'Routeway.ai',
+        usage: completion.usage
+          ? {
+              prompt_tokens: completion.usage.prompt_tokens,
+              completion_tokens: completion.usage.completion_tokens,
+              total_tokens: completion.usage.total_tokens,
+            }
+          : undefined,
+      };
+    } catch (error: any) {
+      lastError = error;
+      const status = error?.status || error?.statusCode || error?.code || 'unknown';
+      console.error(`[LLM] Attempt ${attempt} failed: ${status} — ${error?.message || error}`);
+
+      if (isRetryableError(error) && attempt < MAX_RETRIES) {
+        console.log(`[LLM] Retrying in ${RETRY_DELAY_MS / 1000}s...`);
+        await sleep(RETRY_DELAY_MS);
+        continue;
+      }
+
+      throw error;
+    }
   }
 
-  console.log(`[LLM] ✅ Response received: ${(choice.message.content || '').length} chars`);
-
-  return {
-    content: choice.message.content || '',
-    model: completion.model,
-    provider: 'Routeway.ai',
-    usage: completion.usage
-      ? {
-          prompt_tokens: completion.usage.prompt_tokens,
-          completion_tokens: completion.usage.completion_tokens,
-          total_tokens: completion.usage.total_tokens,
-        }
-      : undefined,
-  };
+  throw lastError;
 }
 
 /**
