@@ -49,7 +49,7 @@ export default function Footer() {
                   key={i}
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors"
+                  className="h-9 w-9 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors btn-press focus-ring"
                   onClick={() => toast.info(`Follow us on ${social.label}!`)}
                 >
                   {social.icon}
@@ -72,7 +72,7 @@ export default function Footer() {
                 { label: "Football News", page: "news" as Page },
                 { label: "Transfer Market", page: "transfers" as Page },
               ].map((item) => (
-                <button key={item.page} className="block text-sm text-muted-foreground hover:text-primary transition-colors hover:translate-x-0.5 transform">
+                <button key={item.page} className="block text-sm text-muted-foreground hover:text-primary transition-colors hover:translate-x-0.5 transform focus-ring">
                   {item.label}
                 </button>
               ))}
@@ -83,13 +83,13 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-4 text-sm">AI Features</h4>
             <div className="space-y-2.5">
-              <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors" onClick={() => setCurrentPage("analyze")}>
+              <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors focus-ring" onClick={() => setCurrentPage("analyze")}>
                 <Cpu className="w-3.5 h-3.5" /> Formation Detection
               </button>
-              <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors" onClick={() => setCurrentPage("chat")}>
+              <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors focus-ring" onClick={() => setCurrentPage("chat")}>
                 <MessageCircle className="w-3.5 h-3.5" /> AI Chat Expert
               </button>
-              <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors" onClick={() => setCurrentPage("predictions")}>
+              <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors focus-ring" onClick={() => setCurrentPage("predictions")}>
                 <Brain className="w-3.5 h-3.5" /> Match Predictions
               </button>
             </div>

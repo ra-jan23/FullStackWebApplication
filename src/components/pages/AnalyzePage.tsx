@@ -12,6 +12,197 @@ import {
   ScanSearch, Camera, Upload, Loader2, BarChart3, Cpu, Target, Layers
 } from "lucide-react";
 
+/* ─── 4-3-3 player positions (viewBox 0 0 800 500) ─── */
+const FORMATION_PLAYERS = [
+  { x: 55, y: 250 },   // GK
+  { x: 165, y: 90 },   // LB
+  { x: 165, y: 195 },  // CB
+  { x: 165, y: 305 },  // CB
+  { x: 165, y: 410 },  // RB
+  { x: 340, y: 120 },  // CM
+  { x: 340, y: 250 },  // CM
+  { x: 340, y: 380 },  // CM
+  { x: 530, y: 100 },  // LW
+  { x: 530, y: 250 },  // ST
+  { x: 530, y: 400 },  // RW
+];
+
+/* ─── Grass texture stripe y-positions ─── */
+const GRASS_LINES = [60, 130, 200, 270, 340, 410];
+
+function PitchDiagram({ formation }: { formation?: string }) {
+  const label = formation || "4-3-3";
+
+  return (
+    <div className="mt-5 space-y-3 animate-fade-in">
+      {/* Formation label */}
+      <div className="flex items-center gap-2">
+        <Badge variant="outline" className="rounded-lg">
+          {label} Formation Detected
+        </Badge>
+      </div>
+
+      {/* Pitch SVG container */}
+      <div className="rounded-2xl overflow-hidden border border-border shadow-sm">
+        <svg
+          viewBox="0 0 800 500"
+          className="w-full h-auto"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            {/* Player dot radial gradient */}
+            <radialGradient id="playerGrad" cx="50%" cy="40%" r="50%">
+              <stop offset="0%" stopColor="#a5b4fc" />
+              <stop offset="100%" stopColor="#4f46e5" />
+            </radialGradient>
+            {/* Player glow gradient */}
+            <radialGradient id="playerGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="white" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="white" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+
+          {/* ── Pitch background ── */}
+          <rect
+            x="0" y="0" width="800" height="500"
+            className="fill-[#2d8a4e] dark:fill-[#1a3a24] transition-all duration-500"
+          />
+
+          {/* ── Grass texture stripes (alternating shade) ── */}
+          {GRASS_LINES.map((y) => (
+            <line
+              key={`grass-${y}`}
+              x1="20" y1={y} x2="780" y2={y}
+              className="stroke-[#278f45] dark:stroke-[#173320] transition-all duration-500"
+              strokeWidth="40"
+              strokeOpacity="0.35"
+              strokeDasharray="800 60"
+              strokeDashoffset="-30"
+            />
+          ))}
+
+          {/* ── Pitch boundary ── */}
+          <rect
+            x="20" y="20" width="760" height="460" rx="2"
+            className="stroke-white/[0.9] dark:stroke-white/[0.15] transition-all duration-500"
+            strokeWidth="2.5"
+            fill="none"
+          />
+
+          {/* ── Center line ── */}
+          <line
+            x1="400" y1="20" x2="400" y2="480"
+            className="stroke-white/[0.9] dark:stroke-white/[0.15] transition-all duration-500"
+            strokeWidth="2.5"
+          />
+
+          {/* ── Center circle ── */}
+          <circle
+            cx="400" cy="250" r="60"
+            className="stroke-white/[0.9] dark:stroke-white/[0.15] transition-all duration-500"
+            strokeWidth="2.5"
+            fill="none"
+          />
+
+          {/* ── Center spot ── */}
+          <circle
+            cx="400" cy="250" r="4"
+            className="fill-white/[0.9] dark:fill-white/[0.15] transition-all duration-500"
+          />
+
+          {/* ── Left penalty area ── */}
+          <rect
+            x="20" y="85" width="130" height="330"
+            className="stroke-white/[0.9] dark:stroke-white/[0.15] transition-all duration-500"
+            strokeWidth="2.5"
+            fill="none"
+          />
+
+          {/* ── Right penalty area ── */}
+          <rect
+            x="650" y="85" width="130" height="330"
+            className="stroke-white/[0.9] dark:stroke-white/[0.15] transition-all duration-500"
+            strokeWidth="2.5"
+            fill="none"
+          />
+
+          {/* ── Left goal area ── */}
+          <rect
+            x="20" y="170" width="50" height="160"
+            className="stroke-white/[0.9] dark:stroke-white/[0.15] transition-all duration-500"
+            strokeWidth="2.5"
+            fill="none"
+          />
+
+          {/* ── Right goal area ── */}
+          <rect
+            x="730" y="170" width="50" height="160"
+            className="stroke-white/[0.9] dark:stroke-white/[0.15] transition-all duration-500"
+            strokeWidth="2.5"
+            fill="none"
+          />
+
+          {/* ── Penalty spots ── */}
+          <circle cx="145" cy="250" r="4" className="fill-white/[0.9] dark:fill-white/[0.15] transition-all duration-500" />
+          <circle cx="655" cy="250" r="4" className="fill-white/[0.9] dark:fill-white/[0.15] transition-all duration-500" />
+
+          {/* ── Penalty arcs ── */}
+          <path
+            d="M 200 185 A 60 60 0 0 1 200 315"
+            className="stroke-white/[0.9] dark:stroke-white/[0.15] transition-all duration-500"
+            strokeWidth="2.5" fill="none"
+          />
+          <path
+            d="M 600 185 A 60 60 0 0 0 600 315"
+            className="stroke-white/[0.9] dark:stroke-white/[0.15] transition-all duration-500"
+            strokeWidth="2.5" fill="none"
+          />
+
+          {/* ── Corner arcs ── */}
+          <path d="M 20 30 A 10 10 0 0 1 30 20" className="stroke-white/[0.9] dark:stroke-white/[0.15] transition-all duration-500" strokeWidth="2.5" fill="none" />
+          <path d="M 770 20 A 10 10 0 0 1 780 30" className="stroke-white/[0.9] dark:stroke-white/[0.15] transition-all duration-500" strokeWidth="2.5" fill="none" />
+          <path d="M 20 470 A 10 10 0 0 0 30 480" className="stroke-white/[0.9] dark:stroke-white/[0.15] transition-all duration-500" strokeWidth="2.5" fill="none" />
+          <path d="M 770 480 A 10 10 0 0 0 780 470" className="stroke-white/[0.9] dark:stroke-white/[0.15] transition-all duration-500" strokeWidth="2.5" fill="none" />
+
+          {/* ── Goals (behind goal line) ── */}
+          <rect x="5" y="215" width="15" height="70" rx="2" className="stroke-white/70 dark:stroke-white/10 transition-all duration-500" strokeWidth="2" fill="none" />
+          <rect x="780" y="215" width="15" height="70" rx="2" className="stroke-white/70 dark:stroke-white/10 transition-all duration-500" strokeWidth="2" fill="none" />
+
+          {/* ══════════════════════════════════════════
+              Player dots – 4-3-3 formation
+              ══════════════════════════════════════════ */}
+          {FORMATION_PLAYERS.map((p, i) => (
+            <g key={`player-${i}`} className="transition-all duration-500">
+              {/* Soft glow behind dot */}
+              <circle
+                cx={p.x} cy={p.y} r="20"
+                fill="url(#playerGlow)"
+                className="opacity-100 dark:opacity-40 transition-opacity duration-500"
+              />
+              {/* Main dot */}
+              <circle
+                cx={p.x} cy={p.y} r="12"
+                fill="url(#playerGrad)"
+                className="stroke-white/30 dark:stroke-white/10 transition-all duration-500"
+                strokeWidth="1.5"
+              />
+              {/* Jersey number */}
+              <text
+                x={p.x} y={p.y + 1}
+                textAnchor="middle"
+                dominantBaseline="central"
+                className="fill-white dark:fill-white/80 text-[10px] font-bold pointer-events-none select-none transition-all duration-500"
+              >
+                {i + 1}
+              </text>
+            </g>
+          ))}
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 export default function AnalyzePage() {
   const { token } = useAppStore();
   const [image, setImage] = useState<string | null>(null);
@@ -92,6 +283,8 @@ export default function AnalyzePage() {
                   </div>
                 )}
                 <div><h4 className="font-semibold mb-2 flex items-center gap-2"><Target className="w-4 h-4 text-primary" /> Tactical Analysis</h4><p className="text-sm text-muted-foreground leading-relaxed">{result.analysis}</p></div>
+                {/* Pitch diagram with detected formation */}
+                <PitchDiagram formation={result.formation} />
               </div>
             ) : (
               <div className="text-center py-12 text-muted-foreground"><ScanSearch className="w-16 h-16 mx-auto mb-4 opacity-20" /><p>Upload an image and click &quot;Analyze Formation&quot; to see results</p></div>

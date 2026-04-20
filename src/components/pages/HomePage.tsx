@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAppStore, type Page } from "@/store/useAppStore";
 import { toast } from "sonner";
 
@@ -28,8 +28,27 @@ export default function HomePage() {
     }
   };
 
+  // Intersection Observer for scroll animations
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+    );
+    const els = scrollRef.current?.querySelectorAll(".animate-on-scroll, .animate-on-scroll-left, .animate-on-scroll-right, .animate-on-scroll-scale");
+    els?.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="animate-fade-in">
+    <div ref={scrollRef} className="animate-fade-in">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
@@ -66,13 +85,13 @@ export default function HomePage() {
               Analyze formations with AI, watch stunning highlights, shop official jerseys, and book match tickets — all in one platform.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button size="lg" className="gap-2 text-base rounded-xl shadow-lg shadow-primary/30 h-12 px-6" onClick={() => setCurrentPage(user ? "analyze" : "register")}>
+              <Button size="lg" className="gap-2 text-base rounded-xl shadow-lg shadow-primary/30 h-12 px-6 btn-press" onClick={() => setCurrentPage(user ? "analyze" : "register")}>
                 <ScanSearch className="w-5 h-5" /> Try AI Analysis
               </Button>
-              <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl border-white/25 text-white hover:bg-white/15 hover:text-white h-12 px-6 backdrop-blur-sm" onClick={() => setCurrentPage("store")}>
+              <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl border-white/25 text-white hover:bg-white/15 hover:text-white h-12 px-6 backdrop-blur-sm btn-press" onClick={() => setCurrentPage("store")}>
                 <Store className="w-5 h-5" /> Browse Jerseys
               </Button>
-              <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl border-white/25 text-white hover:bg-white/15 hover:text-white h-12 px-6 backdrop-blur-sm" onClick={() => setCurrentPage("chat")}>
+              <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl border-white/25 text-white hover:bg-white/15 hover:text-white h-12 px-6 backdrop-blur-sm btn-press" onClick={() => setCurrentPage("chat")}>
                 <MessageCircle className="w-5 h-5" /> AI Chat
               </Button>
             </div>
@@ -125,12 +144,12 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="container mx-auto px-4 py-20 md:py-28">
+      <section className="container mx-auto px-4 py-20 md:py-28 animate-on-scroll">
         <div className="text-center mb-14">
           <Badge variant="outline" className="mb-4 px-4 py-1.5 rounded-full">
             <Crown className="w-3 h-3 mr-1.5" /> Core Features
           </Badge>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Everything a Football Fan Needs</h2>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 gradient-text-animated">Everything a Football Fan Needs</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
             From AI-powered match analysis to ticket booking, PitchVision brings the complete football experience to your fingertips.
           </p>
@@ -150,7 +169,7 @@ export default function HomePage() {
           ].map((feature, i) => (
             <Card
               key={i}
-              className="group cursor-pointer hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border hover:border-primary/20 relative overflow-hidden card-hover-lift"
+              className="group cursor-pointer hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border hover:border-primary/20 relative overflow-hidden card-hover-lift hover-glow card-glass"
               onClick={() => setCurrentPage(feature.page === "analyze" && !user ? "login" : feature.page)}
             >
               <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
@@ -172,7 +191,7 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-emerald-500/5 border-y">
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-emerald-500/5 border-y animate-on-scroll">
         <div className="absolute inset-0 dot-grid-pattern opacity-30" />
         <div className="container mx-auto px-4 py-20 relative">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-10 text-center stagger-fade">
@@ -196,7 +215,7 @@ export default function HomePage() {
       </section>
 
       {/* How It Works */}
-      <section className="container mx-auto px-4 py-20 md:py-28">
+      <section className="container mx-auto px-4 py-20 md:py-28 animate-on-scroll">
         <div className="text-center mb-14">
           <Badge variant="outline" className="mb-4 px-4 py-1.5 rounded-full">
             <Cpu className="w-3 h-3 mr-1.5" /> How It Works
@@ -264,7 +283,7 @@ export default function HomePage() {
       </section>
 
       {/* Testimonials */}
-      <section className="bg-muted/40 border-y">
+      <section className="bg-muted/40 border-y animate-on-scroll">
         <div className="container mx-auto px-4 py-20">
           <div className="text-center mb-14">
             <Badge variant="outline" className="mb-4 px-4 py-1.5 rounded-full">
@@ -278,7 +297,7 @@ export default function HomePage() {
               { name: "Sarah K.", role: "Arsenal Fan", text: "Finally a platform that combines everything — jerseys, tickets, and highlights. The UI is beautiful and super easy to use.", avatar: "SK", rating: 5 },
               { name: "James P.", role: "Sports Journalist", text: "The match analysis feature saves me hours of work. I can quickly identify formations and tactical setups from match photos.", avatar: "JP", rating: 4 },
             ].map((t, i) => (
-              <Card key={i} className="glass hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <Card key={i} className="card-glass glass hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <CardContent className="p-6">
                   <div className="flex gap-0.5 mb-4">
                     {Array.from({ length: 5 }).map((_, j) => (
@@ -303,7 +322,7 @@ export default function HomePage() {
       </section>
 
       {/* Newsletter CTA */}
-      <section className="bg-primary text-primary-foreground relative overflow-hidden">
+      <section className="bg-primary text-primary-foreground relative overflow-hidden animate-on-scroll">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDUpIi8+PC9zdmc+')] opacity-30" />
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
         <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
@@ -326,7 +345,7 @@ export default function HomePage() {
                   onChange={e => setEmail(e.target.value)}
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/50 h-12 rounded-xl"
                 />
-                <Button type="submit" variant="secondary" size="lg" className="rounded-xl shadow-lg h-12 px-6 gap-2 whitespace-nowrap">
+                <Button type="submit" variant="secondary" size="lg" className="rounded-xl shadow-lg h-12 px-6 gap-2 whitespace-nowrap btn-press">
                   Subscribe <ArrowLeft className="w-4 h-4 rotate-[-90deg]" />
                 </Button>
               </form>
@@ -341,19 +360,19 @@ export default function HomePage() {
       </section>
 
       {/* Bottom CTA */}
-      <section className="container mx-auto px-4 py-20 text-center">
+      <section className="container mx-auto px-4 py-20 text-center animate-on-scroll">
         <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Analyze Your First Match?</h2>
         <p className="text-muted-foreground mb-8 max-w-xl mx-auto text-lg">
           Join thousands of football fans using PitchVision to understand the beautiful game at a deeper level.
         </p>
         <div className="flex flex-wrap gap-3 justify-center">
-          <Button size="lg" className="gap-2 text-base rounded-xl shadow-lg shadow-primary/20 h-12 px-6" onClick={() => setCurrentPage(user ? "analyze" : "register")}>
+          <Button size="lg" className="gap-2 text-base rounded-xl shadow-lg shadow-primary/20 h-12 px-6 btn-press" onClick={() => setCurrentPage(user ? "analyze" : "register")}>
             <Zap className="w-5 h-5" /> Get Started Free
           </Button>
-          <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl h-12 px-6" onClick={() => setCurrentPage("highlights")}>
+          <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl h-12 px-6 btn-press" onClick={() => setCurrentPage("highlights")}>
             <Play className="w-5 h-5" /> Watch Highlights
           </Button>
-          <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl h-12 px-6" onClick={() => setCurrentPage("chat")}>
+          <Button size="lg" variant="outline" className="gap-2 text-base rounded-xl h-12 px-6 btn-press" onClick={() => setCurrentPage("chat")}>
             <MessageCircle className="w-5 h-5" /> Chat with AI
           </Button>
         </div>

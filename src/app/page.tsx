@@ -26,6 +26,7 @@ import PredictionsPage from "@/components/pages/PredictionsPage";
 import OrdersPage from "@/components/pages/OrdersPage";
 import NewsPage from "@/components/pages/NewsPage";
 import TransferMarketPage from "@/components/pages/TransferMarketPage";
+import NotificationsPage from "@/components/pages/NotificationsPage";
 import Footer from "@/components/pages/Footer";
 
 // ==================== MAIN APP ====================
@@ -51,13 +52,15 @@ export default function App() {
   if (!mounted || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center space-y-6 animate-fade-in">
+        <div className="text-center space-y-8 animate-fade-in max-w-sm w-full px-6">
+          {/* Logo */}
           <div className="relative w-20 h-20 mx-auto">
             <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center shadow-xl shadow-primary/30 animate-bounce-in">
               <Target className="w-10 h-10 text-primary-foreground" />
             </div>
             <div className="absolute inset-0 w-20 h-20 rounded-2xl border-2 border-primary/20 animate-pulse" />
           </div>
+          {/* Title */}
           <div>
             <div className="text-2xl font-bold mb-1">Pitch<span className="text-primary">Vision</span></div>
             <div className="text-sm text-muted-foreground flex items-center justify-center gap-2">
@@ -67,6 +70,18 @@ export default function App() {
               </span>
             </div>
           </div>
+          {/* Skeleton content preview */}
+          <div className="space-y-3 text-left">
+            <div className="skeleton skeleton-card w-full" />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="skeleton h-16 rounded-xl" />
+              <div className="skeleton h-16 rounded-xl" />
+            </div>
+            <div className="skeleton skeleton-text w-full" />
+            <div className="skeleton skeleton-text w-4/5" />
+            <div className="skeleton skeleton-text w-3/5" />
+          </div>
+          {/* Progress bar */}
           <div className="w-48 h-1 rounded-full bg-muted overflow-hidden mx-auto">
             <div className="h-full w-1/2 bg-gradient-to-r from-primary to-emerald-500 rounded-full animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
           </div>
@@ -113,6 +128,7 @@ export default function App() {
       case "orders": return requireAuth(<OrdersPage />);
       case "news": return <NewsPage />;
       case "transfers": return <TransferMarketPage />;
+      case "notifications": return <NotificationsPage />;
       default: return <HomePage />;
     }
   };
@@ -120,13 +136,13 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
-      <main className="flex-1">{renderPage()}</main>
+      <main className="flex-1"><div key={currentPage} className="page-enter">{renderPage()}</div></main>
       <Footer />
       {/* Scroll to Top Button */}
       {showScrollTop && (
         <Button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 z-40 w-11 h-11 rounded-full shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 text-primary-foreground animate-fade-in transition-opacity"
+          className="fixed bottom-6 right-6 z-40 w-11 h-11 rounded-full shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 text-primary-foreground animate-fade-in transition-opacity btn-press focus-ring"
           size="icon"
         >
           <ArrowUp className="w-5 h-5" />

@@ -11,7 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import {
   Ticket, Video, ScanSearch, ShoppingCart, Store, Play, Eye,
   CreditCard, TrendingUp, Camera, Timer, Trophy, Activity, Heart,
-  Brain, MessageCircle, Zap, BarChart3, Calendar, ArrowUpRight
+  Brain, MessageCircle, Zap, BarChart3, Calendar, ArrowUpRight, Bell
 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -235,6 +235,8 @@ export default function DashboardPage() {
                   { label: "Watch Highlights", icon: <Play className="w-5 h-5" />, page: "highlights" as Page, color: "text-orange-500", bg: "bg-orange-500/10" },
                   { label: "Book Tickets", icon: <Ticket className="w-5 h-5" />, page: "tickets" as Page, color: "text-purple-500", bg: "bg-purple-500/10" },
                   { label: "AI Chat", icon: <MessageCircle className="w-5 h-5" />, page: "chat" as Page, color: "text-cyan-500", bg: "bg-cyan-500/10" },
+                  { label: "My Orders", icon: <ShoppingCart className="w-5 h-5" />, page: "orders" as Page, color: "text-primary", bg: "bg-primary/10" },
+                  { label: "Notifications", icon: <Bell className="w-5 h-5" />, page: "notifications" as Page, color: "text-amber-500", bg: "bg-amber-500/10" },
                 ].map((action, i) => (
                   <Button
                     key={i}

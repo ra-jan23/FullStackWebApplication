@@ -24,10 +24,8 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [notifOpen, setNotifOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
-  const notifRef = useRef<HTMLDivElement>(null);
   const localSearchQuery = useState(searchQuery);
 
   useEffect(() => {
@@ -48,9 +46,6 @@ export default function Navbar() {
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
         setProfileOpen(false);
       }
-      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
-        setNotifOpen(false);
-      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -58,7 +53,9 @@ export default function Navbar() {
 
   const navItems: { page: Page; label: string; icon: React.ReactNode; auth?: boolean }[] = [
     { page: "home", label: "Home", icon: <Home className="w-4 h-4" /> },
+    { page: "notifications", label: "Notifications", icon: <Bell className="w-4 h-4" /> },
     { page: "dashboard", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4" />, auth: true },
+    { page: "orders", label: "My Orders", icon: <ShoppingBag className="w-4 h-4" />, auth: true },
     { page: "match-center", label: "Match Center", icon: <Trophy className="w-4 h-4" /> },
     { page: "store", label: "Jersey Store", icon: <Store className="w-4 h-4" /> },
     { page: "favorites", label: "Favorites", icon: <Heart className="w-4 h-4" />, auth: true },
@@ -98,7 +95,7 @@ export default function Navbar() {
   const unreadCount = notifications.filter(n => n.unread).length;
 
   return (
-    <header className={`sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl navbar-scroll-shadow ${scrolled ? "scrolled" : ""}`}>
+    <header className={`sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl navbar-scroll-shadow ${scrolled ? "scrolled navbar-scrolled" : ""}`}>
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleNavClick("home")}>
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center shadow-lg shadow-primary/25">
@@ -125,13 +122,18 @@ export default function Navbar() {
                 {item.icon}
                 <span className="hidden xl:inline">{item.label}</span>
                 {item.page === "cart" && cartCount > 0 && (
-                  <Badge variant="destructive" className="h-5 min-w-5 px-1 text-xs rounded-full">
+                  <Badge variant="destructive" className="h-5 min-w-5 px-1 text-xs rounded-full badge-pop">
                     {cartCount}
                   </Badge>
                 )}
                 {item.page === "favorites" && favoritesCount > 0 && (
-                  <Badge variant="secondary" className="h-5 min-w-5 px-1 text-xs rounded-full bg-rose-500 text-white hover:bg-rose-500">
+                  <Badge variant="secondary" className="h-5 min-w-5 px-1 text-xs rounded-full bg-rose-500 text-white hover:bg-rose-500 badge-pop">
                     {favoritesCount}
+                  </Badge>
+                )}
+                {item.page === "notifications" && unreadCount > 0 && (
+                  <Badge variant="destructive" className="h-5 min-w-5 px-1 text-xs rounded-full badge-pop">
+                    {unreadCount}
                   </Badge>
                 )}
               </Button>
@@ -146,7 +148,7 @@ export default function Navbar() {
               <Input
                 autoFocus
                 placeholder="Search jerseys..."
-                className="w-40 md:w-56 h-9 text-sm rounded-lg"
+                className="w-40 md:w-56 h-9 text-sm rounded-lg focus-ring"
                 value={localSearchQuery[0]}
                 onChange={e => localSearchQuery[1](e.target.value)}
                 onKeyDown={e => { if (e.key === "Escape") setSearchOpen(false); if (e.key === "Enter") handleSearchSubmit(); }}
@@ -162,40 +164,12 @@ export default function Navbar() {
           )}
 
           {/* Notification Bell */}
-          <div className="relative" ref={notifRef}>
-            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg relative" onClick={() => setNotifOpen(!notifOpen)}>
-              <Bell className="w-4 h-4" />
-              {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{unreadCount}</span>
-              )}
-            </Button>
-            {notifOpen && (
-              <div className="absolute right-0 top-full mt-1 w-80 bg-popover border rounded-xl shadow-xl z-50 animate-fade-in overflow-hidden">
-                <div className="px-4 py-3 border-b flex items-center justify-between">
-                  <h3 className="font-semibold text-sm">Notifications</h3>
-                  <Badge variant="secondary" className="text-xs">{unreadCount} new</Badge>
-                </div>
-                <div className="max-h-72 overflow-y-auto">
-                  {notifications.map(n => (
-                    <div key={n.id} className={`flex items-start gap-3 px-4 py-3 hover:bg-muted/50 transition-colors cursor-pointer ${n.unread ? "bg-primary/5" : ""}`}>
-                      <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 mt-0.5">{n.icon}</div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium text-sm">{n.title}</p>
-                          {n.unread && <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />}
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{n.desc}</p>
-                        <p className="text-xs text-muted-foreground/60 mt-1">{n.time}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="px-4 py-2.5 border-t">
-                  <Button variant="ghost" size="sm" className="w-full text-xs text-primary">View All Notifications</Button>
-                </div>
-              </div>
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg relative" onClick={() => handleNavClick("notifications")}>
+            <Bell className="w-4 h-4" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center badge-pop">{unreadCount}</span>
             )}
-          </div>
+          </Button>
 
           {mounted && (
             <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
