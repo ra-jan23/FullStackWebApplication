@@ -29,6 +29,7 @@ export default function StorePage() {
   const [compareMode, setCompareMode] = useState(false);
   const [compareIds, setCompareIds] = useState<Set<string>>(new Set());
   const [compareOpen, setCompareOpen] = useState(false);
+  const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const { token, setCurrentPage, searchQuery, setSearchQuery, setFavoritesCount } = useAppStore();
 
   useEffect(() => {
@@ -116,6 +117,15 @@ export default function StorePage() {
         <div>
           <h1 className="text-3xl font-bold mb-2">Official Jersey Store</h1>
           <p className="text-muted-foreground">Authentic football jerseys from the world&apos;s biggest clubs</p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-2 gap-2 rounded-lg w-fit"
+            onClick={() => setSizeGuideOpen(true)}
+          >
+            <Ruler className="w-4 h-4" />
+            Size Guide
+          </Button>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -199,6 +209,56 @@ export default function StorePage() {
       {sorted.length === 0 && (
         <div className="text-center py-16 text-muted-foreground"><Store className="w-12 h-12 mx-auto mb-4 opacity-50" /><p>No jerseys found matching {searchQuery ? `"${searchQuery}"` : "your filter"}.</p></div>
       )}
+
+      {/* Size Guide Dialog */}
+      <Dialog open={sizeGuideOpen} onOpenChange={setSizeGuideOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Ruler className="w-5 h-5 text-primary" />
+              Jersey Size Guide
+            </DialogTitle>
+            <DialogDescription>Find your perfect fit</DialogDescription>
+          </DialogHeader>
+
+          <div className="rounded-lg border overflow-hidden">
+            <table className="size-guide-table w-full text-sm">
+              <thead>
+                <tr className="bg-muted/80">
+                  <th className="px-4 py-3 text-left font-semibold">Size</th>
+                  <th className="px-4 py-3 text-left font-semibold">Chest (in)</th>
+                  <th className="px-4 py-3 text-left font-semibold">Waist (in)</th>
+                  <th className="px-4 py-3 text-left font-semibold">Length (in)</th>
+                  <th className="px-4 py-3 text-left font-semibold">Hip (in)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["XS", "34-36", "28-30", "26", "34-36"],
+                  ["S", "36-38", "30-32", "27", "36-38"],
+                  ["M", "38-40", "32-34", "28", "38-40"],
+                  ["L", "40-42", "34-36", "29", "40-42"],
+                  ["XL", "42-44", "36-38", "30", "42-44"],
+                  ["XXL", "44-46", "38-40", "31", "44-46"],
+                  ["3XL", "46-48", "40-42", "32", "46-48"],
+                ].map(([size, chest, waist, length, hip], i) => (
+                  <tr key={size} className={i % 2 === 0 ? "bg-background" : "bg-muted/30"}>
+                    <td className="px-4 py-2.5 font-medium">{size}</td>
+                    <td className="px-4 py-2.5">{chest}</td>
+                    <td className="px-4 py-2.5">{waist}</td>
+                    <td className="px-4 py-2.5">{length}</td>
+                    <td className="px-4 py-2.5">{hip}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <p className="text-xs text-muted-foreground bg-primary/5 border border-primary/10 rounded-lg px-4 py-3">
+            💡 <strong>Tip:</strong> For a relaxed fit, size up. For a tight fit, size down.
+          </p>
+        </DialogContent>
+      </Dialog>
 
       {/* Comparison Dialog */}
       <Dialog open={compareOpen} onOpenChange={setCompareOpen}>

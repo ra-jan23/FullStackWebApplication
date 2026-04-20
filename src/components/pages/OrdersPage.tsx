@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useAppStore } from "@/store/useAppStore";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   ShoppingBag, Store, MapPin, Phone, Calendar, Package,
-  Truck, CheckCircle2, Clock, ArrowRight
+  Truck, CheckCircle2, Clock, ChevronDown, ChevronUp
 } from "lucide-react";
 
 interface OrderItem {
@@ -75,10 +74,82 @@ function formatDate(dateStr: string) {
   });
 }
 
+function getEstimatedDates(orderDate: string) {
+  const placed = new Date(orderDate);
+  const shipped = new Date(placed);
+  shipped.setDate(shipped.getDate() + 3);
+  const delivered = new Date(placed);
+  delivered.setDate(delivered.getDate() + 6);
+  return {
+    placed: placed.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }),
+    shipped: shipped.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }),
+    delivered: delivered.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }),
+  };
+}
+
+function OrderTimeline({ status, orderDate }: { status: string; orderDate: string }) {
+  const dates = getEstimatedDates(orderDate);
+
+  const steps: { label: string; date: string; state: "completed" | "active" | "pending" }[] = [
+    { label: "Order Placed", date: dates.placed, state: "completed" },
+    { label: "Shipped", date: dates.shipped, state: "pending" },
+    { label: "Delivered", date: dates.delivered, state: "pending" },
+  ];
+
+  if (status === "shipped") {
+    steps[1].state = "active";
+  } else if (status === "delivered") {
+    steps[1].state = "completed";
+    steps[2].state = "completed";
+  }
+
+  return (
+    <div className="pt-4 pb-1">
+      <div className="timeline-track">
+        {steps.map((step, idx) => {
+          let dotClass = "timeline-dot";
+          let connectorClass = "timeline-step";
+          if (step.state === "completed") {
+            dotClass += " completed";
+            connectorClass += " completed-connector";
+          } else if (step.state === "active") {
+            dotClass += " active";
+            connectorClass += " active-connector";
+          }
+
+          const icon =
+            step.state === "completed" ? (
+              <CheckCircle2 className="w-4 h-4" />
+            ) : step.state === "active" ? (
+              idx === 1 ? <Truck className="w-4 h-4" /> : <Package className="w-4 h-4" />
+            ) : (
+              <Clock className="w-3 h-3" />
+            );
+
+          return (
+            <div key={idx} className={connectorClass}>
+              <div className={dotClass}>{icon}</div>
+              <div className="mt-2 text-center">
+                <p className={`text-xs font-medium ${step.state === "pending" ? "text-muted-foreground" : "text-foreground"}`}>
+                  {step.label}
+                </p>
+                <p className={`text-[10px] mt-0.5 ${step.state === "pending" ? "text-muted-foreground/60" : "text-muted-foreground"}`}>
+                  {step.date}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function OrdersPage() {
   const { token, setCurrentPage } = useAppStore();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token) return;
@@ -260,14 +331,24 @@ export default function OrdersPage() {
                       size="sm"
                       className="gap-2 rounded-xl"
                       onClick={() =>
-                        toast.info("Tracking info coming soon!", {
-                          description: `Order #${order.id.slice(0, 8).toUpperCase()} tracking will be available soon.`,
-                        })
+                        setExpandedOrderId(
+                          expandedOrderId === order.id ? null : order.id
+                        )
                       }
                     >
                       <Truck className="w-3.5 h-3.5" /> Track Order
-                      <ArrowRight className="w-3 h-3" />
+                      {expandedOrderId === order.id ? (
+                        <ChevronUp className="w-3 h-3" />
+                      ) : (
+                        <ChevronDown className="w-3 h-3" />
+                      )}
                     </Button>
+                  </div>
+                  {/* Order Tracking Timeline (Expandable) */}
+                  <div
+                    className={`timeline-expand ${expandedOrderId === order.id ? "expanded" : ""}`}
+                  >
+                    <OrderTimeline status={order.status} orderDate={order.createdAt} />
                   </div>
                 </CardContent>
               </Card>

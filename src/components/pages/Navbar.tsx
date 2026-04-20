@@ -117,7 +117,7 @@ export default function Navbar() {
                 key={item.page}
                 variant={isActive ? "default" : "ghost"}
                 size="sm"
-                className={`gap-1.5 rounded-lg ${isActive ? "shadow-md shadow-primary/25" : "hover:bg-muted"}`}
+                className={`gap-1.5 rounded-lg transition-all duration-200 ${isActive ? "nav-active-indicator shadow-md shadow-primary/25 ring-0 ring-primary/20" : "hover:bg-muted"}`}
                 onClick={() => handleNavClick(item.page)}
               >
                 {item.icon}
@@ -165,7 +165,7 @@ export default function Navbar() {
           )}
 
           {/* Notification Bell */}
-          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg relative" onClick={() => handleNavClick("notifications")}>
+          <Button variant="ghost" size="icon" className={`h-9 w-9 rounded-lg relative ${unreadCount > 0 ? "animate-heartbeat" : ""}`} onClick={() => handleNavClick("notifications")}>
             <Bell className="w-4 h-4" />
             {unreadCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center badge-pop">{unreadCount}</span>
@@ -173,7 +173,7 @@ export default function Navbar() {
           </Button>
 
           {mounted && (
-            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg transition-all duration-300 hover:scale-110" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </Button>
           )}
@@ -250,7 +250,7 @@ export default function Navbar() {
                 <Button
                   key={item.page}
                   variant={isActive ? "default" : "outline"}
-                  className={`flex-col gap-1 h-auto py-3 rounded-xl text-xs ${isActive ? "shadow-md" : ""}`}
+                  className={`flex-col gap-1 h-auto py-3 rounded-xl text-xs ${isActive ? "shadow-md ring-2 ring-primary/30" : ""}`}
                   onClick={() => handleNavClick(item.page)}
                 >
                   {item.icon}

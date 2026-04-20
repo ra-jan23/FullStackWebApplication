@@ -28,6 +28,35 @@ const STADIUMS: Record<string, { capacity: string; city: string; country: string
   "Camp Nou": { capacity: "99,354", city: "Barcelona", country: "Spain", rating: 4.9 },
 };
 
+function formatCountdown(matchDate: string, matchTime: string, now: Date): { text: string; urgent: boolean; passed: boolean } {
+  const matchDateTime = new Date(`${matchDate}T${matchTime}`);
+  const diff = matchDateTime.getTime() - now.getTime();
+
+  if (diff <= 0) return { text: "Started", urgent: false, passed: true };
+
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  const isToday =
+    now.getFullYear() === matchDateTime.getFullYear() &&
+    now.getMonth() === matchDateTime.getMonth() &&
+    now.getDate() === matchDateTime.getDate();
+
+  if (isToday) {
+    const h = matchDateTime.getHours().toString().padStart(2, "0");
+    const m = matchDateTime.getMinutes().toString().padStart(2, "0");
+    return { text: `Today at ${h}:${m}`, urgent: false, passed: false };
+  }
+
+  const urgent = diff < 60 * 60 * 1000; // less than 1 hour
+  if (days > 0) {
+    return { text: `Starts in ${days}d ${hours % 24}h ${minutes % 60}m ${seconds % 60}s`, urgent, passed: false };
+  }
+  return { text: `Starts in ${hours}h ${minutes % 60}m ${seconds % 60}s`, urgent, passed: false };
+}
+
 export default function TicketsPage() {
   const { token, setCurrentPage } = useAppStore();
   const [tickets, setTickets] = useState<any[]>([]);
@@ -36,6 +65,13 @@ export default function TicketsPage() {
   const [expandedTicket, setExpandedTicket] = useState<string | null>(null);
   const [form, setForm] = useState({ match: "", homeTeam: "", awayTeam: "", date: "", time: "", venue: "", section: "Standard", price: "" });
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [now, setNow] = useState(new Date());
+
+  // Live countdown timer – updates every second
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const fetchTickets = useCallback(async () => {
     if (!token) return;
@@ -169,6 +205,19 @@ export default function TicketsPage() {
                         <span className="flex items-center gap-1"><Building2 className="w-3 h-3" />{stadium.city}, {stadium.country}</span>
                       </div>
                     )}
+                    {/* Live countdown timer */}
+                    <div className="mt-2 mb-1">
+                      {(() => {
+                        const cd = formatCountdown(match.date, match.time, now);
+                        return (
+                          <div className={`flex items-center gap-1.5 text-xs bg-muted/50 rounded-lg px-3 py-1.5 ${cd.urgent ? "text-red-500" : cd.passed ? "text-muted-foreground/50" : "text-muted-foreground"}`}>
+                            {cd.urgent && <span className="status-dot-live" />}
+                            <Clock className="w-3 h-3 flex-shrink-0" />
+                            <span className={`font-medium tabular-nums tracking-tight stat-number ${cd.urgent ? "text-red-500" : ""}`}>{cd.text}</span>
+                          </div>
+                        );
+                      })()}
+                    </div>
                     <div className="mt-3 flex items-center justify-between pt-2 border-t">
                       <span className="font-bold text-primary text-lg">£{match.price}</span>
                       <span className="text-xs text-primary flex items-center gap-1 font-medium opacity-0 group-hover:opacity-100 transition-opacity">

@@ -764,3 +764,106 @@ Priority Recommendations for Next Phase:
 4. Add user order history page (My Orders) with order tracking
 5. Consider upgrading GLM plan for higher rate limits if needed
 6. Add a model selector in AI Chat to let users choose between models
+
+---
+Task ID: 15
+Agent: Main Agent (Round 10 - Styling & Features)
+Task: QA testing, styling improvements, and new feature development
+
+Work Log:
+- Read worklog.md and assessed current project status (17 pages, 20 API routes, 10 DB models)
+- Performed full QA via agent-browser:
+  - Homepage: ✅ All sections visible, 0 console errors, screenshot saved
+  - Dashboard: ✅ Tab navigation, stat cards with progress bars, 0 errors
+  - Store: ✅ Product grid with reviews, favorites, search, 0 errors
+  - Tickets: ✅ Match cards with countdown timers, 0 errors
+  - Orders: ✅ Order cards with tracking timeline, 0 errors
+  - Match Center: ✅ Standings, top scorers, H2H comparison, 0 errors
+  - 0 lint errors, 0 compile errors, 0 runtime errors throughout all pages
+
+New Features (3):
+1. **Order Tracking Timeline** (OrdersPage.tsx):
+   - Visual 3-step timeline: Order Placed → Shipped → Delivered
+   - Status-aware: completed (green check), active (pulsing primary), pending (gray)
+   - Expandable/collapsible with smooth animation (max-height transition)
+   - Auto-calculated estimated dates from order creation date
+   - Icons: CheckCircle2 (completed), Truck (shipped), Package (delivered)
+   - "Track Order" button toggles the timeline with ChevronDown/ChevronUp icons
+
+2. **Product Size Guide Dialog** (StorePage.tsx):
+   - "Size Guide" button with Ruler icon in page header
+   - Dialog component with full size chart table (7 sizes: XS through 3XL)
+   - Measurements: Chest, Waist, Length, Hip (in inches)
+   - Alternating row backgrounds for readability
+   - Helpful sizing tip at the bottom
+   - Uses size-guide-table CSS class for consistent styling
+
+3. **Match Countdown Timer** (TicketsPage.tsx):
+   - Live 1-second interval timer on each upcoming match card
+   - Smart formatting: "Xd Xh Xm Xs" / "Today at HH:MM" / "Started"
+   - Urgent state (< 1 hour): pulsing red dot + red text
+   - Monospace digits (tabular-nums) for clean number display
+   - Clock icon from lucide-react next to countdown text
+   - Subtle muted background container
+
+Enhanced Navbar (Navbar.tsx):
+   - Active page: animated bottom indicator line via nav-active-indicator class
+   - Active mobile items: ring-2 ring-primary/30 for clear active state
+   - Notification bell: animate-heartbeat when unreadCount > 0
+   - Theme toggle: smooth transition-all + hover:scale-110 effect
+
+Styling Improvements (globals.css - 12 new CSS blocks):
+- Page enter animation (.page-enter with pageSlideIn keyframe)
+- 3D card tilt hover effect (.card-3d-tilt with perspective transform)
+- Badge pop animation (@keyframes badgePop)
+- Card top accent ribbon (.card-accent-top ::before gradient line on hover)
+- Enhanced scrollable container (.scroll-container with custom scrollbar)
+- Text reveal animation (@keyframes textReveal with blur filter)
+- Button focus ring enhancement (focus-visible outline)
+- Status dot live pulse (@keyframes dotPulse)
+- Counter slide up animation (@keyframes counterSlideUp)
+- Order tracking timeline styles (.timeline-track, .timeline-step, .timeline-dot variants)
+- Size guide table styles (.size-guide-table th/td with hover effects)
+- Button glow effects (.btn-glow-primary, .btn-glow-destructive)
+
+Files Modified:
+- src/app/globals.css (+327 lines of new CSS)
+- src/components/pages/OrdersPage.tsx (order tracking timeline)
+- src/components/pages/StorePage.tsx (size guide dialog)
+- src/components/pages/TicketsPage.tsx (match countdown timer)
+- src/components/pages/Navbar.tsx (enhanced active indicators)
+
+## Current Project Status Assessment
+- **0 lint errors, 0 compile errors, 0 runtime errors, 0 console errors**
+- **17 pages**: Home, Login, Register, Dashboard, Match Center, Store, Cart, Highlights, Tickets, AI Analysis, Profile, Favorites, AI Chat, Checkout, Predictions, News, Transfer Market
+- **20 API routes**, 1 mini-service (match-service port 3004)
+- **10 database models**: User, Product, CartItem, Ticket, Highlight, MatchAnalysis, FavoriteItem, MatchEvent, Review, Order
+- **14 AI-generated images**, 22 component files
+- **Complete CRUD**: Auth, Products, Cart, Tickets, Highlights, AI Analysis, Favorites, Reviews, Orders, Predictions, Transfers
+- **AI-powered features**: Formation Analysis (VLM), Chat (GLM 4.5 Air), Match Predictions (GLM 4.5 Air), Quiz (GLM 4.5 Air)
+- **AI Search**: News via z-ai-web-dev-sdk web_search
+- **Real-time features**: WebSocket live match simulation
+- **Commerce features**: Product reviews, multi-step checkout, promo codes, favorites/wishlist, order tracking timeline
+- **Data features**: Head-to-Head team comparison, league standings, top scorers, player rankings, transfer market
+- **Dark/light theme**, mobile responsive, comprehensive animations
+
+## Completed Modifications (Round 10)
+1. ✅ Order Tracking Timeline in My Orders page (expandable 3-step visual timeline)
+2. ✅ Product Size Guide Dialog in Jersey Store (7-size chart with measurements)
+3. ✅ Match Countdown Timer in Tickets page (live 1s timer with urgent state)
+4. ✅ Enhanced Navbar with active page glow indicator and notification pulse
+5. ✅ 12 new CSS animations and utility classes
+6. ✅ Full QA passed with 0 errors across all pages
+
+## Unresolved Issues / Risks
+- GLM free tier rate limit: 5 RPM (retry logic handles gracefully)
+- Occasional Cloudflare 504 timeouts from routeway.ai (external, transient)
+
+Priority Recommendations for Next Phase:
+1. Add user profile avatar image upload
+2. Add product comparison feature for jersey store
+3. Add user order history page with order tracking persistence
+4. Add internationalization (i18n) support
+5. Consider adding WebSocket for real-time transfer news updates
+6. Add dark mode pitch diagram adaptation
+7. Add a community/forum section for football discussions
