@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import ZAI from 'z-ai-web-dev-sdk';
+import { glmChatCompletion, isGLMConfigured } from '@/lib/glm';
 
 const conversations = new Map<string, { role: string; content: string }[]>();
 
@@ -37,24 +37,36 @@ export async function POST(request: NextRequest) {
       history = [history[0], ...history.slice(-20)];
     }
 
-    const zai = await ZAI.create();
+    // Use GLM 4.5 Air for chat
+    if (isGLMConfigured()) {
+      const glmMessages = [
+        { role: 'system' as const, content: SYSTEM_PROMPT },
+        ...history.slice(1).map(m => ({ role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant', content: m.content })),
+      ];
 
-    const completion = await zai.chat.completions.create({
-      messages: history.map(m => ({ role: m.role as 'assistant' | 'user', content: m.content })),
-      thinking: { type: 'disabled' }
-    });
+      const completion = await glmChatCompletion(glmMessages, {
+        temperature: 0.8,
+        maxTokens: 1024,
+      });
 
-    const aiResponse = completion.choices[0]?.message?.content || 'Sorry, I could not generate a response. Please try again.';
+      const aiResponse = completion?.choices?.[0]?.message?.content || 'Sorry, I could not generate a response. Please try again.';
 
-    // Add assistant response to history
-    history.push({ role: 'assistant', content: aiResponse });
-    conversations.set(sid, history);
+      // Add assistant response to history
+      history.push({ role: 'assistant', content: aiResponse });
+      conversations.set(sid, history);
+
+      return NextResponse.json({
+        success: true,
+        response: aiResponse,
+        messageCount: history.length - 1,
+        model: 'GLM 4.5 Air',
+      });
+    }
 
     return NextResponse.json({
-      success: true,
-      response: aiResponse,
-      messageCount: history.length - 1
-    });
+      success: false,
+      error: 'AI model not configured. Please set GLM_API_KEY in environment variables.'
+    }, { status: 500 });
   } catch (error: any) {
     console.error('Chat API error:', error);
     return NextResponse.json({

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import ZAI from 'z-ai-web-dev-sdk';
+import { glmChatCompletion, isGLMConfigured } from '@/lib/glm';
 
 const QUIZ_PROMPTS: Record<string, string> = {
   history: `Generate a football history quiz question. Focus on World Cup history, famous moments, legendary matches, football origins, and historic milestones.`,
@@ -37,59 +37,66 @@ export async function POST(request: NextRequest) {
     const cat = category && QUIZ_PROMPTS[category] ? category : 'history';
     const num = typeof count === 'number' && count >= 1 && count <= 10 ? count : 5;
 
-    const zai = await ZAI.create();
+    if (isGLMConfigured()) {
+      const prompt = `${QUIZ_PROMPTS[cat]}\n\nGenerate ${num} unique football quiz question(s). Return each question as a JSON array. If generating multiple, return a JSON array of question objects.`;
 
-    const prompt = `${QUIZ_PROMPTS[cat]}\n\nGenerate ${num} unique football quiz question(s). Return each question as a JSON array. If generating multiple, return a JSON array of question objects.`;
-
-    const completion = await zai.chat.completions.create({
-      messages: [
-        { role: 'assistant', content: SYSTEM_PROMPT },
+      const completion = await glmChatCompletion([
+        { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: prompt }
-      ],
-      thinking: { type: 'disabled' }
-    });
+      ], {
+        temperature: 0.8,
+        maxTokens: 2048,
+      });
 
-    let responseText = completion.choices[0]?.message?.content || '';
+      let responseText = completion?.choices?.[0]?.message?.content || '';
 
-    // Clean response - remove markdown code blocks if present
-    responseText = responseText.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim();
+      // Clean response - remove markdown code blocks if present
+      responseText = responseText.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim();
 
-    // Try to parse as array
-    let questions;
-    try {
-      const parsed = JSON.parse(responseText);
-      if (Array.isArray(parsed)) {
-        questions = parsed;
-      } else {
-        questions = [parsed];
+      // Try to parse as array
+      let questions;
+      try {
+        const parsed = JSON.parse(responseText);
+        if (Array.isArray(parsed)) {
+          questions = parsed;
+        } else {
+          questions = [parsed];
+        }
+      } catch {
+        // Fallback: try to extract JSON from the response
+        const jsonMatch = responseText.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+          questions = JSON.parse(jsonMatch[0]);
+        } else {
+          questions = generateFallbackQuestions(cat, num);
+        }
       }
-    } catch {
-      // Fallback: try to extract JSON from the response
-      const jsonMatch = responseText.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
-        questions = JSON.parse(jsonMatch[0]);
-      } else {
-        questions = generateFallbackQuestions(cat, num);
-      }
+
+      // Validate and sanitize questions
+      const validatedQuestions = questions.slice(0, num).map((q: any, i: number) => ({
+        id: i + 1,
+        question: typeof q.question === 'string' ? q.question : `Question ${i + 1}`,
+        options: Array.isArray(q.options) ? q.options.slice(0, 4) : ['A', 'B', 'C', 'D'],
+        correctAnswer: typeof q.correctAnswer === 'number' && q.correctAnswer >= 0 && q.correctAnswer < 4 ? q.correctAnswer : 0,
+        explanation: typeof q.explanation === 'string' ? q.explanation : 'Great question about football!',
+        difficulty: ['easy', 'medium', 'hard'].includes(q.difficulty) ? q.difficulty : 'medium',
+        category: cat,
+      }));
+
+      return NextResponse.json({
+        success: true,
+        questions: validatedQuestions,
+        totalQuestions: validatedQuestions.length,
+        category: cat,
+        model: 'GLM 4.5 Air',
+      });
     }
 
-    // Validate and sanitize questions
-    const validatedQuestions = questions.slice(0, num).map((q: any, i: number) => ({
-      id: i + 1,
-      question: typeof q.question === 'string' ? q.question : `Question ${i + 1}`,
-      options: Array.isArray(q.options) ? q.options.slice(0, 4) : ['A', 'B', 'C', 'D'],
-      correctAnswer: typeof q.correctAnswer === 'number' && q.correctAnswer >= 0 && q.correctAnswer < 4 ? q.correctAnswer : 0,
-      explanation: typeof q.explanation === 'string' ? q.explanation : 'Great question about football!',
-      difficulty: ['easy', 'medium', 'hard'].includes(q.difficulty) ? q.difficulty : 'medium',
-      category: cat,
-    }));
-
     return NextResponse.json({
-      success: true,
-      questions: validatedQuestions,
-      totalQuestions: validatedQuestions.length,
-      category: cat,
-    });
+      success: false,
+      error: 'AI model not configured. Please set GLM_API_KEY in environment variables.',
+      questions: generateFallbackQuestions('history', 5),
+    }, { status: 500 });
   } catch (error: any) {
     console.error('Quiz API error:', error);
     return NextResponse.json({

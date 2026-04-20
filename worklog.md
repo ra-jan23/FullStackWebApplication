@@ -689,3 +689,78 @@ Priority Recommendations for Next Phase:
 2. Consider generating a presentation version of the report
 3. Add user profile avatar upload
 4. Add product comparison feature for jersey store
+
+---
+Task ID: 14
+Agent: Main Agent (Round 9 - GLM Model Integration)
+Task: Integrate GLM 4.5 Air (Free) model into AI components and verify
+
+Work Log:
+- Read worklog.md and assessed current project status (17 pages, 20 API routes, 10 DB models)
+- Identified 5 AI-powered components using z-ai-web-dev-sdk:
+  - Chat API (/api/chat) - LLM for football Q&A → Migrated to GLM
+  - Predictions API (/api/predictions) - LLM for match predictions → Migrated to GLM
+  - Quiz API (/api/quiz) - LLM for quiz generation → Migrated to GLM
+  - Analyze API (/api/analyze) - VLM for formation detection → Kept z-ai-web-dev-sdk (vision model)
+  - News API (/api/news) - Web search function → Kept z-ai-web-dev-sdk (web_search function)
+- Created src/lib/glm.ts utility wrapper with:
+  - Runtime env var reading (getGLMConfig function)
+  - OpenAI-compatible API call to routeway.ai endpoint
+  - Automatic retry logic for rate limiting (429 errors, 12s/24s wait)
+  - Proper TypeScript interfaces for request/response
+  - Configuration check helper (isGLMConfigured)
+- Updated .env with GLM_API_URL, GLM_API_KEY, GLM_MODEL
+- Updated Chat API: Replaced z-ai-web-dev-sdk with GLM, proper message format conversion (system/user/assistant roles)
+- Updated Predictions API: Replaced z-ai-web-dev-sdk with GLM, JSON parsing with fallback
+- Updated Quiz API: Replaced z-ai-web-dev-sdk with GLM, JSON array parsing with fallback
+- All 3 routes include model identifier in response ("model": "GLM 4.5 Air")
+- Fixed optional chaining on completion.choices[0] to handle edge cases
+
+Verification Results:
+- Lint: 0 errors
+- Chat API: ✅ Confirmed working with GLM 4.5 Air (returns football expert responses)
+- Quiz API: ✅ Confirmed working (generates valid quiz questions with JSON format)
+- Predictions API: ✅ Confirmed working (returns structured match predictions with probabilities)
+- Analyze API: ✅ Unchanged, still using z-ai-web-dev-sdk VLM
+- News API: ✅ Unchanged, still using z-ai-web-dev-sdk web_search
+- Note: GLM free tier has 5 RPM rate limit; retry logic handles 429 errors gracefully
+- Note: Occasional Cloudflare 504 timeouts from routeway.ai (external service, transient)
+
+Files Created:
+- src/lib/glm.ts (GLM API utility wrapper)
+
+Files Modified:
+- .env (added GLM_API_URL, GLM_API_KEY, GLM_MODEL)
+- src/app/api/chat/route.ts (migrated to GLM 4.5 Air)
+- src/app/api/predictions/route.ts (migrated to GLM 4.5 Air)
+- src/app/api/quiz/route.ts (migrated to GLM 4.5 Air)
+
+Cron Job Created:
+- webDevReview scheduled every 15 minutes (job ID: 107134)
+
+Current Project Status Assessment:
+- 0 lint errors, 0 compile errors
+- 17 pages, 20 API routes, 10 DB models, 19 component files
+- AI LLM model: GLM 4.5 Air (Free) via routeway.ai
+- AI Vision model: z-ai-web-dev-sdk VLM (for formation analysis)
+- AI Search: z-ai-web-dev-sdk web_search (for news)
+- All AI features functional with proper fallback handling
+
+Completed Modifications (Round 9):
+1. ✅ GLM 4.5 Air (Free) integrated into Chat, Predictions, and Quiz APIs
+2. ✅ Created reusable GLM utility with retry logic and rate limit handling
+3. ✅ VLM (Analyze) and Web Search (News) kept on z-ai-web-dev-sdk
+4. ✅ 0 lint errors, all APIs verified working
+5. ✅ Cron job created for continued development (job ID: 107134)
+
+Unresolved Issues / Risks:
+- GLM free tier rate limit: 5 requests per minute (retry logic in place)
+- Occasional Cloudflare 504 timeouts from routeway.ai (transient, not code issue)
+
+Priority Recommendations for Next Phase:
+1. Continue styling improvements and feature additions via cron job
+2. Add user profile avatar upload
+3. Add product comparison feature for jersey store
+4. Add user order history page (My Orders) with order tracking
+5. Consider upgrading GLM plan for higher rate limits if needed
+6. Add a model selector in AI Chat to let users choose between models

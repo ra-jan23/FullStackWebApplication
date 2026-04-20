@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import ZAI from 'z-ai-web-dev-sdk';
+import { glmChatCompletion, isGLMConfigured } from '@/lib/glm';
 
 const MATCHES = [
   { id: 1, homeTeam: "Liverpool FC", awayTeam: "Arsenal FC", league: "Premier League", venue: "Anfield", date: "2025-04-26" },
@@ -44,46 +44,50 @@ export async function POST(request: NextRequest) {
 
     const prompt = customPrompt || `Predict the upcoming match: ${match.homeTeam} vs ${match.awayTeam} (${match.league}) at ${match.venue} on ${match.date}. Provide detailed prediction with score, probabilities, key players, and tactical analysis.`;
 
-    const zai = await ZAI.create();
-
-    const completion = await zai.chat.completions.create({
-      messages: [
-        { role: 'assistant', content: SYSTEM_PROMPT },
+    if (isGLMConfigured()) {
+      const completion = await glmChatCompletion([
+        { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: prompt }
-      ],
-      thinking: { type: 'disabled' }
-    });
+      ], {
+        temperature: 0.7,
+        maxTokens: 1024,
+      });
 
-    const rawResponse = completion.choices[0]?.message?.content || '';
+      const rawResponse = completion?.choices?.[0]?.message?.content || '';
 
-    // Try to parse JSON from the response
-    let prediction;
-    try {
-      // Extract JSON from the response (may be wrapped in markdown code blocks)
-      const jsonMatch = rawResponse.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        prediction = JSON.parse(jsonMatch[0]);
-      } else {
-        prediction = JSON.parse(rawResponse);
+      // Try to parse JSON from the response
+      let prediction;
+      try {
+        const jsonMatch = rawResponse.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          prediction = JSON.parse(jsonMatch[0]);
+        } else {
+          prediction = JSON.parse(rawResponse);
+        }
+      } catch {
+        prediction = {
+          predictedScore: "1-1",
+          probabilities: { homeWin: 35, draw: 30, awayWin: 35 },
+          homeKeyPlayer: match.homeTeam.split(" ").pop(),
+          awayKeyPlayer: match.awayTeam.split(" ").pop(),
+          tacticalFactors: ["Both teams evenly matched", "Home advantage factor", "Recent form similar"],
+          prediction: rawResponse || "Analysis inconclusive. Both teams have similar strength heading into this match."
+        };
       }
-    } catch {
-      // If parsing fails, create a structured fallback
-      prediction = {
-        predictedScore: "1-1",
-        probabilities: { homeWin: 35, draw: 30, awayWin: 35 },
-        homeKeyPlayer: match.homeTeam.split(" ").pop(),
-        awayKeyPlayer: match.awayTeam.split(" ").pop(),
-        tacticalFactors: ["Both teams evenly matched", "Home advantage factor", "Recent form similar"],
-        prediction: rawResponse || "Analysis inconclusive. Both teams have similar strength heading into this match."
-      };
+
+      return NextResponse.json({
+        success: true,
+        match,
+        prediction,
+        rawAnalysis: rawResponse,
+        model: 'GLM 4.5 Air',
+      });
     }
 
     return NextResponse.json({
-      success: true,
-      match,
-      prediction,
-      rawAnalysis: rawResponse
-    });
+      success: false,
+      error: 'AI model not configured. Please set GLM_API_KEY in environment variables.'
+    }, { status: 500 });
   } catch (error: any) {
     console.error('Prediction API error:', error);
     return NextResponse.json({
