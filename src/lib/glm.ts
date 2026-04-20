@@ -1,7 +1,7 @@
 /**
  * GLM 4.5 Air (Free) API wrapper
  * Uses OpenAI SDK with OpenRouter endpoint for text-based LLM completions
- * Includes built-in retry logic via OpenAI SDK
+ * Includes built-in retry logic for rate limiting
  */
 
 import OpenAI from 'openai';
@@ -25,8 +25,8 @@ function getOpenAIClient(): OpenAI {
       'HTTP-Referer': 'https://pitchvision.app',
       'X-OpenRouter-Title': 'PitchVision',
     },
-    timeout: 30000,
-    maxRetries: 2,
+    timeout: 60000, // 60s timeout for free tier
+    maxRetries: 1, // Only 1 retry at SDK level (we do our own retry below)
   });
 
   return _openaiClient;
@@ -61,7 +61,7 @@ export async function glmChatCompletion(
 ): Promise<GLMResponseContent> {
   const client = getOpenAIClient();
   const model = getModel();
-  const maxRetries = 3;
+  const maxRetries = 2;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
@@ -90,41 +90,31 @@ export async function glmChatCompletion(
           : undefined,
       };
     } catch (error: any) {
-      const isRateLimit = error?.status === 429 || error?.code === 429 ||
+      const status = error?.status || error?.statusCode;
+      const isRateLimit = status === 429 || error?.code === 429 ||
         error?.message?.includes('429') || error?.message?.includes('rate');
-      
+      const isTimeout = error?.message?.includes('timeout') || error?.message?.includes('ETIMEDOUT') ||
+        error?.message?.includes('504') || error?.code === 'ETIMEDOUT';
+
       if (isRateLimit && attempt < maxRetries) {
-        const waitTime = 5000 * (attempt + 1); // 5s, 10s, 15s
-        console.warn(`OpenRouter rate limited. Retrying in ${waitTime / 1000}s (attempt ${attempt + 1}/${maxRetries})...`);
+        const waitTime = 5000 * (attempt + 1); // 5s, 10s
+        console.warn(`Rate limited. Retrying in ${waitTime / 1000}s (attempt ${attempt + 1}/${maxRetries})...`);
         await new Promise(resolve => setTimeout(resolve, waitTime));
         continue;
       }
+
+      if (isTimeout && attempt < maxRetries) {
+        console.warn(`Timeout. Retrying (attempt ${attempt + 1}/${maxRetries})...`);
+        // Reset client to clear connection pool
+        _openaiClient = null;
+        continue;
+      }
+
       throw error;
     }
   }
 
-  throw new Error('OpenRouter rate limit exceeded after maximum retries.');
-}
-
-/**
- * Helper: Convert z-ai-web-dev-sdk style messages to GLM format
- * z-ai uses 'assistant' for system prompts, GLM uses 'system'
- */
-export function toGLMMessages(
-  messages: Array<{ role: string; content: string }>
-): GLMMessage[] {
-  return messages.map((m, i) => {
-    let role: GLMMessage['role'];
-    if (m.role === 'assistant' && i === 0) {
-      // First assistant message in z-ai SDK is typically the system prompt
-      role = 'system';
-    } else if (m.role === 'user' || m.role === 'assistant') {
-      role = m.role;
-    } else {
-      role = 'user';
-    }
-    return { role, content: m.content };
-  });
+  throw new Error('GLM API failed after maximum retries.');
 }
 
 /**

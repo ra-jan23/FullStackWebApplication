@@ -1309,3 +1309,72 @@ Priority Recommendations for Next Phase:
 5. Add forum reply persistence to database
 6. Consider adding community moderation tools
 7. Add match event persistence to MatchEvent DB table via WebSocket
+
+---
+Task ID: 16
+Agent: Main Agent (Round 11 - AI Chat Fix)
+Task: Fix AI chat not showing responses - improve error handling, loading UX, and add cancel/retry
+
+Work Log:
+- User reported AI chat not showing responses (uploaded screenshot showing 2 user messages but no AI reply)
+- Analyzed uploaded screenshot with VLM: confirmed user sent "Greatest football rivalries of all time" twice with no AI response visible
+- Investigated dev server logs: found POST /api/chat returning 200 but taking 64s and 46s respectively
+- Root cause: GLM 4.5 Air Free tier on OpenRouter is very slow (8-75s per response), combined with:
+  1. No inline error display (errors only shown as easily-missed toast notifications)
+  2. No loading timer or progress indicator
+  3. No cancel button for long-running requests
+  4. No retry mechanism for failed messages
+
+Fixes Applied:
+
+1. **ChatPage.tsx - Complete rewrite with robust error handling:**
+   - Added 3 message types: 'user', 'assistant', 'error' (previously only user/assistant)
+   - Error messages shown INLINE in chat as red-bordered bubbles with AlertCircle icon
+   - Error bubbles include "Retry" button to re-send the failed prompt
+   - Cancelled requests show inline "Request was cancelled" message
+   - Loading state now shows: spinning Loader2 icon + "AI is thinking..." text + elapsed timer
+   - LoadingTimer component: shows seconds elapsed + rotating contextual tips ("Analyzing football data...", "Consulting the tactics board...", etc.)
+   - "Cancel" button below loading indicator to abort long requests via AbortController
+   - Info text below input: "AI responses may take 10-30 seconds on the free tier. You can cancel anytime."
+   - Uses useCallback for all handlers to prevent stale closures
+   - Proper AbortController integration: fetch signal attached, controller stored in ref
+   - New chat and clear chat both cancel any in-flight requests
+   - Message IDs added for proper React key management
+
+2. **glm.ts - Improved timeout and error handling:**
+   - Increased client timeout from 30s to 60s (free tier is slow)
+   - Reduced SDK maxRetries from 2 to 1 (we handle retries ourselves)
+   - Added timeout detection (ETIMEDOUT, 504) with automatic client reset and retry
+   - Better error classification: rate limit (429) vs timeout vs other errors
+
+3. **chat/route.ts - Cleaned up:**
+   - Removed unused 'stream' destructuring from request body
+   - Simplified error handling flow
+
+Verification Results:
+- Lint: 0 errors
+- Chat API: ✅ Working (tested via curl, returns proper responses)
+- Chat UI: ✅ Loading state shows "AI is thinking..." + timer + Cancel button
+- Chat UI: ✅ Responses display correctly in assistant message bubbles
+- Console: 0 errors
+- Compile: ✅ Successful
+
+Files Modified:
+- src/components/pages/ChatPage.tsx (complete rewrite with error handling, cancel, retry, timer)
+- src/lib/glm.ts (timeout increase, timeout retry logic, client reset)
+- src/app/api/chat/route.ts (cleanup)
+
+## Current Project Status Assessment
+- **0 lint errors, 0 compile errors, 0 runtime errors, 0 console errors**
+- AI Chat now has robust error handling with inline errors, retry, and cancel
+- GLM API timeout increased to 60s with automatic retry on timeouts
+- User experience improved: loading timer, cancel button, inline error messages
+
+## Unresolved Issues / Risks
+- GLM free tier remains slow (8-75s per response) - this is an external service limitation
+- GLM rate limit: 5 RPM (retry logic handles 429 errors)
+
+## Priority Recommendations for Next Phase
+1. Consider adding streaming support for real-time token-by-token display
+2. Consider upgrading GLM plan or switching to a faster model
+3. Continue styling improvements and feature additions via cron job
