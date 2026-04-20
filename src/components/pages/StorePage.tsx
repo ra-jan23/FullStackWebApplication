@@ -10,14 +10,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription
 } from "@/components/ui/dialog";
 import {
   Star, Plus, Store, Flame, Search, X, Heart, MessageSquare, ThumbsUp,
-  GitCompare, Check, Trash2, Package, Tag, Ruler
+  GitCompare, Check, Trash2, Package, Tag, Ruler, ArrowLeft,
+  ShoppingCart, Layers, Sparkles
 } from "lucide-react";
 
 export default function StorePage() {
@@ -28,7 +28,7 @@ export default function StorePage() {
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
   const [compareMode, setCompareMode] = useState(false);
   const [compareIds, setCompareIds] = useState<Set<string>>(new Set());
-  const [compareOpen, setCompareOpen] = useState(false);
+  const [showComparison, setShowComparison] = useState(false);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const { token, setCurrentPage, searchQuery, setSearchQuery, setFavoritesCount } = useAppStore();
 
@@ -93,6 +93,19 @@ export default function StorePage() {
     });
   };
 
+  const removeFromComparison = (productId: string) => {
+    setCompareIds(prev => {
+      const next = new Set(prev);
+      next.delete(productId);
+      return next;
+    });
+  };
+
+  const clearComparison = () => {
+    setCompareIds(new Set());
+    setShowComparison(false);
+  };
+
   const compareProducts = products.filter(p => compareIds.has(p.id));
 
   const featured = products.filter(p => p.featured);
@@ -109,7 +122,26 @@ export default function StorePage() {
     return 0;
   });
 
+  // Find min/max prices for bar-fill-left visual bars
+  const comparePrices = compareProducts.map(p => p.price);
+  const minPrice = comparePrices.length > 0 ? Math.min(...comparePrices) : 0;
+  const maxPrice = comparePrices.length > 0 ? Math.max(...comparePrices) : 0;
+  const priceRange = maxPrice - minPrice || 1;
+
   if (loading) return <div className="container mx-auto px-4 py-8"><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">{[1, 2, 3, 4, 5, 6, 7, 8].map(i => <Skeleton key={i} className="h-80 rounded-2xl" />)}</div></div>;
+
+  // Comparison Table View
+  if (showComparison && compareProducts.length >= 2) {
+    return <ComparisonView
+      compareProducts={compareProducts}
+      minPrice={minPrice}
+      maxPrice={maxPrice}
+      priceRange={priceRange}
+      addToCart={addToCart}
+      onRemove={removeFromComparison}
+      onBack={() => setShowComparison(false)}
+    />;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 animate-fade-in">
@@ -117,36 +149,26 @@ export default function StorePage() {
         <div>
           <h1 className="text-3xl font-bold mb-2">Official Jersey Store</h1>
           <p className="text-muted-foreground">Authentic football jerseys from the world&apos;s biggest clubs</p>
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-2 gap-2 rounded-lg w-fit"
-            onClick={() => setSizeGuideOpen(true)}
-          >
-            <Ruler className="w-4 h-4" />
-            Size Guide
-          </Button>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant={compareMode ? "default" : "outline"}
-            size="sm"
-            className={`gap-2 rounded-lg ${compareMode ? 'shadow-md shadow-primary/25' : ''}`}
-            onClick={() => { setCompareMode(!compareMode); if (compareMode) setCompareIds(new Set()); }}
-          >
-            <GitCompare className="w-4 h-4" />
-            {compareMode ? 'Exit Compare' : 'Compare'}
-          </Button>
-          {compareMode && compareIds.size > 0 && (
+          <div className="flex gap-2 mt-2 flex-wrap">
             <Button
+              variant="outline"
               size="sm"
               className="gap-2 rounded-lg"
-              onClick={() => setCompareOpen(true)}
-              disabled={compareIds.size < 2}
+              onClick={() => setSizeGuideOpen(true)}
             >
-              Compare ({compareIds.size}/3)
+              <Ruler className="w-4 h-4" />
+              Size Guide
             </Button>
-          )}
+            <Button
+              variant={compareMode ? "default" : "outline"}
+              size="sm"
+              className={`gap-2 rounded-lg ${compareMode ? 'shadow-md shadow-primary/25' : ''}`}
+              onClick={() => { setCompareMode(!compareMode); if (compareMode) { setCompareIds(new Set()); setShowComparison(false); } }}
+            >
+              <GitCompare className="w-4 h-4" />
+              {compareMode ? 'Exit Compare' : 'Compare'}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -190,7 +212,7 @@ export default function StorePage() {
         </div>
       </div>
 
-      {filter === "all" && (
+      {filter === "all" && !showComparison && (
         <div className="mb-10">
           <div className="flex items-center gap-2 mb-4">
             <Flame className="w-5 h-5 text-orange-500" />
@@ -202,12 +224,57 @@ export default function StorePage() {
         </div>
       )}
 
-      <h2 className="text-xl font-bold mb-4">All Jerseys</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {sorted.map((product) => (<ProductCard key={product.id} product={product} onAddToCart={addToCart} onToggleFavorite={toggleFavorite} isFavorite={favoriteIds.has(product.id)} compareMode={compareMode} isCompared={compareIds.has(product.id)} onToggleCompare={() => toggleCompare(product.id)} />))}
-      </div>
-      {sorted.length === 0 && (
+      {!showComparison && <h2 className="text-xl font-bold mb-4">All Jerseys</h2>}
+      {!showComparison && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {sorted.map((product) => (<ProductCard key={product.id} product={product} onAddToCart={addToCart} onToggleFavorite={toggleFavorite} isFavorite={favoriteIds.has(product.id)} compareMode={compareMode} isCompared={compareIds.has(product.id)} onToggleCompare={() => toggleCompare(product.id)} />))}
+        </div>
+      )}
+      {!showComparison && sorted.length === 0 && (
         <div className="text-center py-16 text-muted-foreground"><Store className="w-12 h-12 mx-auto mb-4 opacity-50" /><p>No jerseys found matching {searchQuery ? `"${searchQuery}"` : "your filter"}.</p></div>
+      )}
+
+      {/* Floating Compare Bar */}
+      {compareIds.size > 0 && !showComparison && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 animate-slide-up">
+          <div className="max-w-2xl mx-auto card-glass rounded-2xl border shadow-xl px-6 py-4 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex -space-x-2">
+                {compareProducts.map(p => (
+                  <img
+                    key={p.id}
+                    src={p.image}
+                    alt={p.name}
+                    className="w-9 h-9 rounded-full border-2 border-background object-cover shadow-sm"
+                  />
+                ))}
+              </div>
+              <span className="text-sm font-semibold">
+                {compareIds.size} item{compareIds.size !== 1 ? 's' : ''} selected
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-1.5 text-muted-foreground hover:text-destructive"
+                onClick={clearComparison}
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Clear</span>
+              </Button>
+              <Button
+                size="sm"
+                className="gap-2 rounded-lg shadow-md shadow-primary/20"
+                onClick={() => setShowComparison(true)}
+                disabled={compareIds.size < 2}
+              >
+                <GitCompare className="w-4 h-4" />
+                Compare ({compareIds.size})
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Size Guide Dialog */}
@@ -255,70 +322,302 @@ export default function StorePage() {
           </div>
 
           <p className="text-xs text-muted-foreground bg-primary/5 border border-primary/10 rounded-lg px-4 py-3">
-            💡 <strong>Tip:</strong> For a relaxed fit, size up. For a tight fit, size down.
+            <Sparkles className="w-3 h-3 inline mr-1" />
+            <strong>Tip:</strong> For a relaxed fit, size up. For a tight fit, size down.
           </p>
-        </DialogContent>
-      </Dialog>
-
-      {/* Comparison Dialog */}
-      <Dialog open={compareOpen} onOpenChange={setCompareOpen}>
-        <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <GitCompare className="w-5 h-5 text-primary" />
-              Jersey Comparison
-            </DialogTitle>
-            <DialogDescription>Side-by-side comparison of {compareProducts.length} jerseys</DialogDescription>
-          </DialogHeader>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-            {/* Header row */}
-            <div className="space-y-3" />
-            {compareProducts.map((p) => (
-              <div key={p.id} className="text-center space-y-3">
-                <img src={p.image} alt={p.name} className="w-24 h-24 object-cover rounded-xl mx-auto shadow-md" />
-                <h3 className="font-semibold text-sm">{p.name}</h3>
-                <Badge variant="outline" className="text-xs">{p.team}</Badge>
-              </div>
-            ))}
-
-            {/* Comparison rows */}
-            {[
-              { label: 'Price', icon: <Tag className="w-4 h-4" />, render: (p: any) => <span className="text-lg font-bold text-primary">£{p.price.toFixed(2)}</span>, best: (items: any[]) => Math.min(...items.map((i: any) => i.price)) },
-              { label: 'Rating', icon: <Star className="w-4 h-4" />, render: (p: any) => <div><div className="flex gap-0.5 justify-center">{[1,2,3,4,5].map(i => <Star key={i} className={`w-4 h-4 ${i <= Math.round(p.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />)}</div><span className="text-sm font-medium">{p.rating.toFixed(1)}</span></div>, best: (items: any[]) => Math.max(...items.map((i: any) => i.rating)) },
-              { label: 'Sizes Available', icon: <Ruler className="w-4 h-4" />, render: (p: any) => <div className="flex gap-1 justify-center flex-wrap">{(p.sizes?.split(',') || []).map((s: string) => <Badge key={s} variant="outline" className="text-xs">{s}</Badge>)}</div>, best: () => 0 },
-              { label: 'Stock', icon: <Package className="w-4 h-4" />, render: (p: any) => <Badge variant={p.stock > 20 ? 'default' : p.stock > 0 ? 'secondary' : 'destructive'} className="text-xs">{p.stock > 0 ? `${p.stock} in stock` : 'Out of stock'}</Badge>, best: (items: any[]) => Math.max(...items.map((i: any) => i.stock)) },
-              { label: 'Featured', icon: <Check className="w-4 h-4" />, render: (p: any) => p.featured ? <Badge className="bg-amber-500 text-white text-xs"><Star className="w-3 h-3 mr-1" />Featured</Badge> : <span className="text-muted-foreground text-xs">No</span>, best: () => 0 },
-            ].map((row, i) => (
-              <React.Fragment key={i}>
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 text-sm font-medium">
-                  {row.icon} {row.label}
-                </div>
-                {compareProducts.map((p) => {
-                  const bestVal = row.best ? row.best(compareProducts) : 0;
-                  const isBest = row.label === 'Price' ? p.price === bestVal : row.label === 'Rating' ? p.rating === bestVal : row.label === 'Stock' ? p.stock === bestVal : false;
-                  return (
-                    <div key={p.id} className={`p-3 rounded-lg text-center ${isBest ? 'bg-primary/5 border border-primary/20' : ''}`}>
-                      {row.render(p)}
-                    </div>
-                  );
-                })}
-              </React.Fragment>
-            ))}
-          </div>
-
-          <div className="flex gap-3 mt-4">
-            {compareProducts.map((p) => (
-              <Button key={p.id} size="sm" className="flex-1 rounded-lg gap-1" onClick={() => { addToCart(p.id); setCompareOpen(false); }}>
-                <Plus className="w-3 h-3" /> Add {p.team.split(' ')[0]}
-              </Button>
-            ))}
-          </div>
         </DialogContent>
       </Dialog>
     </div>
   );
 }
+
+/* ========== Comparison Table View ========== */
+
+function ComparisonView({
+  compareProducts,
+  minPrice,
+  maxPrice,
+  priceRange,
+  addToCart,
+  onRemove,
+  onBack,
+}: {
+  compareProducts: any[];
+  minPrice: number;
+  maxPrice: number;
+  priceRange: number;
+  addToCart: (id: string) => void;
+  onRemove: (id: string) => void;
+  onBack: () => void;
+}) {
+  return (
+    <div className="container mx-auto px-4 py-8 animate-fade-in">
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-8">
+        <Button variant="outline" size="sm" className="gap-2 rounded-lg" onClick={onBack}>
+          <ArrowLeft className="w-4 h-4" />
+          Back to Store
+        </Button>
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
+            <GitCompare className="w-6 h-6 text-primary" />
+            Product Comparison
+          </h1>
+          <p className="text-sm text-muted-foreground">Comparing {compareProducts.length} jersey{compareProducts.length !== 1 ? 's' : ''} side by side</p>
+        </div>
+      </div>
+
+      {/* Comparison Table - horizontally scrollable on mobile */}
+      <div className="overflow-x-auto -mx-4 px-4 pb-4">
+        <div className="min-w-[640px]">
+          {/* Product Headers */}
+          <div className="grid gap-0" style={{ gridTemplateColumns: `180px repeat(${compareProducts.length}, 1fr)` }}>
+            <div /> {/* Empty label cell */}
+            {compareProducts.map((p, idx) => (
+              <div
+                key={p.id}
+                className={`comparison-slide comparison-divider text-center p-4 ${idx < compareProducts.length - 1 ? '' : ''}`}
+                style={{ animationDelay: `${idx * 100}ms` }}
+              >
+                <div className="relative inline-block">
+                  <img
+                    src={p.image}
+                    alt={p.name}
+                    className="w-28 h-28 object-cover rounded-2xl mx-auto shadow-lg mb-3"
+                  />
+                  <button
+                    onClick={() => onRemove(p.id)}
+                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center shadow-md hover:scale-110 transition-transform"
+                    title="Remove from comparison"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+                <h3 className="font-semibold text-sm">{p.name}</h3>
+                <Badge variant="outline" className="text-xs mt-1">{p.team}</Badge>
+              </div>
+            ))}
+          </div>
+
+          {/* Comparison Rows */}
+          <Card className="mt-2 overflow-hidden border">
+            <CardContent className="p-0">
+              <div className="grid gap-0" style={{ gridTemplateColumns: `180px repeat(${compareProducts.length}, 1fr)` }}>
+                {/* Image Row */}
+                <ComparisonLabelRow label="Image" icon={<Layers className="w-4 h-4" />} />
+                {compareProducts.map((p, idx) => (
+                  <div
+                    key={p.id}
+                    className={`p-4 text-center comparison-divider comparison-slide ${idx < compareProducts.length - 1 ? '' : ''}`}
+                    style={{ animationDelay: `${idx * 100}ms` }}
+                  >
+                    <img
+                      src={p.image}
+                      alt={p.name}
+                      className="w-full max-w-[200px] aspect-square object-cover rounded-xl mx-auto shadow-md"
+                    />
+                  </div>
+                ))}
+
+                {/* Name Row */}
+                <ComparisonLabelRow label="Name" icon={<Tag className="w-4 h-4" />} />
+                {compareProducts.map((p, idx) => (
+                  <div
+                    key={p.id}
+                    className={`p-4 flex items-center justify-center comparison-divider ${idx < compareProducts.length - 1 ? 'border-b border-r border-border/50' : 'border-b border-border/50'}`}
+                  >
+                    <span className="font-semibold text-sm text-center">{p.name}</span>
+                  </div>
+                ))}
+
+                {/* Team Row */}
+                <ComparisonLabelRow label="Team" icon={<Sparkles className="w-4 h-4" />} />
+                {compareProducts.map((p, idx) => (
+                  <div
+                    key={p.id}
+                    className={`p-4 flex items-center justify-center comparison-divider ${idx < compareProducts.length - 1 ? 'border-b border-r border-border/50' : 'border-b border-border/50'}`}
+                  >
+                    <Badge variant="secondary" className="text-xs">{p.team}</Badge>
+                  </div>
+                ))}
+
+                {/* Category Row */}
+                <ComparisonLabelRow label="Category" icon={<Layers className="w-4 h-4" />} />
+                {compareProducts.map((p, idx) => (
+                  <div
+                    key={p.id}
+                    className={`p-4 flex items-center justify-center comparison-divider ${idx < compareProducts.length - 1 ? 'border-b border-r border-border/50' : 'border-b border-border/50'}`}
+                  >
+                    <span className="text-sm capitalize">{p.category || 'Jersey'}</span>
+                  </div>
+                ))}
+
+                {/* Price Row - highlight lowest in green */}
+                <ComparisonLabelRow label="Price" icon={<Tag className="w-4 h-4" />} />
+                {compareProducts.map((p, idx) => {
+                  const isLowest = p.price === minPrice;
+                  const fillPct = priceRange > 0 ? ((p.price - minPrice) / priceRange) * 100 : 50;
+                  return (
+                    <div
+                      key={p.id}
+                      className={`p-4 flex flex-col items-center justify-center gap-2 comparison-divider ${idx < compareProducts.length - 1 ? 'border-b border-r border-border/50' : 'border-b border-border/50'}`}
+                    >
+                      <span className={`text-xl font-bold ${isLowest ? 'text-green-500 dark:text-green-400' : ''}`}>
+                        £{p.price.toFixed(2)}
+                      </span>
+                      {isLowest && (
+                        <Badge className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20 text-[10px]">
+                          <Check className="w-2.5 h-2.5 mr-0.5" /> Lowest
+                        </Badge>
+                      )}
+                      {/* Visual price range bar */}
+                      <div className="w-full max-w-[140px] h-2 rounded-full bg-muted overflow-hidden">
+                        <div
+                          className="h-full rounded-full bar-fill-left bg-gradient-to-r from-green-400 to-primary"
+                          style={{ width: `${Math.max(fillPct, 15)}%` }}
+                        />
+                      </div>
+                      {maxPrice > minPrice && (
+                        <span className="text-[10px] text-muted-foreground">
+                          {isLowest ? 'Best value' : `+£${(p.price - minPrice).toFixed(0)} from lowest`}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* Rating Row */}
+                <ComparisonLabelRow label="Rating" icon={<Star className="w-4 h-4" />} />
+                {compareProducts.map((p, idx) => (
+                  <div
+                    key={p.id}
+                    className={`p-4 flex flex-col items-center justify-center gap-1.5 comparison-divider ${idx < compareProducts.length - 1 ? 'border-b border-r border-border/50' : 'border-b border-border/50'}`}
+                  >
+                    <div className="flex gap-0.5">
+                      {[1, 2, 3, 4, 5].map(i => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${i <= Math.round(p.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm font-semibold">{p.rating.toFixed(1)}</span>
+                  </div>
+                ))}
+
+                {/* Sizes Available Row */}
+                <ComparisonLabelRow label="Sizes Available" icon={<Ruler className="w-4 h-4" />} />
+                {compareProducts.map((p, idx) => {
+                  const sizes = p.sizes?.split(",") || ["M"];
+                  return (
+                    <div
+                      key={p.id}
+                      className={`p-4 flex items-center justify-center comparison-divider ${idx < compareProducts.length - 1 ? 'border-b border-r border-border/50' : 'border-b border-border/50'}`}
+                    >
+                      <div className="flex gap-1.5 flex-wrap justify-center">
+                        {sizes.map((s: string) => (
+                          <Badge key={s} variant="outline" className="text-xs font-medium">{s}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Stock Status Row */}
+                <ComparisonLabelRow label="Stock Status" icon={<Package className="w-4 h-4" />} />
+                {compareProducts.map((p, idx) => {
+                  const inStock = p.stock > 20;
+                  const lowStock = p.stock > 0 && p.stock <= 20;
+                  return (
+                    <div
+                      key={p.id}
+                      className={`p-4 flex flex-col items-center justify-center gap-2 comparison-divider ${idx < compareProducts.length - 1 ? 'border-b border-r border-border/50' : 'border-b border-border/50'}`}
+                    >
+                      {inStock && (
+                        <Badge className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20">
+                          <Check className="w-3 h-3 mr-1" /> In Stock
+                        </Badge>
+                      )}
+                      {lowStock && (
+                        <Badge className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20">
+                          <Package className="w-3 h-3 mr-1" /> Low Stock
+                        </Badge>
+                      )}
+                      {p.stock === 0 && (
+                        <Badge variant="destructive" className="text-xs">
+                          <X className="w-3 h-3 mr-1" /> Out of Stock
+                        </Badge>
+                      )}
+                      {p.stock > 0 && (
+                        <span className="text-[10px] text-muted-foreground">{p.stock} units available</span>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* Description Row */}
+                <ComparisonLabelRow label="Description" icon={<MessageSquare className="w-4 h-4" />} />
+                {compareProducts.map((p, idx) => (
+                  <div
+                    key={p.id}
+                    className={`p-4 flex items-center comparison-divider ${idx < compareProducts.length - 1 ? 'border-r border-border/50' : ''}`}
+                  >
+                    <p className="text-xs text-muted-foreground text-center leading-relaxed">
+                      {p.description || 'No description available.'}
+                    </p>
+                  </div>
+                ))}
+
+                {/* Add to Cart Row */}
+                <div /> {/* Empty label cell */}
+                {compareProducts.map((p, idx) => (
+                  <div
+                    key={p.id}
+                    className={`p-4 flex items-center justify-center comparison-divider comparison-slide ${idx < compareProducts.length - 1 ? '' : ''}`}
+                    style={{ animationDelay: `${idx * 100 + 300}ms` }}
+                  >
+                    <Button
+                      size="sm"
+                      className="gap-2 rounded-lg shadow-sm w-full max-w-[200px]"
+                      onClick={() => addToCart(p.id)}
+                    >
+                      <ShoppingCart className="w-3.5 h-3.5" />
+                      Add to Cart
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Bottom Actions */}
+      <div className="flex items-center justify-between mt-6">
+        <Button variant="outline" size="sm" className="gap-2 rounded-lg" onClick={onBack}>
+          <ArrowLeft className="w-4 h-4" />
+          Back to Store
+        </Button>
+        <p className="text-xs text-muted-foreground">
+          {compareProducts.length}/3 items compared
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ========== Comparison Label Row ========== */
+
+function ComparisonLabelRow({ label, icon }: { label: string; icon: React.ReactNode }) {
+  return (
+    <div className="p-4 flex items-center gap-2 bg-muted/30 border-b border-border/50 font-medium text-sm text-muted-foreground">
+      {icon}
+      {label}
+    </div>
+  );
+}
+
+/* ========== Product Card ========== */
 
 function ProductCard({ product, onAddToCart, onToggleFavorite, isFavorite, compareMode, isCompared, onToggleCompare }: { product: any; onAddToCart: (id: string) => void; onToggleFavorite: (id: string, name: string) => void; isFavorite: boolean; compareMode: boolean; isCompared: boolean; onToggleCompare: () => void }) {
   const [selectedSize, setSelectedSize] = useState("M");
@@ -394,11 +693,11 @@ function ProductCard({ product, onAddToCart, onToggleFavorite, isFavorite, compa
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           {product.featured && <Badge className="absolute top-3 left-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-sm rounded-lg"><Star className="w-3 h-3 mr-1" /> Featured</Badge>}
 
-          {/* Compare checkbox */}
+          {/* Compare checkbox - top right corner */}
           {compareMode && (
             <button
               onClick={(e) => { e.stopPropagation(); onToggleCompare(); }}
-              className={`absolute top-3 left-3 ${product.featured ? 'left-24' : ''} w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 shadow-md z-10 ${
+              className={`absolute top-3 right-3 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 shadow-md z-10 ${
                 isCompared
                   ? "bg-primary text-primary-foreground scale-100"
                   : "bg-black/40 text-white/80 hover:bg-primary/80 hover:text-white"
@@ -408,10 +707,10 @@ function ProductCard({ product, onAddToCart, onToggleFavorite, isFavorite, compa
             </button>
           )}
 
-          {/* Favorite Heart */}
+          {/* Favorite Heart - positioned below compare checkbox when in compare mode */}
           <button
             onClick={(e) => { e.stopPropagation(); onToggleFavorite(product.id, product.name); }}
-            className={`absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 shadow-md ${
+            className={`absolute ${compareMode ? 'top-14' : 'top-3'} right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 shadow-md ${
               isFavorite
                 ? "bg-rose-500 text-white scale-100"
                 : "bg-black/40 text-white/80 hover:bg-rose-500 hover:text-white opacity-0 group-hover:opacity-100"
@@ -534,6 +833,8 @@ function ProductCard({ product, onAddToCart, onToggleFavorite, isFavorite, compa
     </>
   );
 }
+
+/* ========== Review Star Selector ========== */
 
 function ReviewStarSelector({ name }: { name: string }) {
   const [rating, setRating] = useState(0);

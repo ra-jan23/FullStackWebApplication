@@ -20,7 +20,8 @@ export type Page =
   | 'news'
   | 'transfers'
   | 'notifications'
-  | 'quiz';
+  | 'quiz'
+  | 'community';
 
 interface User {
   id: string;

@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   ScanSearch, Store, Ticket, Video, Sparkles, Crown, Cpu, Upload,
   CheckCircle2, Star, ArrowLeft, Play, Zap, Flame, CircleDot,
-  ChevronRight, Megaphone, Users, BarChart3, Shield, Target, MessageCircle, Brain, Newspaper, ArrowLeftRight
+  ChevronRight, Megaphone, Users, BarChart3, Shield, Target, MessageCircle, MessageSquare, Brain, Newspaper, ArrowLeftRight
 } from "lucide-react";
 
 export default function HomePage() {
@@ -167,6 +167,7 @@ export default function HomePage() {
             { icon: <Newspaper className="w-8 h-8" />, title: "Football News Hub", desc: "Stay updated with the latest transfer rumors, match results, and football headlines.", page: "news" as Page, gradient: "from-orange-500 to-red-600", bg: "bg-orange-500/10" },
             { icon: <ArrowLeftRight className="w-8 h-8" />, title: "Transfer Market", desc: "Track latest transfer rumors, player values, and completed deals from around the world.", page: "transfers" as Page, gradient: "from-teal-500 to-cyan-600", bg: "bg-teal-500/10" },
             { icon: <Zap className="w-8 h-8" />, title: "Football Quiz", desc: "Test your football knowledge with AI-generated trivia across 6 exciting categories.", page: "quiz" as Page, gradient: "from-amber-500 to-orange-600", bg: "bg-amber-500/10" },
+            { icon: <MessageSquare className="w-8 h-8" />, title: "Community Forum", desc: "Discuss tactics, transfers, and match results with fellow football fans.", page: "community" as Page, gradient: "from-emerald-500 to-teal-600", bg: "bg-emerald-500/10" },
           ].map((feature, i) => (
             <Card
               key={i}
